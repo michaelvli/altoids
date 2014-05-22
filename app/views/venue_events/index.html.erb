@@ -1,0 +1,46 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<div class="panel-heading">
+			<h3 class="panel-title">Events for <%= @venue.name %></h3>
+			<%= link_to "Add Event", new_venue_event_path(:venue_id => session[:venue_id]), class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="hidden-xs">ID</th>
+						<th>Event</th>
+						<th>Type</th>
+						<th class="hidden-xs">Date</th>
+						<th class="hidden-xs">Recurring</th>
+						<th class="hidden-xs">Description</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for venue_event in @venue_events %>
+						<tr>
+							<%= hidden_field_tag "venue_id", params[:venue_id] %>
+							<td class="hidden-xs"><%= venue_event.id %></td>
+							<td><%= link_to venue_event.name, edit_venue_event_path(venue_event.id) %></td>
+							<td><%= venue_event.event.name %></td>
+							<td class="hidden-xs">
+								<%= venue_event.start_time.strftime("%a (%m/%d) %l:%M %p") %>&nbsp;-&nbsp;
+								<% if venue_event.start_time.strftime("%m/%d") ==  venue_event.end_time.strftime("%m/%d") %>
+									<%= venue_event.end_time.strftime("%l:%M %p") %>					
+								<% else %>
+									<%= venue_event.end_time.strftime("%l:%M %p (%m/%d)") %>
+								<% end %>
+							</td>
+							<td class="hidden-xs"><%= venue_event.recurrence %></td>
+							<td class="hidden-xs"><%= venue_event.description %></td>
+							<td><%= link_to "Delete", venue_event, method: :delete, data: { confirm: "You sure?" } %></td>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+	</div> <!-- panel -->

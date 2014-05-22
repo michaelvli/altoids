@@ -1,0 +1,27 @@
+<div class="container">
+
+	<div class="panel panel-default">
+		
+		<div class="panel-heading">
+			<h3 class="panel-title">Neighborhood: <%= @neighborhood.name %></h3>
+			<%= link_to "Cancel", "#", class:"back-button btn btn-xs btn-danger pull-right hidden-xs hidden-sm" %>
+		</div><!-- panel heading  -->
+		
+		<div class="panel-body">
+			<%= bootstrap_form_for(@neighborhood, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-9") do |f| %>
+				<%= f.alert_message "Please fix the errors below:" %>
+<% if false %>  Debugging only
+				<%= f.error_summary %>
+<% end %>	
+				
+				<%= render 'form', f: f %>
+				
+				<div class='text-center'> 
+					<%= f.submit 'Update', class: 'btn btn-success' %>
+				</div>
+			<% end %>
+		</div> <!-- panel body -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->

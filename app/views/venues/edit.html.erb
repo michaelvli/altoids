@@ -1,0 +1,59 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<!-- Default panel contents -->
+		<div class="panel-heading">
+			<h3 class="panel-title">New Venue</h3>
+			<%= link_to "Cancel", "#", class:"back-button btn btn-xs btn-danger pull-right format-right-margin hidden-xs hidden-sm" %>				
+		</div>
+
+		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-9") do |f| %>
+
+			<%= f.alert_message "Please fix the errors below:" %>
+<% if false %>  Debugging only
+			<%= f.error_summary %>
+<% end %>			
+				
+			<!-- Contact info panel -->
+			<div class="panel-body">
+				<h5 class="panel-title">Contact Info</h5>
+				<%= render 'venues/form_contact', f: f %>
+			</div> <!-- panel body -->
+
+			<!-- Additional Info panel -->
+			<div class="panel-body">
+				<h5 class="panel-title">Additional Info</h5>
+				<%= render 'venues/form_additional', f: f %>
+			</div> <!-- panel body -->
+			
+
+			<!-- Features panel -->
+			<div class="panel-body">
+				<h5 class="panel-title">Features</h5>
+				<%= render 'venues/form_features', f: f %>
+			</div> <!-- panel body -->
+
+			<!-- Venue Hours panel -->
+			<div class="panel-body">
+				<h5 class="panel-title">Venue Hours</h5>
+				<%= render 'venues/form_hours_venue', f: f %>
+			</div> <!-- panel body -->
+			
+			<!-- Kitchen Hours panel -->
+			<div class="panel-body">
+				<h5 class="panel-title">Kitchen Hours</h5>
+				<%= render 'venues/form_hours_kitchen', f: f %>
+			</div> <!-- panel body -->
+			
+			<div class="panel-body">
+				<div class='text-center'> 
+					<%= f.submit 'Update Venue', class: 'btn btn-success' %>
+				</div>
+			</div>
+			
+		<% end %>
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->

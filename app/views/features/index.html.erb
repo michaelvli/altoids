@@ -1,0 +1,39 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<div class="panel-heading">
+			<h3 class="panel-title">Features Index</h3>
+			<%= link_to "Add Feature", new_feature_path, class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">ID</th>
+						<th>Feature</th>
+						<th># of Venues</th>
+						<th>Active</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for feature in @features %>
+						<tr>
+							<td class="visible-lg"><%= feature.id %></td>
+							<td><%= link_to feature.name, edit_feature_path(feature.id) %></td>
+							<td><%= feature.venues.count %></td>
+							<td><%= feature.active %></td>
+							<% if current_user.account_type == "admin" %>
+								<td><%= link_to "Delete", feature, method: :delete, data: { confirm: "You sure?" } %></td>
+							<% end %>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->

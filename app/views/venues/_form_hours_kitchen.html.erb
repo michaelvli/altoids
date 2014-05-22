@@ -1,0 +1,40 @@
+			<!-- Kitchen hours -->								
+				<% @days_of_week.each do |day_of_week| %>
+					<div class="form-group">
+						<%= label_tag day_of_week.to_s.capitalize, nil, class: 'col-sm-2 control-label' %>
+						<div class='col-sm-2'>
+							<%= f.time_select time_field_helper("open", day_of_week, "kitchen"),
+								{:combined => true,
+								:hide_label => true,
+								:label_col => "col-0",
+								:ampm => true,
+								:include_blank => false,
+								:prompt => "Open",
+								:minute_interval => 30,
+								:time_separator => "",
+								:start_hour => 0,
+								:start_minute => 00,
+								:end_hour => 23,
+								:end_minute => 59}, 
+								{:class => ""}
+							%>
+						</div>	
+						<div class='col-sm-2'>
+							<%= f.time_select time_field_helper("close", day_of_week, "kitchen"),
+								{:combined => true,
+								:hide_label => true,
+								:label_col => "col-0",
+								:ampm => true,
+								:include_blank => false,
+								:prompt => "Close",
+								:minute_interval => 30,
+								:time_separator => "",
+								:start_hour => 0,
+								:start_minute => 00,
+								:end_hour => 23,
+								:end_minute => 59},
+								{:class => "no-margin"}
+							%>
+						</div>	
+					</div>
+				<% end %>

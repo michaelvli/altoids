@@ -1,0 +1,7 @@
+	<%= f.text_field :name, placeholder: "Neighborhood" %>
+	<%= f.text_field :city, placeholder: "City" %>
+	<%= f.select :state, ["IL"], prompt: "Select State" %>
+	<%= f.form_group :active, label: { text: "Active" } do %>
+		<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@neighborhood.active == true) %>
+		<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@neighborhood.active == false) %>
+	<% end %>

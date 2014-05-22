@@ -1,0 +1,14 @@
+			<!-- Features panel -->
+			<div class="form-group">
+				<%= hidden_field_tag "venue[feature_ids][]", nil %>
+				<div class='col-sm-offset-2 col-sm-9'>
+					<% Feature.all.each do |feature| %>
+						<div class="checkbox">
+							<label>
+								<%= check_box_tag "venue[feature_ids][]", feature.id, @venue.feature_ids.include?(feature.id) %>
+								<%= feature.name %><br>
+							</label>
+						</div>
+					<% end %>
+				</div>
+			</div>	

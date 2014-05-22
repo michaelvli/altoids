@@ -1,0 +1,5 @@
+	<%= f.text_field :name %>
+	<%= f.form_group :active, label: { text: "Active" } do %>
+		<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@event.active == true) %>
+		<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@event.active == false) %>
+	<% end %>
