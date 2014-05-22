@@ -1,0 +1,62 @@
+	<%= f.text_field :first_name, label: "First Name", placeholder: "Enter First Name" %>
+	<%= f.text_field :last_name, label: "Last Name", placeholder: "Enter Last Name"  %>
+	<%= f.email_field :email, placeholder: "Enter Email" %>
+	<%= f.password_field :password, placeholder: "Create a Password" %>
+	<%= f.password_field :password_confirmation, hide_label: true, placeholder: "Re-enter Password" %>
+	<%= f.date_select :birthday, start_year: Date.today.year - 21,
+                            end_year: Date.today.year - 90, 
+							discard_day: false,
+                            order: [:month, :day, :year] %>
+	<%= f.form_group :gender, label: { text: "Gender" } do %>
+		<%= f.radio_button :gender, 1, label: "Male", inline: true, checked: (@user.gender == true if !@user.nil?) %>
+		<%= f.radio_button :gender, 0, label: "Female", inline: true, checked: (@user.gender == false if !@user.nil?) %>
+	<% end %>
+	
+	<% if !@user.nil? %>
+		<%= f.form_group :active, label: { text: "Active" } do %>
+			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@user.active == true if !@user.nil?) %>
+			<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@user.active == false if !@user.nil?) %>
+		<% end %>
+	<% end %>	
+
+<% if false %>
+	<%= f.input :first_name, placeholder: 'First Name', label: show_label_helper('First Name'), class: 'form-control' %>
+	<%= f.input :last_name, placeholder: 'Last Name', label: show_label_helper('Last Name'), class: 'form-control' %>
+	<%= f.input :email, placeholder: 'Email', label: show_label_helper('Email'), class: 'form-control' %>
+	<%= f.input :password, placeholder: 'Password', label: show_label_helper('Password'), class: 'form-control' %>
+	<%= f.input :password_confirmation, placeholder: 'Re-enter Password', label: show_label_helper('Password Confirmation'), class: 'form-control' %>
+	<%= f.input :birthday, 	label: show_label_helper('Date of Birth'), 
+							as: :date, 
+							start_year: Date.today.year - 21,
+                            end_year: Date.today.year - 90, 
+							discard_day: false,
+                            order: [:month, :day, :year], 
+							class: 'form-control' %>
+	<%= f.input :gender, label: false, as: :radio_buttons, collection: [:Male, :Female], class: 'form-control' %>					
+<% end %>
+	
+<% if false %>	
+<!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
+	<% if !current_user.nil? && current_user.account_type == "admin" %>
+		<div class="form-group">
+			<%= f.label :account_type, class: class_helper(params[:controller], params[:action], 'label') %>
+			<div class="<%= class_helper(params[:controller], params[:action]) %>">
+			  	<%= f.select :account_type, ["user","venue","admin"], {:selected => @user.account_type}, { :class => "form-control" } %>
+				<%= retrieve_errors(@user, :account_type) %>
+			</div>
+		</div>
+	
+		<div class="form-group">
+			<%= f.label :venue_id, "Venue", class: class_helper(params[:controller], params[:action], 'label') %>
+			<div class="<%= class_helper(params[:controller], params[:action]) %>">
+				<% if @user.venue.nil? %>
+					<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, { :prompt => "Select Venue" } , { :class => "form-control" }%>
+				<% else %>	
+					<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @user.venue.id} , { :class => "form-control" }%>
+				<% end %>
+				<%= retrieve_errors(@user, :venue_id) %>
+			</div>
+		</div>
+	<% end %>
+<!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
+<% end %>

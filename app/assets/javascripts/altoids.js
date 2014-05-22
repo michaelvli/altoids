@@ -13,7 +13,6 @@ function endless_scroll(){
 	// Checks for a pagination element so function isn't called on every page when user scrolls
 	if ($('.pagination').length) 
 	{
-
 		// Ensures additional videos are loaded incrementally (vs. a large number at once):
 		$(window).scroll(function(){
 			url = $('.pagination .next_page').attr('href'); // global variable - http://learn.jquery.com/javascript-101/scope/

@@ -4,17 +4,29 @@ Altoids::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
-	root 'products#index'
+  # root 'products#index'
+	root 'sessions#splash'
   
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
+	match '/splash', to: 'sessions#splash', via: 'get'
+  	match '/home', to: 'sessions#home', via: 'get'
 
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
 
   # Example resource route (maps HTTP verbs to controller actions automatically):
-    resources :products
-
+	resources :products
+	resources :sessions, only: [:new, :create, :destroy]
+	resources :users
+	resources :venues
+	resources :neighborhoods
+	resources :features
+	resources :venue_features
+	resources :events
+	resources :venue_events
+	resources :password_resets
+	
   # Example resource route with options:
   #   resources :products do
   #     member do

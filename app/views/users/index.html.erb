@@ -1,0 +1,53 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<div class="panel-heading">
+			<h3 class="panel-title">Users Index</h3>
+			<%= link_to "Add User", new_user_path, class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+  
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">ID</th>
+						<th>Name</th>
+						<th class="hidden-xs">Email</th>
+						<th class="hidden-xs">Account Type</th>
+						<th class="hidden-xs hidden-sm">Date Joined</th>
+						<th class="hidden-xs hidden-sm">Last Activity</th>							
+						<th class="visible-lg">Zip Code</th>
+						<th class="hidden-xs">Venue Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for user in @users %>
+						<tr>
+							<td class="visible-lg"><%= user.id %></td>
+							<td><%= link_to user.first_name+" "+user.last_name, edit_user_path(user.id) %></td>
+							<td class="hidden-xs"><%= user.email %></td>
+							<td class="hidden-xs"><%= user.account_type %></td>
+							<td class="hidden-xs hidden-sm"><%= user.created_at.in_time_zone.strftime("%b %-d, %Y @%k:%M") %></td>
+							<td class="hidden-xs hidden-sm">TBD</td>
+							<td class="visible-lg"><%= user.zip_code %></td>
+							<% if !user.venue.nil? %>
+								<td class="hidden-xs">	
+									<%= link_to user.venue.name, edit_venue_path(user.venue.id) %>
+								</td>
+							<% else %>
+								<td class="hidden-xs">&nbsp;</td>
+							<% end %>
+							<% if current_user.account_type == "admin" %>
+								<td><%= link_to "Delete", user, method: :delete, data: { confirm: "You sure?" } %></td>
+							<% end %>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->
