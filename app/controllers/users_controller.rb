@@ -57,12 +57,12 @@ class UsersController < ApplicationController
   
   private  #See Listing 7.22: Private functions are used internally by the controller (and don't need to be exposed to external users via the Web)
 
-    def user_params #See Chapter 7.3.2 for strong parameters.  Params.require ensures that the params hash has a :user attribute, and permits only the name, email, password, and password confirmation attributes (but no others) to be passed to User.new in the create method.
-	  if !current_user.nil? && current_user.account_type == 'admin'
+    def user_params #See Chapter 7.3.2 for strong parameters.  Params.require ensures that the params hash has a :user attribute, and permits only the name, email, password, and password confirmation attributes (but no others) to be passed to User.new in the create method.	
+#	  if !current_user.nil? && current_user.account_type == 'admin'
         params.require(:user).permit(:first_name, :last_name, :zip_code, :email, :password, :password_confirmation, :gender, :birthday, :account_type, :venue_id)
-	  else
-        params.require(:user).permit(:first_name, :last_name, :zip_code, :email, :password, :password_confirmation, :gender, :birthday)
-	  end
+#	  else
+#        params.require(:user).permit(:first_name, :last_name, :zip_code, :email, :password, :password_confirmation, :gender, :birthday)
+#	  end
     end
 	
 	# Before filters
@@ -78,11 +78,11 @@ class UsersController < ApplicationController
       user = User.find_by(id: params[:id])
 	  if user
 		  unless (current_user?(user) || current_user.account_type == 'admin')
-			flash[:error] = "Ooops... looks like you aren't authorized to do that."
+			flash[:error] = "Ooops... looks like you aren't authorized to do that. 1"
 			redirect_to(root_url) 
 		  end
 	  else
-		flash[:error] = "Ooops... looks like you aren't authorized to do that."
+		flash[:error] = "Ooops... looks like you aren't authorized to do that. 2"
 		redirect_to(root_url) 
 	  end
     end
