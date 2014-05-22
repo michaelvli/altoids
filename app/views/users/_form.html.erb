@@ -12,6 +12,9 @@
 		<%= f.radio_button :gender, 0, label: "Female", inline: true, checked: (@user.gender == false if !@user.nil?) %>
 	<% end %>
 	
+	<!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
+		<%= f.select :account_type, ["user","venue","admin"], {:selected => @user.account_type} %>	
+	
 	<% if !@user.nil? %>
 		<%= f.form_group :active, label: { text: "Active" } do %>
 			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@user.active == true if !@user.nil?) %>
@@ -19,21 +22,6 @@
 		<% end %>
 	<% end %>	
 
-<% if false %>
-	<%= f.input :first_name, placeholder: 'First Name', label: show_label_helper('First Name'), class: 'form-control' %>
-	<%= f.input :last_name, placeholder: 'Last Name', label: show_label_helper('Last Name'), class: 'form-control' %>
-	<%= f.input :email, placeholder: 'Email', label: show_label_helper('Email'), class: 'form-control' %>
-	<%= f.input :password, placeholder: 'Password', label: show_label_helper('Password'), class: 'form-control' %>
-	<%= f.input :password_confirmation, placeholder: 'Re-enter Password', label: show_label_helper('Password Confirmation'), class: 'form-control' %>
-	<%= f.input :birthday, 	label: show_label_helper('Date of Birth'), 
-							as: :date, 
-							start_year: Date.today.year - 21,
-                            end_year: Date.today.year - 90, 
-							discard_day: false,
-                            order: [:month, :day, :year], 
-							class: 'form-control' %>
-	<%= f.input :gender, label: false, as: :radio_buttons, collection: [:Male, :Female], class: 'form-control' %>					
-<% end %>
 	
 <% if false %>	
 <!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
