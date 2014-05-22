@@ -1,0 +1,68 @@
+	<!-- Contact info panel -->
+	<%= f.text_field :name, placeholder: "Venue Name" %>
+	<%= f.text_field :address, placeholder: "Street" %>
+	<%= f.text_field :city, placeholder: "City", hide_label: true %>
+	<%= f.select :state, ["IL"], prompt: "Select State", hide_label: true %>
+	<%= f.text_field :zip_code, placeholder: "Zip Code", hide_label: true %>
+	<% if @venue.neighborhood.nil? %>
+		<%= f.select :neighborhood_id, Neighborhood.all.collect{|p| [p.name, p.id]}, {include_blank: false, prompt: "Select Neighborhood"} %>
+	<% else %>
+		<%= f.select :neighborhood_id, Neighborhood.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @venue.neighborhood.id} %>
+	<% end %>
+	<%= f.text_field :phone, placeholder: "Phone Number" %>			
+				
+				
+				
+<% if false %>				
+						<div class="form-group">
+							<%= f.label :address, class: 'col-sm-2 control-label' %>
+							<div class="col-sm-9">
+								<% if current_user.account_type != "admin" %>
+									<%= f.text_field :address, class:"form-control", placeholder:"Street", :readonly => true %>
+								<% else %>
+									<%= f.text_field :address, class:"form-control", placeholder:"Street" %>
+								<% end %>
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-4">
+								<% if current_user.account_type != "admin" %>
+									<%= f.text_field :city, class:"form-control", placeholder:"City", :readonly => true %>
+								<% else %>	
+									<%= f.text_field :city, class:"form-control", placeholder:"City" %>
+								<% end %>
+							</div>
+							
+							<div class="col-sm-2">
+								<% if @venue.state.nil? %>
+									<%= f.select :state, ["IL"], {:prompt => "ST"}, { :class => "form-control" } %>
+								<% else %>
+									<% if current_user.account_type != "admin" %>
+										<%= f.text_field :state, class:"form-control", placeholder:"City", :readonly => true %>
+									<% else %>	
+										<%= f.select :state, ["IL"], {:selected => @venue.state}, { :class => "form-control" } %>	
+									<% end %>	
+								<% end %>
+							</div>
+
+							<div class="col-sm-3">
+								<% if current_user.account_type != "admin" %>
+									<%= f.text_field :zip_code, class:"form-control", placeholder:"Zip", maxlength:"5", :readonly => true %>
+								<% else %>
+									<%= f.text_field :zip_code, class:"form-control", placeholder:"Zip", maxlength:"5" %>
+								<% end %>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<%= f.label :neighborhood_id, "Neighborhood", class: 'col-sm-2 control-label' %>
+							<div class="col-sm-10">
+								<% if @venue.neighborhood.nil? %>
+									<%= f.select :neighborhood_id, Neighborhood.all.collect{|p| [p.name, p.id]}, { :prompt => "Select Neighborhood" } , { :class => "form-control" }%>
+								<% else %>	
+									<%= f.select :neighborhood_id, Neighborhood.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @venue.neighborhood.id} , { :class => "form-control" }%>
+								<% end %>
+							</div>
+						</div>
+<% end %>						

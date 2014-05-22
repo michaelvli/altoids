@@ -1,0 +1,11 @@
+	<!-- Additional Info panel -->
+	<%= f.text_area :description, placeholder: "Venue Description" %>
+	<% if current_user.account_type == "admin" %>
+		<%= f.text_field :file_name, placeholder: "File Name (not required)" %>
+		<%= f.form_group :active, label: { text: "Active" } do %>
+			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@venue.active == true) %>
+			<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@venue.active == false) %>
+		<% end %>
+	<% else %>
+		<%= hidden_field_tag :active, @venue.active %>
+	<% end %>

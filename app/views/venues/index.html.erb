@@ -1,0 +1,38 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<!-- Default panel contents -->
+		<div class="panel-heading">
+			<h3 class="panel-title format-inline">Venues Index</h3>
+			<%= link_to "Add Venue", new_venue_path, class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">ID</th>
+						<th>Venue</th>
+						<th>Events</th>
+						<th>Views</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for venue in @venues %>
+						<tr>
+							<td class="visible-lg"><%= venue.id %></td>
+							<td><%= link_to venue.name, edit_venue_path(venue.id) %></td>							
+							<td><%= link_to venue.venue_events.count, venue_events_path(:venue_id => venue.id) %></td>
+							<td>TBD</td>
+							<td><%= link_to "Delete", venue, method: :delete, data: { confirm: "You sure?" } %></td>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->

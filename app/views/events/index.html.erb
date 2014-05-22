@@ -1,0 +1,46 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<div class="panel-heading">
+			<h3 class="panel-title">Event Types Index</h3>
+			<%= link_to "Add Event Type", new_event_path, class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="hidden-xs">ID</th>
+						<th>Event</th>
+						<th># of Venues</th>
+						<th>Active</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for event in @events %>
+						<tr>
+							<td class="hidden-xs"><%= event.id %></td>
+							<td><%= link_to event.name, edit_event_path(event.id) %></td>
+							<td><%= event.venues.count %></td>
+							<td><%= event.active %></td>
+							<% if current_user.account_type == "admin" %>
+								<td><%= link_to "Delete", event, method: :delete, data: { confirm: "You sure?" } %></td>
+							<% end %>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->
+
+
+
+
+
+
+

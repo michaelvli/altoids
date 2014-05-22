@@ -1,0 +1,43 @@
+<div class="container">
+
+	<div class="panel panel-default">
+	
+		<div class="panel-heading">
+			<h3 class="panel-title">Neighborhoods Index</h3>
+			<%= link_to "Add Neighborhood", new_neighborhood_path, class:"btn btn-xs btn-primary pull-right" %>
+		</div>
+		
+		<div class="table-responsive">
+			<table class="table table-condensed table-hover">
+				<thead>
+					<tr>
+						<th class="visible-lg">ID</th>
+						<th>Neighborhood</th>
+						<th class="hidden-xs">City</th>
+						<th class="hidden-xs">State</th>
+						<th>Active</th>
+						<th># of Venues</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody> 
+					<% for neighborhood in @neighborhoods %>
+						<tr>
+							<td class="visible-lg"><%= neighborhood.id %></td>
+							<td><%= link_to neighborhood.name, edit_neighborhood_path(neighborhood.id) %></td>
+							<td class="hidden-xs"><%= neighborhood.city %></td>
+							<td class="hidden-xs"><%= neighborhood.state %></td>
+							<td><%= neighborhood.active %></td>
+							<td><%= neighborhood.venues.count %></td>
+							<% if current_user.account_type == "admin" %>
+								<td><%= link_to "Delete", neighborhood, method: :delete, data: { confirm: "You sure?" } %></td>
+							<% end %>
+						</tr>	
+					<% end %>
+				</tbody>
+			</table>
+		</div> <!-- table -->
+		
+	</div> <!-- panel -->
+	
+</div> <!-- container -->

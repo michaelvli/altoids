@@ -1,0 +1,91 @@
+	<%= f.text_field :name, placeholder: "Event Name" %>
+	<%= f.select :event_id, Event.all.collect{|p| [p.name, p.id]}, {label: "Event Type", include_blank: false, prompt: "Select Type of Event"} %>
+	<%= f.text_area :description, placeholder: "Event Description" %>
+	
+	<!-- start_date and end_date use datepicker from jquery-ui-rails gem.  See Railscast #213 -->
+	<% if @venue_event.start_time.nil? %>
+		<%= f.text_field :start_date, label: "Event Date", placeholder: "Select Event Date" %>
+	<% elsif !params[:venue_event].nil? && !params[:venue_event][:start_date].nil? %>
+		<%= f.text_field :start_date, :value => params[:venue_event][:start_date] %>
+	<% else %>
+		<%= f.text_field :start_date, :value => @venue_event.start_time.strftime("%b %d, %Y (%a)")%>
+	<% end %>
+
+	<%= f.form_group :start_time, label: { text: "Event Time" } do %>
+		<%= f.time_select :start_time,
+			{:combined => true,
+			:hide_label => true,
+			:label_col => "col-0",
+			:ampm => true,
+			:include_blank => false,
+			:prompt => "Start",
+			:minute_interval => 30,
+			:time_separator => "",
+			:start_hour => 0,
+			:start_minute => 00,
+			:end_hour => 23,
+			:end_minute => 59}, 
+			{:class => ""}
+		%>
+		<%= f.time_select :end_time,
+			{:combined => true,
+			:hide_label => true,
+			:label_col => "col-0",
+			:ampm => true,			
+			:include_blank => false,
+			:prompt => "End",
+			:minute_interval => 30,
+			:time_separator => "",
+			:start_hour => 0,
+			:start_minute => 00,
+			:end_hour => 23,
+			:end_minute => 59},
+			{:class => ""}
+		%>
+	<% end %>
+
+	<%= f.form_group :active, label: { text: "Active" } do %>
+		<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@venue_event.active == true if !@venue_event.nil?) %>
+		<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@venue_event.active == false if !@venue_event.nil?) %>
+	<% end %>
+
+<% if false %>
+	
+	<div class="form-group">
+		<%= f.label "Start Time", class: class_helper(params[:controller], params[:action], 'label') %>
+		<div class="<%= class_helper(params[:controller], params[:action]) %>">
+			<%= f.time_select :start_time,
+				{:combined => true,
+				:include_blank => false,
+				:prompt => "Event Start",
+				:minute_interval => 30,
+				:time_separator => "",
+				:start_hour => 0,
+				:start_minute => 00,
+				:end_hour => 23,
+				:end_minute => 00}, 
+				{:class => "form-control"}
+			%>
+			<%= retrieve_errors(@venue_event, :start_time) %>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<%= f.label "End Time", class: class_helper(params[:controller], params[:action], 'label') %>
+		<div class="<%= class_helper(params[:controller], params[:action]) %>">					
+			<%= f.time_select :end_time,
+				{:combined => true,
+				:include_blank => false,
+				:prompt => "Event End",
+				:minute_interval => 30,
+				:time_separator => "",
+				:start_hour => 0,
+				:start_minute => 00,
+				:end_hour => 23,
+				:end_minute => 00},
+				{:class => "form-control"}
+			%>
+			<%= retrieve_errors(@venue_event, :end_time) %>
+		</div>
+	</div>
+<% end %>	
