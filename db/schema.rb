@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140522182139) do
+ActiveRecord::Schema.define(version: 20140522201354) do
 
   create_table "events", force: true do |t|
     t.string   "name"
@@ -70,16 +70,29 @@ ActiveRecord::Schema.define(version: 20140522182139) do
   add_index "users", ["venue_id"], name: "index_users_on_venue_id"
 
   create_table "venue_events", force: true do |t|
+    t.integer  "venue_id"
+    t.integer  "event_id"
     t.string   "name"
+    t.text     "description"
+    t.boolean  "active"
+    t.text     "recurrence"
+    t.datetime "start_time"
+    t.datetime "end_time"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "venue_events", ["venue_id"], name: "index_venue_events_on_venue_id"
+
   create_table "venue_features", force: true do |t|
-    t.string   "name"
+    t.integer  "venue_id"
+    t.integer  "feature_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "venue_features", ["feature_id"], name: "index_venue_features_on_feature_id"
+  add_index "venue_features", ["venue_id"], name: "index_venue_features_on_venue_id"
 
   create_table "venues", force: true do |t|
     t.integer  "neighborhood_id"
@@ -125,6 +138,7 @@ ActiveRecord::Schema.define(version: 20140522182139) do
     t.time     "kitchen_close_sun"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "website"
   end
 
   add_index "venues", ["neighborhood_id"], name: "index_venues_on_neighborhood_id"
