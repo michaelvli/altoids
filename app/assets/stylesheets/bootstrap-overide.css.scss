@@ -1,0 +1,222 @@
+// https://github.com/twbs/bootstrap-sass
+@import "bootstrap";
+
+// http://www.colorhexa.com/
+$color-darkest: #050505;
+$color-darker: #0d0d0d;
+$color-dark: #2d2d2d;
+$color-medium-dark: #474747;
+$color-medium: #b6b6b6;
+$color-light: #e6e6e6;
+$color-lighter: #f0f0f0;
+$color-lightest: #fafafa;
+
+
+body {
+// navbar-fixed-top.css
+//  min-height: 2000px;
+	padding-top: 70px;
+	background-color: $color-darker;
+	color: $color-light;
+}
+
+	
+/* simple_form edits
+*/
+
+
+
+/* ID specific styling
+*/
+#signup-heading{
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+/* Navbar
+*/
+.navbar-inverse {
+  border-color: #080808;
+  background-color:rgba(0,0,0,0.7); // matches $color-darker
+}
+
+.padding {
+	min-width: 300px;
+	padding: 15px;
+	.form-group {
+		margin: 0 0 10px 0;
+//		@extend .vee-blue;
+	}
+	.form-inline label {
+		display: inline;
+	}
+}
+	
+
+/* Carousel
+*/
+
+.carousel {
+	margin-top: -20px; // positions video right under navbar
+}
+
+.carousel-inner{
+	video{
+		display: block;
+		max-width: 100%;
+		height: auto;
+	}
+}
+
+.carousel-control{
+//	@extend .vee-red;
+	width: 10%;
+	z-index: 10;
+} 
+  
+.carousel-caption{
+//	@extend .vee-red;
+	position: absolute;
+	right: 10%;
+	left: 65%;
+	top: 120px;
+	text-align: left;
+	z-index: 5;
+}
+
+.carousel-caption.venue{
+	right: 60%;
+	left: 10%;
+	top: initial;
+	text-align: left;
+}
+
+
+
+/* Thumbnails */
+
+.thumbnail-container{
+	.thumbnail {
+		padding: 1px; // creates the border around thumbnail images
+		background-color: $color-medium-dark;
+		border: 1px solid $color-medium-dark;
+		border-radius: 0;
+	}
+	.carousel-caption{
+		position: absolute;
+		right: 7%;
+		left: 55%;
+		top: 10%;
+		text-align: left;
+		z-index: 5;
+		h2{
+			font-size: 16px;
+			font-weight: bold;
+			margin-bottom: 5px;
+			margin-top: 0px;
+		}
+		h4{
+			font-size: 12px;
+			margin-bottom: 5px;
+		}
+		p{
+			font-size: 11px;
+		}
+		// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
+		// .text_wrapper is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .text_wrapper selector
+		.text_wrapper{
+			width: 100%;
+			height: 35%;
+		}
+	}
+	.carousel-caption.venue{
+		position: absolute;
+		left: 7%;
+		right: initial;
+		bottom: 15%;
+		top: initial;
+		text-align: left;
+		padding: 0;
+		h2{
+			display: inline;
+			font-size: 13px;
+			font-weight: bold;
+			margin-bottom: 0;
+			margin-top: 0;
+		}
+		p{
+			font-size: 12px;
+			margin-bottom: 0;
+		}
+	}
+}
+
+
+/* Panel */
+.panel-heading > h3 {
+	display:inline;
+}
+
+
+/* Additional styling
+*/
+
+// handles left and right margin problem by nesting the inline form within the horizontal form
+.form-inline .form-group{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.time-select{
+	.col-sm-2 {
+//		@extend .vee-red;
+//		height: 36px; // This was set at auto but there was too much height for the hours selection box.
+	}
+}
+
+
+@media (min-width: 768px) {
+//	.navbar-nav.navbar-right:last-child,
+//	.navbar-form.navbar-right:last-child{
+//		margin-right: 10px;
+//	}
+//	.navbar-form {
+//		.checkbox {
+//	border-style: solid !important;
+//	border-width: 1px !important;
+//	border-color: red !important;
+//		}	
+//	}
+
+	#signup-heading {
+		font-size: 35px;
+	}
+}
+ 
+/* debugging 
+*/
+
+.vee-red {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: red !important;
+	}
+	
+.vee-blue {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: blue !important;
+	}
+
+.vee-green {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: green !important;
+	}
+	
+.vee-yellow {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: yellow !important;
+	}

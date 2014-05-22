@@ -42,10 +42,10 @@ end
 # gem 'capistrano', group: :development
 
 # Use debugger
- gem 'debugger', group: [:development, :test]
+gem 'debugger', group: [:development, :test]
 
 #  	https://github.com/twbs/bootstrap-sass
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 3.1.1'
 
 #	Datepicker from jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
 gem 'jquery-ui-rails' # for datepicker gem... requires 'rails', '~>4.0.0' (instead of gem 'rails', '4.0.0')

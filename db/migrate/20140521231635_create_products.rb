@@ -5,7 +5,7 @@ class CreateProducts < ActiveRecord::Migration
       t.decimal :price
       t.datetime :released_at
 
-      t.timestamps
-    end
+      t.timestamps    
+	end
   end
 end
