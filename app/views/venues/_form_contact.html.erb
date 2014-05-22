@@ -9,8 +9,8 @@
 	<% else %>
 		<%= f.select :neighborhood_id, Neighborhood.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @venue.neighborhood.id} %>
 	<% end %>
-	<%= f.text_field :phone, placeholder: "Phone Number" %>			
-				
+	<%= f.text_field :phone, placeholder: "Phone Number" %>
+	<%= f.text_field :website, placeholder: "Website" %>			
 				
 				
 <% if false %>				

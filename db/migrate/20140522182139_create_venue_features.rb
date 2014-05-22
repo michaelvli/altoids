@@ -6,6 +6,7 @@ class CreateVenueFeatures < ActiveRecord::Migration
 
 			t.timestamps
 		end
+		
 		add_index :venue_features, :venue_id
 		add_index :venue_features, :feature_id
 	end

@@ -10,15 +10,6 @@ class SessionsController < ApplicationController
 
 	def home
 		@venues = Venue.order("name").page(params[:page]).per_page(2)
-		
-		if (params[:scroll])			
-#  			http://stackoverflow.com/questions/6214201/best-practices-for-loading-page-content-via-ajax-request-in-rails3
-#			render :layout => false	
-
-			# if endless scroll, ajax will append the additional html:
-			render :template => 'stand_alone_pages/endless_scroll.js.erb'
-		end
-
 	end
 		
 	def new

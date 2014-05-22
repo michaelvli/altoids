@@ -4,7 +4,7 @@ class Feature < ActiveRecord::Base
   
   before_validation :process_data
   
-  VALID_NAME_REGEX = /\A+[\w\s\&\,\:\-\']+\z/i
+  VALID_NAME_REGEX = /\A+[\w\s\&\,\:\-\'\\\&]+\z/i
 	
   validates(:name, presence: true, length: { maximum: 30 }, format: { with: VALID_NAME_REGEX })
   validates :active, inclusion: { in: [true, false], message: "Please select True or False" }
