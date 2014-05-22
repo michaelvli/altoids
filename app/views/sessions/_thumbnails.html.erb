@@ -1,0 +1,34 @@
+					<!-- Venue Thumbnail -->
+					<div class="col-md-6 thumbnail-container">
+					
+						<!-- Thumbnail image-->
+						<a href="#" class="thumbnail">
+							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
+						</a>
+						
+						<!-- Thumbnail content - Event info -->
+						<% venue.venue_events.upcoming_event.each do |venue_event| %>
+							<% if !venue_event.nil? %>
+								<div class="carousel-caption event">
+									<h4><em><%= venue_event.event.name %></em></h4>
+									<h2><strong><%= venue_event.name %></strong></h2>
+									<div class="text_wrapper">
+										<p><%= venue_event.description %></p>
+									</div>	
+<% if false %>
+									<p><a class="btn btn-xs btn-primary" href="#" role="button">More</a></p>
+<% end %>									
+								</div>
+							<% end %>
+						<% end %>
+							
+						<!-- Thumbnail content - Venue info -->
+						<div class="carousel-caption venue">
+							<h2><%= venue.name %></h2>&nbsp;
+<% if false %>							
+							<small>(<%= venue.distance.round(1) %> miles)</small>
+<% end %>							
+							<p><em><%= venue.neighborhood.name %></em></p>
+						</div>
+						
+					</div><!-- Venue Thumbnail -->

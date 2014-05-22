@@ -1,0 +1,51 @@
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+</div>
+
+<!-- Carousel -->
+<div class="container">
+
+Latitude:&nbsp;<span id="latitude">N/A</span><br>
+Longitude:&nbsp;<span id="longitude">N/A</span>
+
+	<div class="row">
+		<div class="col-md-9">
+			<div class="row" id="thumbnails">
+				<%= render partial: 'thumbnails', collection: @venues, as: 'venue'  || "There are no venues at the moment" %>
+			</div>
+			
+			<%= will_paginate @venues %>
+		</div>
+		<div class="col-md-3 vee-green">
+
+			<span>SORT BY</span>
+
+			<div class="btn-group" data-toggle="buttons">
+				
+				<!-- Default selection: distance -->
+				<label class="btn btn-glass sort" data-sort="distance">
+					<span class="glyphicon glyphicon-map-marker"></span><br>
+					<%= radio_button_tag 'sort', 'distance' %>Distance
+				</label>
+				
+				<label class="btn btn-glass sort" data-sort="name asc">
+					<span class="glyphicon glyphicon-arrow-down"></span><br>
+					<%= radio_button_tag 'sort', 'name asc' %>A-Z
+				</label>
+				<label class="btn btn-glass sort" data-sort="name desc">
+					<span class="glyphicon glyphicon-arrow-up"></span><br>
+					<%= radio_button_tag 'sort', 'name desc' %>Z-A
+				</label>
+				<label class="btn btn-glass sort" data-sort="neighborhoods.name asc, name asc">
+					<span class="glyphicon glyphicon-pushpin"></span><br>
+					<%= radio_button_tag 'sort', 'neighborhoods.name asc, name asc' %>Hood
+				</label>
+			</div>
+		
+		
+		
+		</div>
+	</div>
+	
+</div><!-- container -->

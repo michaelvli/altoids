@@ -1,0 +1,7 @@
+$('#thumbnails').append("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue') %>");
+
+<% if @venues.next_page %>
+	$('.pagination').replaceWith('<%= j will_paginate(@venues) %>');
+<% else %>
+	$('.pagination').remove();
+<% end %>
