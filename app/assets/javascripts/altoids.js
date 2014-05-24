@@ -2,17 +2,71 @@
 
 $(function() { //on DOM ready
 //	alert("DOM ready");
-	endless_scroll();
+	if ($('#venue_event_start_date').length)
+	{
+		calendar_datepicker(); // plugin
+	}
+	if ($('.pagination').length)
+	{
+		endless_scroll();
+	}
+	if ($('.text_wrapper').length)
+	{
+		limit_captions(); // plugin
+	}	
 });
+
+// Need to respond to appropriate page actions or else else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
+$(document).on('page:load', page_load_functions);
+$(document).on('page:update', page_update_functions);
+
+function page_load_functions(){
+	if ($('#venue_event_start_date').length)
+	{
+		calendar_datepicker(); // plugin
+	}
+	if ($('.pagination').length)
+	{
+		endless_scroll();
+	}
+	if ($('.text_wrapper').length)
+	{
+		limit_captions(); // plugin
+	}
+}
+
+function page_update_functions(){
+	if ($('.text_wrapper').length)
+	{
+		limit_captions(); // plugin
+	}
+}
+	
+/* *****
+jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
+Shortens captions by appending three periods
+*/
+function limit_captions(){
+	$('.text_wrapper').dotdotdot({
+        // configuration goes here
+    });
+}
 
 
 /* *****
-Endless scroll - uses ajax to load additional pagination elements as user scrolls down  
+Jquery Datepicker - From jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
+For API options, see http://api.jqueryui.com/datepicker/
+*/
+function calendar_datepicker(){
+	$('#venue_event_start_date').datepicker({dateFormat: 'M d, yy (D)', minDate: 0});
+}
+
+
+/* *****
+Endless scroll - uses ajax to load additional pagination elements as user scrolls down 
+From Ryan Bates - http://railscasts.com/episodes/114-endless-page-revised
 */ 
 function endless_scroll(){
-	// Checks for a pagination element so function isn't called on every page when user scrolls
-	if ($('.pagination').length) 
-	{
 		// Ensures additional videos are loaded incrementally (vs. a large number at once):
 		$(window).scroll(function(){
 			url = $('.pagination .next_page').attr('href'); // global variable - http://learn.jquery.com/javascript-101/scope/
@@ -33,5 +87,4 @@ function endless_scroll(){
 		});
 		// manually initiate a scroll in case user's viewport might be big enough
 		$(window).scroll();
-	}	
 }
