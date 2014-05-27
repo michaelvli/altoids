@@ -9,7 +9,19 @@ class SessionsController < ApplicationController
 	end
 
 	def home
-		@venues = Venue.order("name").page(params[:page]).per_page(2)
+		@venues = Venue.select("DISTINCT(venues.name), venues.*").joins(:neighborhood)
+
+		if (params.has_key?(:latitude) && params.has_key?(:longitude))
+			# Info about geocoder for methods like near() and order("distance")
+			# http://www.rubygeocoder.com/
+			# http://stackoverflow.com/questions/11463940/rails-geocoder-and-near
+			max_distance = 1000 # in km
+			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
+		end		
+
+		@venues = @venues.order('name')
+
+		@venues = @venues.page(params[:page]).per_page(2)		
 	end
 		
 	def new

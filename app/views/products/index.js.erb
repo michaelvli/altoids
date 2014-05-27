@@ -1,4 +1,4 @@
-$('#products').append('<%= j render(@products) %>');
+$('#endless_list').append('<%= j render(@products) %>');
 <% if @products.next_page %>
   $('.pagination').replaceWith('<%= j will_paginate(@products) %>');
 <% else %>
