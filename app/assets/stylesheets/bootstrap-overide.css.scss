@@ -18,12 +18,10 @@ body {
 	padding-top: 70px;
 	background-color: $color-darker;
 	color: $color-light;
+	max-width: 1450px; // video in carousel doesn't need to be bigger than 1450px
+	margin-left:auto;
+	margin-right:auto;
 }
-
-	
-/* simple_form edits
-*/
-
 
 
 /* ID specific styling
@@ -33,6 +31,7 @@ body {
   line-height: 1;
   letter-spacing: -1px;
 }
+
 
 /* Navbar
 */
@@ -59,13 +58,23 @@ body {
 
 .carousel {
 	margin-top: -20px; // positions video right under navbar
+	position: relative; // necessary for centering oversized video in carousel
+    overflow: hidden; // necessary for centering oversized video in carousel
 }
 
 .carousel-inner{
+	.item{
+		background-color: $color-darkest !important;
+	}
 	video{
 		display: block;
 		max-width: 100%;
-		height: auto;
+		position: absolute; // necessary for centering oversized video in carousel
+		top: -9999px; // necessary for centering oversized video in carousel
+		bottom: -9999px; // necessary for centering oversized video in carousel
+		left: -9999px; // necessary for centering oversized video in carousel
+		right: -9999px; // necessary for centering oversized video in carousel
+		margin: auto; // necessary for centering oversized video in carousel
 	}
 }
 
@@ -91,7 +100,6 @@ body {
 	top: initial;
 	text-align: left;
 }
-
 
 
 /* Thumbnails */
@@ -152,8 +160,57 @@ body {
 	}
 }
 
+/* Sort and Filter*/
+.btn-group, .btn-group-vertical {
+	padding: 15px 0 15px 0; // top right bottom  left
+	width: 100%;
+}
 
-/* Panel */
+.btn-group > .btn,
+.btn-group-vertical > .btn {
+	border-radius: 0 !important;
+}
+
+.btn-group > .btn{
+	width: 25%;
+	font-size: 0.6em;
+}
+
+.btn-group {
+	.btn-glass {
+		color: white;
+		background-color: transparent;
+		border-color: white;
+		font-size: 0.8em;
+	}
+	.glyphicon{
+		font-size: 300%;
+	}
+}
+
+.btn-group-vertical > .btn-glass {	
+	//  @extend .vee-red;
+		color: white;
+		background-color: transparent;
+		border-color: $color-dark;
+		border-width: 0 0 1px 0;
+		padding: 10px 20px;
+		font-size: 1em;
+		text-align: left;
+}
+
+.btn-group, .btn-group-vertical {
+	.btn-glass:hover, .btn-glass:active, .btn-glass.active {
+		color: $color-dark;
+		background-color: white;
+		border-color: white;
+		background-image: none;
+	}		
+}
+
+
+
+/* Admin Panels */
 .panel-heading > h3 {
 	display:inline;
 }

@@ -1,4 +1,4 @@
-$('#thumbnails').append("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue') %>");
+$('#endless_list').append("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
 
 <% if @venues.next_page %>
 	$('.pagination').replaceWith('<%= j will_paginate(@venues) %>');

@@ -13,6 +13,7 @@
 									<h4><em><%= venue_event.event.name %></em></h4>
 									<h2><strong><%= venue_event.name %></strong></h2>
 									<div class='text_wrapper'>
+										<!-- class: 'text_wrapper' calls jQuery.dotdotdot plugin to truncate description -->
 										<p><%= venue_event.description %></p>
 									</div>	
 <% if false %>
@@ -25,9 +26,9 @@
 						<!-- Thumbnail content - Venue info -->
 						<div class="carousel-caption venue">
 							<h2><%= venue.name %></h2>&nbsp;
-<% if false %>							
-							<small>(<%= venue.distance.round(1) %> miles)</small>
-<% end %>							
+							<% if !venue.try(:distance).nil? %>
+								<small>(<%= venue.distance.round(1) %> miles)</small>
+							<% end %>	
 							<p><em><%= venue.neighborhood.name %></em></p>
 						</div>
 						

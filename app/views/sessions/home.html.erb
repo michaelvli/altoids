@@ -6,19 +6,18 @@
 <!-- Carousel -->
 <div class="container">
 
-Latitude:&nbsp;<span id="latitude">N/A</span><br>
-Longitude:&nbsp;<span id="longitude">N/A</span>
-
 	<div class="row">
+		<!-- Thumbnails -->
 		<div class="col-md-9">
-			<div class="row" id="thumbnails">
-				<%= render partial: 'thumbnails', collection: @venues, as: 'venue'  || "There are no venues at the moment" %>
+			<div class="row" id="endless_list">
+				<!--  Venue thumbnails are inserted here via AJAX call, locate_user(); -->
 			</div>
 			
 			<%= will_paginate @venues %>
 		</div>
+		
+		<!-- Sort and Filter -->
 		<div class="col-md-3 vee-green">
-
 			<span>SORT BY</span>
 
 			<div class="btn-group" data-toggle="buttons">
@@ -42,8 +41,6 @@ Longitude:&nbsp;<span id="longitude">N/A</span>
 					<%= radio_button_tag 'sort', 'neighborhoods.name asc, name asc' %>Hood
 				</label>
 			</div>
-		
-		
 		
 		</div>
 	</div>
