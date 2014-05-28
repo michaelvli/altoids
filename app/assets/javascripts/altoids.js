@@ -115,49 +115,37 @@ function calendar_datepicker(){
 /* *****
 locate_user - uses HTML5 geolocation to obtain the user's latitude and longitude, upon 
 which an ajax call then retrieves venues based on distance from user.
+
+Problem with HTML5 geolocation and Firefox when user doesn't respond to geolocation permissions prompt:
+-If user selects "Not this time" to prompt or closes it, no error method for getCurrentPosition method is not called in Firefox - nothing happens.
+- If user closes the prompt or does nothing for 3 seconds, the global setTimeout method in the try statement will execute an ajax statement in the onError function (returns venues not based on distance/location).
+- Ideally, we should use the timeout attribute in the options variable but it doesn't work in Firefox (it does, however, work in Chrome).
 */
 function locate_user(){
 	var options = {
 	  enableHighAccuracy: true,
-	  timeout: 5000,
+	  timeout: 5000, //doesn't work in Firefox
 	  maximumAge: 60000
 	};
-	// Need to wrap html5 geolocation in a try/catch statements in case the user doesn't respond to allowing geolocation while using Firefox.
-	// If user selects "Not this time" to geolocation permission prompt, no error method for getCurrentPosition method is not called in Firefox; thus, application halts.
-	// If user closes the geolocation permission prompt or does nothing for 3 seconds, the setTimeout method in the try statement will execute an ajax statement that will return venues not based on distance/location from user.
-	// Ideally, we should use the timeout attribute in the options variable but it doesn't work in Firefox (it does, however, work in Chrome).
-	var waitTime = 3000; // 3 seconds
-	try {
-		if(navigator.geolocation)
-		{
-			navigator.geolocation.getCurrentPosition(onSuccess, onError, options); // Firefox does not consistently execute the timeout attribute in the options variable.
-		}	
-		else
-		{
-			alert("Geolocation is not supported by this browser");
-		}
-		
-		var t = setTimeout(function () {
-			var url = 'home';			
-			$.get(	url,
-					{},
-					function(){
-//						alert( "Load was performed - called locate_user - didn't use geolocation" );
-					}, 
-					"script"
-			)
-		}, waitTime);
-	}
-	catch(event){
-		alert("Uh Oh... we have a problem with locating your location: " + event);
+	
+	if (navigator.geolocation) 
+	{
+		location_timeout = setTimeout(onError, options.timeout); // global variable so timer can be cleared in onSuccess or onError functions
+		navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
+	} 
+	else 
+	{
+		alert("Geolocation is not supported by this browser");
 	}
 }
-
+	
 function onSuccess(location){
     var lat = location.coords.latitude;
     var lon = location.coords.longitude;
 	var url = 'home';
-	
+
+	clearTimeout(location_timeout);
+
 	$.get(	url,
 			{latitude: lat, longitude: lon},
 			function(){
@@ -169,21 +157,37 @@ function onSuccess(location){
 }
 
 function onError(error){
-	switch(error.code) 
-    {
-		case error.PERMISSION_DENIED:
-			alert("User denied the request for Geolocation.");
-			break;
-		case error.POSITION_UNAVAILABLE:
-			alert("Location information is unavailable.");
-			break;
-		case error.TIMEOUT:
-			alert("The request to get user location timed out.");
-			break;
-		case error.UNKNOWN_ERROR:
-			alert("An unknown error occurred.");
-			break;
-    }
+	clearTimeout(location_timeout);
+	if (error == null)
+	{
+		alert("You'll need to share your location if you'd like to find out how far venues are from you.");
+		var url = 'home';			
+		$.get(	url,
+				{},
+				function(){
+//					alert( "Load was performed - called locate_user - didn't use geolocation" );
+				}, 
+				"script"
+		)
+	}
+	else
+	{
+		switch(error.code) 
+		{
+			case error.PERMISSION_DENIED:
+				alert("User denied the request for Geolocation.");
+				break;
+			case error.POSITION_UNAVAILABLE:
+				alert("Location information is unavailable.");
+				break;
+			case error.TIMEOUT:
+				alert("The request to get user location timed out.");
+				break;
+			case error.UNKNOWN_ERROR:
+				alert("An unknown error occurred.");
+				break;
+		}
+	}	
 }
 
 
