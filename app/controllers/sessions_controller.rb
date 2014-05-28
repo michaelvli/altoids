@@ -35,8 +35,8 @@ class SessionsController < ApplicationController
       		flash[:success] = 'Welcome back, ' + user.first_name + '!'
 			redirect_back_or home_path
 		else
-			flash.now[:error] = 'Invalid email/password combination'
-			render 'new'	#render doesn't count as a page request so flash would persist one page too long which is why we need to use flash.now  
+			flash[:error] = 'Invalid email/password combination'
+			redirect_to splash_path	#render doesn't count as a page request so flash would persist one page too long which is why we need to use flash.now			
 		end
    
 	end

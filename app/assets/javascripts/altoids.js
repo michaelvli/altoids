@@ -117,30 +117,51 @@ locate_user - uses HTML5 geolocation to obtain the user's latitude and longitude
 which an ajax call then retrieves venues based on distance from user.
 */
 function locate_user(){
-	var timeoutVal = 10 * 1000 * 1000;
-	var maxAgeVal = 0;
-	
-    if(navigator.geolocation)
-	{
-		navigator.geolocation.getCurrentPosition(onSuccess, onError,
-		{enableHighAccuracy: false, timeout: timeoutVal, maximumAge: maxAgeVal})
-	}	
-	else
-	{
-		alert("Geolocation is not supported by this browser");
+	var options = {
+	  enableHighAccuracy: true,
+	  timeout: 5000,
+	  maximumAge: 60000
+	};
+	// Need to wrap html5 geolocation in a try/catch statements in case the user doesn't respond to allowing geolocation while using Firefox.
+	// If user selects "Not this time" to geolocation permission prompt, no error method for getCurrentPosition method is not called in Firefox; thus, application halts.
+	// If user closes the geolocation permission prompt or does nothing for 3 seconds, the setTimeout method in the try statement will execute an ajax statement that will return venues not based on distance/location from user.
+	// Ideally, we should use the timeout attribute in the options variable but it doesn't work in Firefox (it does, however, work in Chrome).
+	var waitTime = 3000; // 3 seconds
+	try {
+		if(navigator.geolocation)
+		{
+			navigator.geolocation.getCurrentPosition(onSuccess, onError, options); // Firefox does not consistently execute the timeout attribute in the options variable.
+		}	
+		else
+		{
+			alert("Geolocation is not supported by this browser");
+		}
+		
+		var t = setTimeout(function () {
+			var url = 'home';			
+			$.get(	url,
+					{},
+					function(){
+//						alert( "Load was performed - called locate_user - didn't use geolocation" );
+					}, 
+					"script"
+			)
+		}, waitTime);
+	}
+	catch(event){
+		alert("Uh Oh... we have a problem with locating your location: " + event);
 	}
 }
 
 function onSuccess(location){
     var lat = location.coords.latitude;
     var lon = location.coords.longitude;
-	var paginate = true;
 	var url = 'home';
 	
 	$.get(	url,
 			{latitude: lat, longitude: lon},
 			function(){
-//				alert( "Load was performed - locate_user" );
+//				alert( "Load was performed - called locate_user - used geolocation" );
 			}, 
 			"script"
 	)
