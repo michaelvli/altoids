@@ -10,7 +10,8 @@ class SessionsController < ApplicationController
 
 	def home
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
-		@venues = Venue.select("DISTINCT(venues.name), venues.*").joins(:neighborhood)
+#		@venues = Venue.select("DISTINCT(venues.name), venues.*").joins(:neighborhood) # Having problems with using DISTINCT in postgreSQL db so using GROUP BY instead
+		@venues = Venue.joins(:neighborhood)
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
@@ -31,9 +32,10 @@ class SessionsController < ApplicationController
 		# For more info about activerecord relations (difference between find vs. where method), see: http://stackoverflow.com/questions/9574659/rails-where-vs-find
 		# IMPORTANT: Make sure geocoder near() method is before the left outer join statement
 		@venues = @venues.joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id') # Left outer join is used since not all venues will have a upcoming event
-		@venues = @venues.order('venues.name').order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
+		@venues = @venues.group('venues.name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
+		@venues = @venues.order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		
-#		@sql = @venues.to_sql
+		@sql = @venues.to_sql
 		@venues = @venues.page(params[:page]).per_page(2)
 		
 		respond_to do |format|
