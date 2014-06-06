@@ -47,6 +47,14 @@ class Venue < ActiveRecord::Base
   validates(:venue_open_sun, presence: true)
   validates(:venue_close_sun, presence: true)
 
+  def self.search(search)
+    if search
+      where('venues.name LIKE ?', "%#{search}%")
+    else
+      scoped  #perform an empty scope on venues and allow us to add on other queries afterwards
+    end
+  end
+  
   #  Select random venues for carousel on home page
   def self.carousel_prep(options={})
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
@@ -100,7 +108,7 @@ class Venue < ActiveRecord::Base
 		self.city = self.city.strip.titleize.gsub(/[^a-z\s]/i, '')
 		self.state = self.state.strip.upcase.gsub(/[^a-z]/i, '')
 		self.zip_code = self.zip_code.strip.gsub(/[^0-9]/, '')
-		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'') unless self.file_name != ""
+		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'').gsub(/&/,'') unless self.file_name != ""
 		self.phone = self.phone.strip.gsub(/[^0-9]/, '')
 		if self.active.nil?
 			self.active = true
