@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
 		# IMPORTANT: Make sure geocoder near() method is before the left outer join statement
 		@venues = @venues.joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id') # Left outer join is used since not all venues will have a upcoming event
 #		@venues = @venues.group('venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
-		@venues = @venues.order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
+		@venues = @venues.order('venues.name').order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		
 		@sql = @venues.to_sql
 		@venues = @venues.page(params[:page]).per_page(2)
