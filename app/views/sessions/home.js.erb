@@ -1,7 +1,11 @@
-$('#endless_list').append("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
+<% if (scroll == 'true') %>
+	$('#endless_list').append("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
+<% else %>
+	$('#endless_list').html("<%= escape_javascript(render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
+<% end %>
 
 <% if @venues.next_page %>
 	$('.pagination').replaceWith('<%= j will_paginate(@venues) %>');
 <% else %>
-	$('.pagination').remove();
+	$('.pagination').hide();
 <% end %>

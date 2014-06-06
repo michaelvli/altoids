@@ -1,16 +1,18 @@
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
+	<%= render partial: 'geolocation_permissions_modal' %>
 </div>
+
+SQL:<%= @sql %>
 
 <!-- Carousel -->
 <div class="container">
-
 	<div class="row">
 		<!-- Thumbnails -->
 		<div class="col-md-9">
 			<div class="row" id="endless_list">
 				<!--  Venue thumbnails are inserted here via AJAX call, locate_user(); -->
+				<%= render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment" %>
 			</div>
 			
 			<%= will_paginate @venues %>
@@ -18,29 +20,20 @@
 		
 		<!-- Sort and Filter -->
 		<div class="col-md-3 vee-green">
-			<span>SORT BY</span>
-
-			<div class="btn-group" data-toggle="buttons">
+			<%= form_tag home_path, :method => 'get' do %>
+				<p>
+					<%= text_field_tag :search, params[:search] %>
+					<%= submit_tag "Search", :name => nil %>
+				</p>
 				
-				<!-- Default selection: distance -->
-				<label class="btn btn-glass sort" data-sort="distance">
-					<span class="glyphicon glyphicon-map-marker"></span><br>
-					<%= radio_button_tag 'sort', 'distance' %>Distance
-				</label>
+<% if false %>				
+				<%= hidden_field_tag :sort_order, params[:sort_order], {id:'hidden_field_sort'} %>
+<% end %>				
+				<%= hidden_field_tag :latitude, params[:latitude], {id:'hidden_field_latitude'} %>
+				<%= hidden_field_tag :longitude, params[:longitude], {id:'hidden_field_longitude'} %>
 				
-				<label class="btn btn-glass sort" data-sort="name asc">
-					<span class="glyphicon glyphicon-arrow-down"></span><br>
-					<%= radio_button_tag 'sort', 'name asc' %>A-Z
-				</label>
-				<label class="btn btn-glass sort" data-sort="name desc">
-					<span class="glyphicon glyphicon-arrow-up"></span><br>
-					<%= radio_button_tag 'sort', 'name desc' %>Z-A
-				</label>
-				<label class="btn btn-glass sort" data-sort="neighborhoods.name asc, name asc">
-					<span class="glyphicon glyphicon-pushpin"></span><br>
-					<%= radio_button_tag 'sort', 'neighborhoods.name asc, name asc' %>Hood
-				</label>
-			</div>
+				<%= render partial: "sort" %>
+			<% end %>
 		
 		</div>
 	</div>

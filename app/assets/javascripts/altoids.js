@@ -2,6 +2,7 @@
 
 $(function() { //on DOM ready
 //	alert("DOM ready");
+
 	if ($('.carousel').length)
 	{
 		carousel_behavior(); // plugin
@@ -10,10 +11,35 @@ $(function() { //on DOM ready
 	{
 		calendar_datepicker(); // plugin
 	}
+	
 	if ($('#endless_list').length)
 	{
-		locate_user();
+	
+		sort_list();
+/*	
+		$('#myModal').modal('show'); // Modal prompts user for geolocation permission
+		$('#myModal .btn').on('click', function(){ // Captures user's response to modal message
+			var response = $(this).data("share_location");
+			if (response == 'yes')
+			{
+				var user_location = Location();
+				user_location.initiate( // calls html5 geolocation to access user location
+					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
+						alert('latitude: ' + user_location.latitude()+ ' ' + 'longitude: ' + user_location.longitude());
+					}
+				);
+			}
+			else
+			{
+				alert("no location")				
+			}
+		});
+		$('#myModal').on('hide.bs.modal', function (e) {
+			alert("hiding modal") //means user said "no" to location sharing or closed modal without responding
+		})
+*/
 	}
+	
 	if ($('.pagination').length)
 	{
 		endless_scroll();
@@ -24,9 +50,11 @@ $(function() { //on DOM ready
 	}
 });
 
+
 /* 	
 Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
  */
+
 $(document).on('page:load', page_load_functions);
 $(document).on('page:update', page_update_functions);
 
@@ -55,6 +83,74 @@ function page_update_functions(){
 
 /* ***************************************************************************************** */
 
+/* *****
+sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.
+
+Possible values of data-sort: 
+1. distance
+2. name asc
+3. name desc
+4. neighborhoods.name asc, name asc
+5. venue_events.start_time asc, name asc
+*/
+function sort_list(){
+
+	$('.sort').on('click', function(){
+		var url = $(this).attr('href');
+		var sort_order = $(this).data('sort'); // grabs the value of the custom attribute, data-sort
+ alert(sort_order);
+		
+		var user_location = Location(sort_order);
+		user_location.initiate( // calls html5 geolocation to access user location
+			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
+//					alert('latitude: ' + user_location.latitude()+ ' ' + 'longitude: ' + user_location.longitude());
+				$.get(url,
+					{sort_order: sort_order, latitude: user_location.latitude(), longitude: user_location.longitude()},
+					function(){
+//							alert( "Success - called function sort_list - used geolocation );
+					}, 
+					"script"
+				)
+			}
+		);
+	});
+}
+
+
+/* *****
+Endless scroll - uses ajax to load additional pagination elements as user scrolls down 
+From Ryan Bates - http://railscasts.com/episodes/114-endless-page-revised
+*/ 
+function endless_scroll(){
+		// Ensures additional videos are loaded incrementally (vs. a large number at once):
+		$(window).scroll(function(){
+			var url = $('.pagination .next_page').attr('href'); // global variable - http://learn.jquery.com/javascript-101/scope/
+
+			// 1. Check if url is available (url should not be available until results have been retrieved)
+			// 2. Check if user has scrolled near bottom of page
+			// 3. Check if initial set of venues (loaded by function locate_user) has been loaded
+			if ((url) && $('#endless_list').children().length > 0 && $(window).scrollTop() > $(document).height() - $(window).height() - 100)
+			{
+//alert(url);
+				$('.pagination').html('<br><h4>Loading...</h4>');
+				$.get(	url,
+						{scroll: true},
+						function(){
+//							alert( "Success: endless_scroll " );
+						}, 
+						"script"
+				)				
+			}
+		});
+		// manually initiate a scroll in case user's viewport might be big enough
+		$(window).scroll();
+}
+
+
+
+/* *****
+carousel_behavior - defines carousel behavior in terms of 1)frequency of carousel advancing videos, 2)start/stop of active video
+*/
 function carousel_behavior(){
 	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
 	$('.carousel').carousel({
@@ -91,6 +187,7 @@ function carousel_behavior(){
 	});
 }
 
+
 	
 /* *****
 jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
@@ -103,119 +200,11 @@ function limit_captions(){
 }
 
 
+
 /* *****
 Jquery Datepicker - From jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
 For API options, see http://api.jqueryui.com/datepicker/
 */
 function calendar_datepicker(){
 	$('#venue_event_start_date').datepicker({dateFormat: 'M d, yy (D)', minDate: 0});
-}
-
-
-/* *****
-locate_user - uses HTML5 geolocation to obtain the user's latitude and longitude, upon 
-which an ajax call then retrieves venues based on distance from user.
-
-Problem with HTML5 geolocation and Firefox when user doesn't respond to geolocation permissions prompt:
--If user selects "Not this time" to prompt or closes it, no error method for getCurrentPosition method is not called in Firefox - nothing happens.
-- If user closes the prompt or does nothing for 3 seconds, the global setTimeout method in the try statement will execute an ajax statement in the onError function (returns venues not based on distance/location).
-- Ideally, we should use the timeout attribute in the options variable but it doesn't work in Firefox (it does, however, work in Chrome).
-*/
-function locate_user(){
-	var options = {
-	  enableHighAccuracy: true,
-	  timeout: 5000, //doesn't work in Firefox
-	  maximumAge: 60000
-	};
-	
-	if (navigator.geolocation) 
-	{
-		location_timeout = setTimeout(onError, options.timeout); // global variable so timer can be cleared in onSuccess or onError functions
-		navigator.geolocation.getCurrentPosition(onSuccess, onError, options);
-	} 
-	else 
-	{
-		alert("Geolocation is not supported by this browser");
-	}
-}
-	
-function onSuccess(location){
-    var lat = location.coords.latitude;
-    var lon = location.coords.longitude;
-	var url = 'home';
-
-	clearTimeout(location_timeout);
-
-	$.get(	url,
-			{latitude: lat, longitude: lon},
-			function(){
-//				alert( "Load was performed - called locate_user - used geolocation" );
-			}, 
-			"script"
-	)
-
-}
-
-function onError(error){
-	clearTimeout(location_timeout);
-	if (error == null)
-	{
-		alert("You'll need to share your location if you'd like to find out how far venues are from you.");
-		var url = 'home';			
-		$.get(	url,
-				{},
-				function(){
-//					alert( "Load was performed - called locate_user - didn't use geolocation" );
-				}, 
-				"script"
-		)
-	}
-	else
-	{
-		switch(error.code) 
-		{
-			case error.PERMISSION_DENIED:
-				alert("User denied the request for Geolocation.");
-				break;
-			case error.POSITION_UNAVAILABLE:
-				alert("Location information is unavailable.");
-				break;
-			case error.TIMEOUT:
-				alert("The request to get user location timed out.");
-				break;
-			case error.UNKNOWN_ERROR:
-				alert("An unknown error occurred.");
-				break;
-		}
-	}	
-}
-
-
-/* *****
-Endless scroll - uses ajax to load additional pagination elements as user scrolls down 
-From Ryan Bates - http://railscasts.com/episodes/114-endless-page-revised
-*/ 
-function endless_scroll(){
-		// Ensures additional videos are loaded incrementally (vs. a large number at once):
-		$(window).scroll(function(){
-			url = $('.pagination .next_page').attr('href'); // global variable - http://learn.jquery.com/javascript-101/scope/
-
-			// 1. Check if url is available (url should not be available until results have been retrieved)
-			// 2. Check if user has scrolled near bottom of page
-			// 3. Check if initial set of venues (loaded by function locate_user) has been loaded
-			if ((url) && $('#endless_list').children().length > 0 && $(window).scrollTop() > $(document).height() - $(window).height() - 100)
-			{
-//alert(url);			
-				$('.pagination').html('<br><h4>Loading...</h4>');
-				$.get(	url,
-						{scroll: true},
-						function(){
-//							alert( "Success: endless_scroll " );
-						}, 
-						"script"
-				)				
-			}
-		});
-		// manually initiate a scroll in case user's viewport might be big enough
-		$(window).scroll();
 }

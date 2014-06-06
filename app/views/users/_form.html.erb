@@ -14,7 +14,12 @@
 	
 	<!--  Remove if statement to seed admin user into postgreSQL db (also need to modify user_params condition in User controller -->
 	<% if !current_user.nil? && current_user.account_type == "admin" %>
-		<%= f.select :account_type, ["user","venue","admin"], {:selected => @user.account_type} %>	
+		<%= f.select :account_type, ["user","venue","admin"], {:selected => @user.account_type} %>
+		<% if @user.venue.nil? %>
+			<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, { :prompt => "Select Venue" } %>		
+		<% else %>
+			<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @user.venue.id} %>
+		<% end %>	
 	<% end %>
 	
 	<% if !@user.nil? %>
@@ -22,23 +27,4 @@
 			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@user.active == true if !@user.nil?) %>
 			<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@user.active == false if !@user.nil?) %>
 		<% end %>
-	<% end %>	
-
-	
-<% if false %>	
-<!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
-	<% if !current_user.nil? && current_user.account_type == "admin" %>
-		<div class="form-group">
-			<%= f.label :venue_id, "Venue", class: class_helper(params[:controller], params[:action], 'label') %>
-			<div class="<%= class_helper(params[:controller], params[:action]) %>">
-				<% if @user.venue.nil? %>
-					<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, { :prompt => "Select Venue" } , { :class => "form-control" }%>
-				<% else %>	
-					<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, {include_blank: false, :selected => @user.venue.id} , { :class => "form-control" }%>
-				<% end %>
-				<%= retrieve_errors(@user, :venue_id) %>
-			</div>
-		</div>
 	<% end %>
-<!--  cheating to get admin user into postgreSQL db (also need to modify user_params condition in User controller -->
-<% end %>

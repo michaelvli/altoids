@@ -21,7 +21,7 @@ class VenueEvent < ActiveRecord::Base
 
   #  Selects most recent upcoming event for a specific venue in the carousel
   def self.upcoming_event
-	select("venue_events.*").order("start_time desc").limit(1)
+	select("venue_events.*").where("start_time >= ?", Time.now).order("start_time ASC").limit(1)
   end
   
   #  Selects upcoming events across all venues (for home page)

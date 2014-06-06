@@ -9,19 +9,37 @@ class SessionsController < ApplicationController
 	end
 
 	def home
+		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
 		@venues = Venue.select("DISTINCT(venues.name), venues.*").joins(:neighborhood)
-
-		if (params.has_key?(:latitude) && params.has_key?(:longitude))
-			# Info about geocoder for methods like near() and order("distance")
+		
+		# if latitude and longitude parameters are available, show distance from venues to user
+		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
+			# Info about geocoder for methods like near() and order("distance"):
 			# http://www.rubygeocoder.com/
 			# http://stackoverflow.com/questions/11463940/rails-geocoder-and-near
+			# NOTE: near() method has problems with includes or left outer joins.  
+			# To use near() with left outer joins, do query conditions without includes BEFORE ARel compiles and executes:
+			# https://github.com/alexreisner/geocoder/issues/99
 			max_distance = 1000 # in km
-			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
+			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance) # outer join comes after this line
 		end		
 
-		@venues = @venues.order('name')
-
-		@venues = @venues.page(params[:page]).per_page(2)		
+		@venues = @venues.search(params[:search])		
+	
+		# Adding activerecord relation of venue_events in order to sort venues based on venue_start_time.
+		# Note: the query is not run until sessions/_thumbnails.html.erb upon which the upcoming_event method will list the most recent upcoming event.
+		# For more info about activerecord relations (difference between find vs. where method), see: http://stackoverflow.com/questions/9574659/rails-where-vs-find
+		# IMPORTANT: Make sure geocoder near() method is before the left outer join statement
+		@venues = @venues.joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id') # Left outer join is used since not all venues will have a upcoming event
+		@venues = @venues.order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
+		
+#		@sql = @venues.to_sql
+		@venues = @venues.page(params[:page]).per_page(2)
+		
+		respond_to do |format|
+			format.html
+			format.js { render :template => 'sessions/home.js.erb', locals: {scroll: params[:scroll]} }
+		end
 	end
 		
 	def new
@@ -46,5 +64,18 @@ class SessionsController < ApplicationController
 		flash[:success] = 'See you next time!'
 		redirect_to root_url
 	end
-  
+
+	
+	private
+	  
+	def sort_order
+#	vulnerable to SQL injection
+		if (['name asc', 'name desc', 'neighborhoods.name asc, name asc', 'venue_events.id is null, venue_events.start_time asc'].include?(params[:sort_order]))
+			return params[:sort_order]
+		elsif (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank? && (params[:sort_order] == 'distance'))
+			"distance"
+		else	
+			"venue_events.id is null, venue_events.start_time asc" # sorts results by most recent start_times first followed by null (and by distance if available)
+		end	
+	end	
 end
