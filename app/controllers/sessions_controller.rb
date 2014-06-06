@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
 	def home
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*").joins(:neighborhood) # Having problems with using DISTINCT in postgreSQL db so using GROUP BY instead
-		@venues = Venue.select("venues.*")joins(:neighborhood)
+		@venues = Venue.select("venues.*").joins(:neighborhood)
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
