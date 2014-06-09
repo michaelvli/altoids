@@ -9,25 +9,34 @@ class SessionsController < ApplicationController
 	end
 
 	def home
+		@venueEvents = VenueEvent.select("venue_events.id")
+		@venueEvents = @venueEvents.where("venue_events.id IS NULL OR venue_events.start_time >= ?", '2014-01-01')
+		@venueEvents = @venueEvents.order("venue_events.start_time asc").limit(1)
+				
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
 #		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name").joins(:neighborhood)
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
 #		@venues = Venue.select("venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
-		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, venue_events.id, venue_events.name").joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
+		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, venue_events.id, venue_events.name")
+		@venues = @venues.joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = @venueEvents')
+		
+		
+
+
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
-		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
+#		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
 			# Info about geocoder for methods like near() and order("distance"):
 			# http://www.rubygeocoder.com/
 			# http://stackoverflow.com/questions/11463940/rails-geocoder-and-near
 			# NOTE: near() method has problems with includes or left outer joins.  
 			# To use near() with left outer joins, do query conditions without includes BEFORE ARel compiles and executes:
 			# https://github.com/alexreisner/geocoder/issues/99
-			max_distance = 1000 # in km
-			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance) # outer join comes after this line
-		end		
+#			max_distance = 1000 # in km
+#			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance) # outer join comes after this line
+#		end		
 
-		@venues = @venues.search(params[:search])		
+#		@venues = @venues.search(params[:search])		
 	
 		# Adding activerecord relation of venue_events in order to sort venues based on venue_start_time.
 		# Note: the query is not run until sessions/_thumbnails.html.erb upon which the upcoming_event method will list the most recent upcoming event.
@@ -37,9 +46,11 @@ class SessionsController < ApplicationController
 #		@venues = @venues.group('venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
 #		@venues = @venues.select('venue_events.*')
 #		@venues = @venues.group('venues.name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
-		@venues = @venues.order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
+		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		
-		@sql = @venues.to_sql
+		@sql_venueEvents = @venueEvents.to_sql
+		@sql_venues = @venues.to_sql
+
 		@venues = @venues.page(params[:page]).per_page(2)
 		
 		respond_to do |format|
