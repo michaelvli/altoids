@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
 #		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name").joins(:neighborhood)
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
 #		@venues = Venue.select("venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
-		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.id, neighborhoods.name").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
+		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.id, neighborhoods.name").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
@@ -36,7 +36,7 @@ class SessionsController < ApplicationController
 #		@venues = @venues.select('venue_events.*').joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id') # Left outer join is used since not all venues will have a upcoming event
 #		@venues = @venues.group('venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
 #		@venues = @venues.select('venue_events.*')
-		@venues = @venues.group('venues.id') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
+#		@venues = @venues.group('venues.name') # Using group method instead of select DISTINCT bc of problems in postgreSQL db
 		@venues = @venues.order(sort_order).limit(1) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		
 		@sql = @venues.to_sql
