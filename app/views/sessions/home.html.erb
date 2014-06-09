@@ -3,7 +3,8 @@
 	<%= render partial: 'geolocation_permissions_modal' %>
 </div>
 
-SQL:<%= @sql %>
+VENUE SQL:<%= @sql_venues %> <br>
+EVENTS SQL:<%= @sql_venueEvents %> <br>
 
 <!-- Carousel -->
 <div class="container">
@@ -12,7 +13,9 @@ SQL:<%= @sql %>
 		<div class="col-md-9">
 			<div class="row" id="endless_list">
 				<!--  Venue thumbnails are inserted here via AJAX call, locate_user(); -->
+
 				<%= render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment" %>
+
 			</div>
 			
 			<%= will_paginate @venues %>
