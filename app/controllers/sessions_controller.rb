@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
 #		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name").joins(:neighborhood)
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
-		@venues = Venue.select("DISTINCT(venues.name), venues.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
+		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
