@@ -10,15 +10,15 @@ class SessionsController < ApplicationController
 
 	def home
 		@venueEvents = VenueEvent.select("venue_events.id")
-		@venueEvents = @venueEvents.where("venue_events.id IS NULL OR venue_events.start_time >= ?", '2014-01-01')
 		@venueEvents = @venueEvents.order("venue_events.start_time asc").limit(1)
+		
 				
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
 #		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name").joins(:neighborhood)
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
 #		@venues = Venue.select("venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
 		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, venue_events.id, venue_events.name")
-		@venues = @venues.joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = @venueEvents')
+		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
 		
 		
 
