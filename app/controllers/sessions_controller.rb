@@ -74,7 +74,7 @@ class SessionsController < ApplicationController
 	  
 	def sort_order
 #	vulnerable to SQL injection
-		if (['name asc', 'name desc', 'neighborhoods.name asc, name asc', 'venue_events.id is null, venue_events.start_time asc'].include?(params[:sort_order]))
+		if (['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.id is null, venue_events.start_time asc'].include?(params[:sort_order]))
 			return params[:sort_order]
 		elsif (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank? && (params[:sort_order] == 'distance'))
 			"distance"
