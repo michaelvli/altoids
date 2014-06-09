@@ -52,19 +52,19 @@
 					<%= radio_button_tag 'sort', 'distance' %>Distance
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name asc' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'venues.name asc' } do %>
 					<span class="glyphicon glyphicon-arrow-down"></span><br>
 					<%= radio_button_tag 'sort', 'venues.name asc' %>A-Z
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name desc' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'venues.name desc' } do %>
 					<span class="glyphicon glyphicon-arrow-up"></span><br>
 					<%= radio_button_tag 'sort', 'venues.name desc' %>Z-A
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'neighborhoods.name asc, name asc' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'neighborhoods.name asc, venues.name asc' } do %>
 					<span class="glyphicon glyphicon-pushpin"></span><br>
-					<%= radio_button_tag 'sort', 'neighborhoods.name asc, name asc' %>Hood
+					<%= radio_button_tag 'sort', 'neighborhoods.name asc, venues.name asc' %>Hood
 				<% end %>
 				
 			</div>
