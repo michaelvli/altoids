@@ -54,12 +54,12 @@
 				
 				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name asc' } do %>
 					<span class="glyphicon glyphicon-arrow-down"></span><br>
-					<%= radio_button_tag 'sort', 'name asc' %>A-Z
+					<%= radio_button_tag 'sort', 'venues.name asc' %>A-Z
 				<% end %>
 				
 				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name desc' } do %>
 					<span class="glyphicon glyphicon-arrow-up"></span><br>
-					<%= radio_button_tag 'sort', 'name desc' %>Z-A
+					<%= radio_button_tag 'sort', 'venues.name desc' %>Z-A
 				<% end %>
 				
 				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'neighborhoods.name asc, name asc' } do %>
