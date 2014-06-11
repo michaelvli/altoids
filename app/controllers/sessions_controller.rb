@@ -85,7 +85,7 @@ class SessionsController < ApplicationController
 		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
 			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time is null, venue_events.start_time asc']	
 		else # For a PostGreSQL db
-			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time asc NULL LAST']	
+			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time asc NULLS LAST']	
 		end
 		
 		if (sort_parameter_list.include?(params[:sort_order]))
