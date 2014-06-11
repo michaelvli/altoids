@@ -7,25 +7,20 @@
 						</a>
 						
 						<!-- Thumbnail content - Event info -->
-						<% venue.venue_events.upcoming_event.each do |venue_event| %>
-							<% if !venue_event.nil? %>
 								<div class="carousel-caption event">
-									<h4><em><%= venue_event.event.name %></em></h4>
-									<h2><strong><%= venue_event.name %></strong></h2>
+									<h2><strong><%= venue.venue_event_name %></strong></h2>
 									<div class='text_wrapper'>
 										<!-- class: 'text_wrapper' calls jQuery.dotdotdot plugin to truncate description -->
-										<p><%= venue_event.description %></p>
+										<p><%= venue.description %></p>
 									</div>	
 <% if false %>
 									<p><a class="btn btn-xs btn-primary" href="#" role="button">More</a></p>
 <% end %>									
 								</div>
-							<% end %>
-						<% end %>
 							
 						<!-- Thumbnail content - Venue info -->
 						<div class="carousel-caption venue">
-							<h2><%= venue.name %></h2>&nbsp;
+							<h2><%= venue.venue_name %></h2>&nbsp;
 							<% if !venue.try(:distance).nil? %>
 								<small>(<%= venue.distance.round(1) %> miles)</small>
 							<% end %>	
