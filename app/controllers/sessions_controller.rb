@@ -14,7 +14,7 @@ class SessionsController < ApplicationController
 		
 				
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
-		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.name, venue_events.id, venue_events.name, venue_events.start_time")
+		@venues = Venue.select("DISTINCT(venues.name) as venue_name, venues.id, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.name, venue_events.id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time")
 		@venues = @venues.joins(:neighborhood)
 		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
 		
