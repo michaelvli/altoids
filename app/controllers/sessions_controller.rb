@@ -18,6 +18,7 @@ class SessionsController < ApplicationController
 #		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
 #		@venues = Venue.select("venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
 		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, venue_events.id, venue_events.name")
+		@venues = @venues.joins(:neighborhood)
 		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
 		
 		
