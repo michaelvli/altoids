@@ -108,7 +108,7 @@ class Venue < ActiveRecord::Base
 		self.city = self.city.strip.titleize.gsub(/[^a-z\s]/i, '')
 		self.state = self.state.strip.upcase.gsub(/[^a-z]/i, '')
 		self.zip_code = self.zip_code.strip.gsub(/[^0-9]/, '')
-		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'').gsub(/&/,'') unless self.file_name != ""
+		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'') unless self.file_name != ""
 		self.phone = self.phone.strip.gsub(/[^0-9]/, '')
 		if self.active.nil?
 			self.active = true
