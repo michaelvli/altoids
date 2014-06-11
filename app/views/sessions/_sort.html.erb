@@ -42,10 +42,17 @@
 			<div class="btn-group" data-toggle="buttons">
 				
 				<!-- Default selection: featured -->
-				<%= link_to home_path, class:'btn btn-glass sort active', :data => { :sort => 'venue_events.id is null, venue_events.start_time asc' } do %>
-					<span class="glyphicon glyphicon-ok"></span><br>
-					<%= radio_button_tag 'sort', 'venue_events.id is null, venue_events.start_time asc' %>Featured
-				<% end %>
+				<% if (ActiveRecord::Base.connection.adapter_name == 'SQLite') %>				
+					<%= link_to home_path, class:'btn btn-glass sort active', :data => { :sort => 'venue_events.start_time is null, venue_events.start_time asc' } do %>
+						<span class="glyphicon glyphicon-ok"></span><br>
+						<%= radio_button_tag 'sort', 'venue_events.start_time is null, venue_events.start_time asc' %>Featured
+					<% end %>
+				<% else %>
+					<%= link_to home_path, class:'btn btn-glass sort active', :data => { :sort => 'venue_events.start_time asc NULL LAST' } do %>
+						<span class="glyphicon glyphicon-ok"></span><br>
+						<%= radio_button_tag 'sort', 'venue_events.start_time asc NULL LAST' %>Featured
+					<% end %>
+				<% end %>	
 
 				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'distance' } do %>
 					<span class="glyphicon glyphicon-map-marker"></span><br>

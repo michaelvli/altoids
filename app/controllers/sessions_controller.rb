@@ -14,16 +14,9 @@ class SessionsController < ApplicationController
 		
 				
 		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
-#		@venues = Venue.select("venues.id, venues.name, venues.phone, venues.neighborhood_id, venues.file_name").joins(:neighborhood)
-#		@venues = Venue.select("DISTINCT(venues.name), venues.*, neighborhoods.*").joins(:neighborhood)
-#		@venues = Venue.select("venues.*, neighborhoods.*, venue_events.*").joins(:neighborhood).joins('LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id')
-		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, venue_events.id, venue_events.name, neighborhoods.name")
+		@venues = Venue.select("DISTINCT(venues.name), venues.id, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.name, venue_events.id, venue_events.name, venue_events.start_time")
 		@venues = @venues.joins(:neighborhood)
 		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
-		
-		
-
-
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 #		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
@@ -88,13 +81,25 @@ class SessionsController < ApplicationController
 	  
 	def sort_order
 #	vulnerable to SQL injection
-		if (['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.id is null, venue_events.start_time asc'].include?(params[:sort_order]))
+		# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
+		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time is null, venue_events.start_time asc']	
+		else # For a PostGreSQL db
+			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time asc NULL LAST']	
+		end
+		
+		if (sort_parameter_list.include?(params[:sort_order]))
 			return params[:sort_order]
 		elsif (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank? && (params[:sort_order] == 'distance'))
 			"distance"
-		else	
-#			"venue_events.id is null, venue_events.start_time asc" # sorts results by most recent start_times first followed by null (and by distance if available)
-			"venues.name asc"
+		else
+			if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+			#	"venue_events.start_time is null, venue_events.start_time asc" # sorts results by most recent start_times first followed by null (and by distance if available)
+				"venues.name asc"
+			else # For a PostGreSQL db
+			#	"venue_events.start_time asc NULL LAST" # sorts results by most recent start_times first followed by null (and by distance if available)
+				"venues.name asc"
+			end
 		end	
 	end	
 end
