@@ -9,11 +9,10 @@ class SessionsController < ApplicationController
 	end
 
 	def home
-		@venueEvents = VenueEvent.select("venue_events.id")
-		@venueEvents = @venueEvents.order("venue_events.start_time asc").limit(1)
-		
-				
-		# Setting up activerecord relation between venues and neighborhoods is set up to sort by venue name and neighborhood
+		# Setting up activerecord relation between venues, neighborhoods, and venue_events.
+		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
+		# DISTINCT ensures that unique list of venue names will displayed
+		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
 		@venues = Venue.select("DISTINCT(venues.name) as venue_name, venues.id, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
 		@venues = @venues.joins(:neighborhood)
 		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
@@ -27,16 +26,12 @@ class SessionsController < ApplicationController
 			# To use near() with left outer joins, do query conditions without includes BEFORE ARel compiles and executes:
 			# https://github.com/alexreisner/geocoder/issues/99
 			max_distance = 1000 # in km
-			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance) # outer join comes after this line
+			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
 		end		
 
-#		@venues = @venues.search(params[:search])		
-	
+#		@venues = @venues.search(params[:search])
 		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
-		
-		@sql_venueEvents = @venueEvents.to_sql
-		@sql_venues = @venues.to_sql
-
+#		@sql_venues = @venues.to_sql
 		@venues = @venues.page(params[:page]).per_page(2)
 		
 		respond_to do |format|
