@@ -31,6 +31,7 @@ var Location = function (sort_order) {
 //					clearTimeout(location_timeout);
 					lat = position.coords.latitude;
 					lon = position.coords.longitude;
+					localStorage['authorizedGeoLocation'] = true;
 					callback();
 				},
 				// Geolocation error
@@ -40,24 +41,26 @@ var Location = function (sort_order) {
 					switch(error.code) 
 					{
 						case error.PERMISSION_DENIED:
-//							alert("User denied the request for Geolocation.");
+							alert("User denied the request for Geolocation.");
+							localStorage['authorizedGeoLocation'] = false;
+				
+// need to display instructions on how to reset geolocation permissions
+
 							if (sort_order == 'distance')
 							{
 								$('#myModal').modal('show'); // Modal prompts user for geolocation permission
 							}	
 							break;
-//						case error.POSITION_UNAVAILABLE:
-//							alert("Location information is unavailable.");
-//							break;
-//						case error.TIMEOUT:
-//							alert("The request to get user location timed out.");
-//							break;
-//						case error.UNKNOWN_ERROR:
-//							alert("An unknown error occurred.");
-//							break;
+						case error.POSITION_UNAVAILABLE:
+							alert("Location information is unavailable.");
+							break;
+						case error.TIMEOUT:
+							alert("The request to get user location timed out.");
+							break;
+						case error.UNKNOWN_ERROR:
+							alert("An unknown error occurred.");
+							break;
 					}
-
-					callback();
 				},
 				options);
 		} 

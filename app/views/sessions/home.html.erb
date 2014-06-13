@@ -14,9 +14,9 @@
 		<div class="col-md-9">
 			<div class="row" id="endless_list">
 				<!--  Venue thumbnails are inserted here via AJAX call, locate_user(); -->
-
+<% if false %>
 				<%= render partial: 'thumbnails', collection: @venues, as: 'venue' || "There are no venues at the moment" %>
-
+<% end %>
 			</div>
 			
 			<%= will_paginate @venues %>

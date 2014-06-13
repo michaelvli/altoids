@@ -14,8 +14,24 @@ $(function() { //on DOM ready
 	
 	if ($('#endless_list').length)
 	{
-	
-		sort_list();
+	localStorage.clear();
+//		alert(checkAuthorizedGeoLocation());
+		if (checkAuthorizedGeoLocation() == 'undefined')
+		{
+			ModalPrompt();
+		}
+		else if (checkAuthorizedGeoLocation() == true)
+		{
+			// get get venues() - pass latitude and longitude info to server
+			alert('sweetness');
+		}
+		else (checkAuthorizedGeoLocation() == false)
+		{
+			// get get venues() - no latitude or longitude info
+			sort_list();
+		}
+		
+//		sort_list();
 /*	
 		$('#myModal').modal('show'); // Modal prompts user for geolocation permission
 		$('#myModal .btn').on('click', function(){ // Captures user's response to modal message
@@ -36,7 +52,7 @@ $(function() { //on DOM ready
 		});
 		$('#myModal').on('hide.bs.modal', function (e) {
 			alert("hiding modal") //means user said "no" to location sharing or closed modal without responding
-		})
+		});
 */
 	}
 	
@@ -82,6 +98,34 @@ function page_update_functions(){
 
 
 /* ***************************************************************************************** */
+
+
+function checkAuthorizedGeoLocation(){ // Use this function to know if geoLocation was previously allowed
+    if(typeof localStorage['authorizedGeoLocation'] == "undefined") 
+        return "undefined";
+    else 
+        return localStorage['authorizedGeoLocation'];
+}
+
+function get_list(url, sort_order, latitude, longitude){
+	// default values for url and sort_order
+	if (url == '')
+	{
+		url = 'home'
+	}
+	if (sort_order == '')
+	{
+		sort_order = 'event'
+	}
+
+	$.get(url,
+		{sort_order: sort_order, latitude: latitude, longitude: longitude},
+		function(){ // Success callback
+//			alert( "Success");
+		}, 
+	"script"
+	)
+}
 
 /* *****
 sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.

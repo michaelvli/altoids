@@ -67,26 +67,26 @@ class SessionsController < ApplicationController
 	private
 	  
 	def sort_order
-#	vulnerable to SQL injection
-		# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
-		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time is null, venue_events.start_time asc']	
-		else # For a PostGreSQL db
-			sort_parameter_list = ['venues.name asc', 'venues.name desc', 'neighborhoods.name asc, venues.name asc', 'venue_events.start_time asc NULLS LAST']	
-		end
-		
+	#	vulnerable to SQL injection?
+		sort_parameter_list = ['name_asc', 'name_desc', 'neighborhood', 'distance', 'event']
 		if (sort_parameter_list.include?(params[:sort_order]))
-			return params[:sort_order]
-		elsif (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank? && (params[:sort_order] == 'distance'))
-			"distance"
-		else
-			if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-			#	"venue_events.start_time is null, venue_events.start_time asc" # sorts results by most recent start_times first followed by null (and by distance if available)
-				"venues.name asc"
-			else # For a PostGreSQL db
-			#	"venue_events.start_time asc NULL LAST" # sorts results by most recent start_times first followed by null (and by distance if available)
-				"venues.name asc"
+			case params[:sort_order]
+			when 'name_asc'
+				return 'venues.name asc'
+			when 'name_desc'
+				return 'venues.name desc'
+			when 'neighborhood'
+				return 'neighborhoods.name asc, venues.name asc'
+			when 'distance'
+				return 'distance'
+			when 'event'
+				# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
+				if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+					return 'venue_events.start_time is null, venue_events.start_time asc'
+				else
+					return 'venue_events.start_time asc NULLS LAST'
+				end
 			end
-		end	
+		end
 	end	
 end
