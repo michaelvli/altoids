@@ -6,7 +6,8 @@ $(function() { //on DOM ready
 	if ($('.carousel').length)
 	{
 		carousel_behavior(); // plugin
-	}	
+	}
+	
 	if ($('#venue_event_start_date').length)
 	{
 		calendar_datepicker(); // plugin
@@ -14,52 +15,33 @@ $(function() { //on DOM ready
 	
 	if ($('#endless_list').length)
 	{
-	localStorage.clear();
-//		alert(checkAuthorizedGeoLocation());
-		if (checkAuthorizedGeoLocation() == 'undefined')
+//TESTING GEOLOCATION PERMISSION MODAL	
+		localStorage.clear();
+		switch(checkLocalStorage('geolocationAuth')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
 		{
-			ModalPrompt();
-		}
-		else if (checkAuthorizedGeoLocation() == true)
-		{
-			// get get venues() - pass latitude and longitude info to server
-			alert('sweetness');
-		}
-		else (checkAuthorizedGeoLocation() == false)
-		{
-			// get get venues() - no latitude or longitude info
-			sort_list();
-		}
-		
-//		sort_list();
-/*	
-		$('#myModal').modal('show'); // Modal prompts user for geolocation permission
-		$('#myModal .btn').on('click', function(){ // Captures user's response to modal message
-			var response = $(this).data("share_location");
-			if (response == 'yes')
-			{
+			case 'undefined':
+			case 'false':
+				var geoPermissionsModal = geolocationPermissionsPrompt();
+				geoPermissionsModal.initiate();
+				geoPermissionsModal.hide_action_on();
+				break;
+			case 'true':
 				var user_location = Location();
 				user_location.initiate( // calls html5 geolocation to access user location
 					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-						alert('latitude: ' + user_location.latitude()+ ' ' + 'longitude: ' + user_location.longitude());
+						get_list('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
 					}
 				);
-			}
-			else
-			{
-				alert("no location")				
-			}
-		});
-		$('#myModal').on('hide.bs.modal', function (e) {
-			alert("hiding modal") //means user said "no" to location sharing or closed modal without responding
-		});
-*/
+				break;
+		}
+		sort_list(); // bind sort buttons
 	}
 	
 	if ($('.pagination').length)
 	{
 		endless_scroll();
 	}
+	
 	if ($('.text_wrapper').length)
 	{
 		limit_captions(); // plugin
@@ -97,35 +79,54 @@ function page_update_functions(){
 }
 
 
+
 /* ***************************************************************************************** */
 
+/* *****
+checkLocalStorage - retrieves the value of variables stored in LocalStorage or if the variable doesn't exist, returns "undefined"
 
-function checkAuthorizedGeoLocation(){ // Use this function to know if geoLocation was previously allowed
-    if(typeof localStorage['authorizedGeoLocation'] == "undefined") 
+LocalStorage Variables:
+1.  geolocationAuth - user's approval or denial of geolocation permission via the geolocation modal window to prevent repeated displays.  If user has 
+previously answered "Not Now" or "Yes".  Possible values:
+	a. true - user clicked on "Yes" in the geolocation permission modal window (sessions/_geolocation_permissions_modal.html)
+	b. false - user clicked on "Not Now" in the geolocation permission modal window
+*/
+function checkLocalStorage(variable){
+    if(typeof localStorage[variable] == "undefined")
+	{
         return "undefined";
-    else 
-        return localStorage['authorizedGeoLocation'];
+	}	
+    else
+	{
+        return localStorage[variable];
+	}	
 }
 
-function get_list(url, sort_order, latitude, longitude){
-	// default values for url and sort_order
-	if (url == '')
-	{
-		url = 'home'
-	}
-	if (sort_order == '')
-	{
-		sort_order = 'event'
-	}
 
+
+/* *****
+get_list - sends a GET request via ajax to the server, passing in the following parameters:
+1. url - specifies the controller action along with url variables such as page(for pagination).  If no url is specified, the default value is the home action (for the sessions controller)
+2. sort_order - specifies the sort order of venues, events, or specials.  Possible values include: 
+	a. name_asc (venue name ascending order)
+	b. name_desc (venue name in descending order)
+	c. neighborhood (neighborhood in ascending order)
+	d. distance (distance of venue from user in ascending order)
+	e. event (start day/time of an event in chronological order)
+3. latitude - user's latitude (may be blank)
+4. longitude - user's longitude (may be blank)
+*/
+function get_list(url, sort_order, latitude, longitude){
 	$.get(url,
 		{sort_order: sort_order, latitude: latitude, longitude: longitude},
 		function(){ // Success callback
 //			alert( "Success");
 		}, 
-	"script"
+		"script"
 	)
 }
+
+
 
 /* *****
 sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.
@@ -138,27 +139,20 @@ Possible values of data-sort:
 5. venue_events.start_time asc, name asc
 */
 function sort_list(){
-
 	$('.sort').on('click', function(){
 		var url = $(this).attr('href');
 		var sort_order = $(this).data('sort'); // grabs the value of the custom attribute, data-sort
- alert(sort_order);
-		
-		var user_location = Location(sort_order);
+		var user_location = Location();
+		alert(sort_order);
+
 		user_location.initiate( // calls html5 geolocation to access user location
 			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-//					alert('latitude: ' + user_location.latitude()+ ' ' + 'longitude: ' + user_location.longitude());
-				$.get(url,
-					{sort_order: sort_order, latitude: user_location.latitude(), longitude: user_location.longitude()},
-					function(){
-//							alert( "Success - called function sort_list - used geolocation );
-					}, 
-					"script"
-				)
+				get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
 			}
 		);
 	});
 }
+
 
 
 /* *****
