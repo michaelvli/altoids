@@ -10,12 +10,12 @@ Solution:
 - Use setTimeout method to set off behavior instead of getCurrentPosition
 */
 
-var Location = function (sort_order) {
+var Location = function () {
     var lat;
     var lon;
 	var location_timeout;
 	
-    initiate = function (callback) {
+    initiate = function(callback) {
 		var options = {
 		  enableHighAccuracy: true,
 		  timeout: 3000, //doesn't work in Firefox
@@ -31,25 +31,38 @@ var Location = function (sort_order) {
 //					clearTimeout(location_timeout);
 					lat = position.coords.latitude;
 					lon = position.coords.longitude;
-					localStorage['authorizedGeoLocation'] = true;
+					localStorage['geolocationAuth'] = true; // so user isn't prompted with geopermission modal again
 					callback();
 				},
 				// Geolocation error
 				function(error){
 //					clearTimeout(location_timeout); // location_timeout is set in initiate function
-					
+					localStorage['geolocationAuth'] = false; // so user is prompted with geopermission modal again					
 					switch(error.code) 
 					{
-						case error.PERMISSION_DENIED:
-							alert("User denied the request for Geolocation.");
-							localStorage['authorizedGeoLocation'] = false;
-				
-// need to display instructions on how to reset geolocation permissions
-
-							if (sort_order == 'distance')
-							{
-								$('#myModal').modal('show'); // Modal prompts user for geolocation permission
-							}	
+						case error.PERMISSION_DENIED: // User denied the request for Geolocation
+//							alert("User denied the request for Geolocation");
+							callback();
+//							$('#modal_geolocation_permissions').off('hide.bs.modal');
+//							$('#modal_geolocation_permissions').modal('hide'); // close modal window
+//							localStorage['geolocationAuth'] = true; // so user isn't prompted with geopermission modal again
+//							get_list('home','event', '', ''); // load venues - without passing user's latitude and longitude
+/*  Temporary - hold off on using the geolocation instructions modal
+									$('#modal_geolocation_instructions').modal('show'); // show geolocation instructions
+									$('#modal_geolocation_instructions .btn').on('click', function(){
+										navigator.geolocation.getCurrentPosition(
+											function(position){
+												get_list('home','event', position.coords.latitude, position.coords.longitude);	// load venues - passing user's latitude and longitude to server 
+											},
+											function(error){
+												get_list('home','event', '', ''); // load venues - without passing user's latitude and longitude
+											}
+										);
+									})			
+									$('#modal_geolocation_instructions').on('hide.bs.modal', function () {
+										get_list('home','event', '', ''); // load venues - without passing user's latitude and longitude
+									});
+*/												
 							break;
 						case error.POSITION_UNAVAILABLE:
 							alert("Location information is unavailable.");
