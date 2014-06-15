@@ -32,7 +32,6 @@ var Location = function () {
 					lat = position.coords.latitude;
 					lon = position.coords.longitude;
 					localStorage['geolocationAuth'] = true; // so user isn't prompted with geopermission modal again
-					callback();
 				},
 				// Geolocation error
 				function(error){
@@ -42,7 +41,6 @@ var Location = function () {
 					{
 						case error.PERMISSION_DENIED: // User denied the request for Geolocation
 //							alert("User denied the request for Geolocation");
-							callback();
 //							$('#modal_geolocation_permissions').off('hide.bs.modal');
 //							$('#modal_geolocation_permissions').modal('hide'); // close modal window
 //							localStorage['geolocationAuth'] = true; // so user isn't prompted with geopermission modal again
@@ -76,6 +74,7 @@ var Location = function () {
 					}
 				},
 				options);
+				callback();
 		} 
 		else 
 		{

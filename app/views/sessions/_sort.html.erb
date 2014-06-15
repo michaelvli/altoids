@@ -52,12 +52,12 @@
 					<%= radio_button_tag 'sort', 'distance' %>Distance
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name_asc' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', id:'name_asc', :data => { :sort => 'name_asc' } do %>
 					<span class="glyphicon glyphicon-arrow-down"></span><br>
 					<%= radio_button_tag 'sort', 'name_asc' %>A-Z
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'name_desc' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', id:'name_desc', :data => { :sort => 'name_desc' } do %>
 					<span class="glyphicon glyphicon-arrow-up"></span><br>
 					<%= radio_button_tag 'sort', 'name_desc' %>Z-A
 				<% end %>

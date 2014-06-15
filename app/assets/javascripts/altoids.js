@@ -17,6 +17,7 @@ $(function() { //on DOM ready
 	{
 //TESTING GEOLOCATION PERMISSION MODAL	
 		localStorage.clear();
+//alert('localstorage: ' + checkLocalStorage('geolocationAuth'));		
 		switch(checkLocalStorage('geolocationAuth')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
 		{
 			case 'undefined':
@@ -131,20 +132,66 @@ function get_list(url, sort_order, latitude, longitude){
 /* *****
 sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.
 
-Possible values of data-sort: 
-1. distance
-2. name asc
-3. name desc
-4. neighborhoods.name asc, name asc
-5. venue_events.start_time asc, name asc
+Possible values of data-sort:
+	1. name_asc (venue name ascending order)
+	2. name_desc (venue name in descending order)
+	3. neighborhood (neighborhood in ascending order)
+	4. distance (distance of venue from user in ascending order)
+	5. event (start day/time of an event in chronological order)
 */
 function sort_list(){
+	$('#name_desc').hide()
 	$('.sort').on('click', function(){
 		var url = $(this).attr('href');
 		var sort_order = $(this).data('sort'); // grabs the value of the custom attribute, data-sort
 		var user_location = Location();
-		alert(sort_order);
+//		alert(sort_order);
 
+		// switch statement toggles the A-Z, Z-A sort button
+		switch(sort_order)
+		{
+			case 'name_asc':
+				if ($('#name_asc').attr('class').search('active') >= 0 ) // search method returns position of string if found, else returns -1
+				{ // element is active
+					$('.sort').removeClass('active');
+					$('#name_asc').hide();
+					$('#name_desc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
+						$('#name_desc').addClass('active');					
+					});
+					sort_order = 'name_desc';
+				}
+				else
+				{ // element is not active
+					$('.sort').removeClass('active');
+					$('#name_desc').hide();
+					$('#name_asc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
+						$('#name_asc').addClass('active');					
+					});
+					sort_order = 'name_asc';
+				}
+				break;
+			case 'name_desc':
+				if ($('#name_desc').attr('class').search('active') >= 0 ) // search method returns position of string if found, else returns -1
+				{ // element is active
+					$('.sort').removeClass('active');
+					$('#name_desc').hide();					
+					$('#name_asc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
+						$('#name_asc').addClass('active');					
+					});
+					sort_order = 'name_asc';
+				}
+				else
+				{ // element is not active
+					$('.sort').removeClass('active');
+					$('#name_asc').hide();					
+					$('#name_desc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
+						$('#name_desc').addClass('active');					
+					});
+					sort_order = 'name_desc';
+				}
+				break;
+		}
+		
 		user_location.initiate( // calls html5 geolocation to access user location
 			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
 				get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
