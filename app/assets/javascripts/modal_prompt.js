@@ -33,30 +33,24 @@ var geolocationPermissionsPrompt = function() {
 			response = $(this).data("share_location");
 			if (response == 'yes')
 			{
+				localStorage['geoPermissionsModal'] = true; // so user isn't prompted with geopermission modal again
 				user_location.initiate( // calls html5 geolocation to access user location
 					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
 //						alert('latitude: ' + user_location.latitude()+ ' ' + 'longitude: ' + user_location.longitude());
 						$('#modal_geolocation_permissions').modal('hide');
+					},
+					function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
+						get_list('home','event', '', ''); // load venues without passing user's latitude and longitude to server 
 					}
 				);
-			}
-			else
-			{
-				localStorage['geolocationAuth'] = true; // so user isn't prompted with geopermission modal again
 			}
 		});
 	},
 	
 	hide_action_on = function(){
 		$('#modal_geolocation_permissions').on('hide.bs.modal', function () {
-			if (response == 'yes') // means user said "Yes" to location sharing
-			{
-				get_list('home','event', user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
-			}
-			else //means user said "Not Now" to location sharing or closed modal without responding
-			{
-				get_list('home','event', '', ''); // load venues - without passing user's latitude and longitude
-			}
+			get_list('home','event', user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude, if available, to server
+			hide_action_off(); // unbinding .on method
 		});
 	},
 	

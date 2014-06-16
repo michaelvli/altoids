@@ -16,21 +16,23 @@ $(function() { //on DOM ready
 	if ($('#endless_list').length)
 	{
 //TESTING GEOLOCATION PERMISSION MODAL	
-		localStorage.clear();
-//alert('localstorage: ' + checkLocalStorage('geolocationAuth'));		
-		switch(checkLocalStorage('geolocationAuth')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
+//localStorage.clear();
+//alert('localstorage: ' + checkLocalStorage('geoPermissionsModal'));		
+		switch(checkLocalStorage('geoPermissionsModal')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
 		{
-			case 'undefined':
-			case 'false':
-				var geoPermissionsModal = geolocationPermissionsPrompt();
-				geoPermissionsModal.initiate();
-				geoPermissionsModal.hide_action_on();
+			case 'undefined': // user is shown geolocation permissions modal unless he has clicked "Yes" or "Not Now" buttons in a previous session.
+				var Modal = geolocationPermissionsPrompt();
+				Modal.initiate();
+				Modal.hide_action_on();
 				break;
-			case 'true':
+			case 'true': // user has seen modal for geolocation permissions and has clicked "Yes" or "Not Now" buttons - no need to show modal again.
 				var user_location = Location();
 				user_location.initiate( // calls html5 geolocation to access user location
 					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
 						get_list('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
+					},
+					function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
+						get_list('home','event', '', '');	// load venues without passing user's latitude and longitude to server 
 					}
 				);
 				break;
@@ -87,10 +89,10 @@ function page_update_functions(){
 checkLocalStorage - retrieves the value of variables stored in LocalStorage or if the variable doesn't exist, returns "undefined"
 
 LocalStorage Variables:
-1.  geolocationAuth - user's approval or denial of geolocation permission via the geolocation modal window to prevent repeated displays.  If user has 
-previously answered "Not Now" or "Yes".  Possible values:
-	a. true - user clicked on "Yes" in the geolocation permission modal window (sessions/_geolocation_permissions_modal.html)
-	b. false - user clicked on "Not Now" in the geolocation permission modal window
+1.  geoPermissionsModal - controls if the user will be shown the geolocation permissions Modal window.
+	a.  true - user has viewed modal and will not be shown Modal again.
+	b.  undefined - user has not viewed modal and will be shown the Modal.
+	
 */
 function checkLocalStorage(variable){
     if(typeof localStorage[variable] == "undefined")
@@ -144,61 +146,60 @@ function sort_list(){
 	$('.sort').on('click', function(){
 		var url = $(this).attr('href');
 		var sort_order = $(this).data('sort'); // grabs the value of the custom attribute, data-sort
-		var user_location = Location();
+
 //		alert(sort_order);
 
-		// switch statement toggles the A-Z, Z-A sort button
+		// switch statement used in conjunction with sortButtonToggle to toggle the A-Z, Z-A sort button
 		switch(sort_order)
 		{
 			case 'name_asc':
 				if ($('#name_asc').attr('class').search('active') >= 0 ) // search method returns position of string if found, else returns -1
 				{ // element is active
-					$('.sort').removeClass('active');
-					$('#name_asc').hide();
-					$('#name_desc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
-						$('#name_desc').addClass('active');					
-					});
-					sort_order = 'name_desc';
+					sort_order = sortButtonToggle(sort_order, 'name_desc');
 				}
 				else
 				{ // element is not active
-					$('.sort').removeClass('active');
-					$('#name_desc').hide();
-					$('#name_asc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
-						$('#name_asc').addClass('active');					
-					});
-					sort_order = 'name_asc';
+					sort_order = sortButtonToggle('name_desc', sort_order)
 				}
 				break;
 			case 'name_desc':
 				if ($('#name_desc').attr('class').search('active') >= 0 ) // search method returns position of string if found, else returns -1
 				{ // element is active
-					$('.sort').removeClass('active');
-					$('#name_desc').hide();					
-					$('#name_asc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
-						$('#name_asc').addClass('active');					
-					});
-					sort_order = 'name_asc';
+					sort_order = sortButtonToggle(sort_order, 'name_asc');
 				}
 				else
 				{ // element is not active
-					$('.sort').removeClass('active');
-					$('#name_asc').hide();					
-					$('#name_desc').show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
-						$('#name_desc').addClass('active');					
-					});
-					sort_order = 'name_desc';
+					sort_order = sortButtonToggle('name_asc', sort_order);
 				}
 				break;
 		}
-		
-		user_location.initiate( // calls html5 geolocation to access user location
-			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-				get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
-			}
-		);
+				var user_location = Location();
+				user_location.initiate( // calls html5 geolocation to access user location
+					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
+						get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
+					},
+					function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
+						get_list(url, sort_order, '', ''); // load venues - passing user's latitude and longitude to server
+					}
+				);
+	
 	});
 }
+
+
+
+/* *****
+sortButtonToggle - Toggles between the A-Z and Z-A sort button while controlling active states as well.  Returns the value of inverse_button to 
+dictate the sort order of venues.
+*/
+function sortButtonToggle(sort_button, inverse_button){
+	$('.sort').removeClass('active');
+	$('#' + sort_button).hide();
+	$('#' + inverse_button).show(1, function(){ // need a minimal amount of time to specify callback to occur subsequently
+		$('#' + inverse_button).addClass('active');					
+	});
+	return inverse_button;
+}	
 
 
 
