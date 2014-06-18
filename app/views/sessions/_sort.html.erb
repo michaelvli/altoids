@@ -42,16 +42,16 @@
 			<div class="btn-group" data-toggle="buttons">
 				
 				<!-- Default selection: featured -->
-				<%= link_to home_path, class:'btn btn-glass sort active', :data => { :sort => 'event' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort active', id:'event', :data => { :sort => 'event' } do %>
 					<span class="glyphicon glyphicon-ok"></span><br>
 					<%= radio_button_tag 'sort', 'event' %>Featured
 				<% end %>
 
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'distance' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', id:'distance', :data => { :sort => 'distance' } do %>
 					<span class="glyphicon glyphicon-map-marker"></span><br>
 					<%= radio_button_tag 'sort', 'distance' %>Distance
 				<% end %>
-				
+
 				<%= link_to home_path, class:'btn btn-glass sort', id:'name_asc', :data => { :sort => 'name_asc' } do %>
 					<span class="glyphicon glyphicon-arrow-down"></span><br>
 					<%= radio_button_tag 'sort', 'name_asc' %>A-Z
@@ -62,7 +62,7 @@
 					<%= radio_button_tag 'sort', 'name_desc' %>Z-A
 				<% end %>
 				
-				<%= link_to home_path, class:'btn btn-glass sort', :data => { :sort => 'neighborhood' } do %>
+				<%= link_to home_path, class:'btn btn-glass sort', id:'neighborhood', :data => { :sort => 'neighborhood' } do %>
 					<span class="glyphicon glyphicon-pushpin"></span><br>
 					<%= radio_button_tag 'sort', 'neighborhood' %>Hood
 				<% end %>
