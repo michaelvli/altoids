@@ -2,7 +2,6 @@
 
 $(function() { //on DOM ready
 //	alert("DOM ready");
-
 	if ($('.carousel').length)
 	{
 		carousel_behavior(); // plugin
@@ -15,18 +14,19 @@ $(function() { //on DOM ready
 	
 	if ($('#endless_list').length)
 	{
-//TESTING GEOLOCATION PERMISSION MODAL	
+//TESTING GEOLOCATION PERMISSION MODAL
 //localStorage.clear();
-//alert('localstorage: ' + checkLocalStorage('geoPermissionsModal'));		
-		switch(checkLocalStorage('geoPermissionsModal')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
+//sessionStorage.clear();
+
+		switch(checkLocalStorage('geolocation_permissions')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
 		{
 			case 'undefined': // user is shown geolocation permissions modal unless he has clicked "Yes" or "Not Now" buttons in a previous session.
-				var Modal = geolocationPermissionsPrompt();
-				Modal.initiate();
-				Modal.hide_action_on();
+				var Modal = ModalPrompt();
+				Modal.initiate('geolocation_permissions');
+				Modal.hide_action_on('geolocation_permissions');
 				break;
 			case 'true': // user has seen modal for geolocation permissions and has clicked "Yes" or "Not Now" buttons - no need to show modal again.
-				var user_location = Location();
+				var user_location = html5_geolocation();
 				user_location.initiate( // calls html5 geolocation to access user location
 					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
 						get_list('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
@@ -86,52 +86,6 @@ function page_update_functions(){
 /* ***************************************************************************************** */
 
 /* *****
-checkLocalStorage - retrieves the value of variables stored in LocalStorage or if the variable doesn't exist, returns "undefined"
-
-LocalStorage Variables:
-1.  geoPermissionsModal - controls if the user will be shown the geolocation permissions Modal window.
-	a.  true - user has viewed modal and will not be shown Modal again.
-	b.  undefined - user has not viewed modal and will be shown the Modal.
-	
-*/
-function checkLocalStorage(variable){
-    if(typeof localStorage[variable] == "undefined")
-	{
-        return "undefined";
-	}	
-    else
-	{
-        return localStorage[variable];
-	}	
-}
-
-
-
-/* *****
-get_list - sends a GET request via ajax to the server, passing in the following parameters:
-1. url - specifies the controller action along with url variables such as page(for pagination).  If no url is specified, the default value is the home action (for the sessions controller)
-2. sort_order - specifies the sort order of venues, events, or specials.  Possible values include: 
-	a. name_asc (venue name ascending order)
-	b. name_desc (venue name in descending order)
-	c. neighborhood (neighborhood in ascending order)
-	d. distance (distance of venue from user in ascending order)
-	e. event (start day/time of an event in chronological order)
-3. latitude - user's latitude (may be blank)
-4. longitude - user's longitude (may be blank)
-*/
-function get_list(url, sort_order, latitude, longitude){
-	$.get(url,
-		{sort_order: sort_order, latitude: latitude, longitude: longitude},
-		function(){ // Success callback
-//			alert( "Success");
-		}, 
-		"script"
-	)
-}
-
-
-
-/* *****
 sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.
 
 Possible values of data-sort:
@@ -142,13 +96,25 @@ Possible values of data-sort:
 	5. event (start day/time of an event in chronological order)
 */
 function sort_list(){
-	$('#name_desc').hide()
+	$('#name_desc').hide();
+
+	// Initializing popover prior to binding to click handler or else popover will require two clicks - http://stackoverflow.com/questions/12333585/twitter-bootstrappopovers-are-not-showing-up-on-first-click-but-show-up-on-seco
+	$('#distance').popover({trigger: 'manual',
+							delay: {show: 0, hide: 0},
+							content: "Requires location sharing. <a id='geolocation_instructions_link' href='#'>More</a>",
+							placement: 'top',
+							html: 'true'
+	});
+	
+	if (checkSessionStorage('previousSort') == 'undefined')
+	{
+		sessionStorage['previousSort'] = 'event'; //default value is "Featured" on screen
+	}
+	
 	$('.sort').on('click', function(){
-		var url = $(this).attr('href');
+		var url = $(this).attr('href'); // url is passed to function get_list() for ajax call retrieving list of venues - necessary for capturing pagination and specifying controller action
 		var sort_order = $(this).data('sort'); // grabs the value of the custom attribute, data-sort
-
-//		alert(sort_order);
-
+		
 		// switch statement used in conjunction with sortButtonToggle to toggle the A-Z, Z-A sort button
 		switch(sort_order)
 		{
@@ -173,19 +139,76 @@ function sort_list(){
 				}
 				break;
 		}
-				var user_location = Location();
-				user_location.initiate( // calls html5 geolocation to access user location
-					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-						get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
-					},
-					function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
-						get_list(url, sort_order, '', ''); // load venues - passing user's latitude and longitude to server
-					}
-				);
-	
+		
+		// store sort history in case user clicks on 'distance' and geolocation is not enabled (need to take user back to previously clicked sort button)
+		// must set sessionStorage['previousSort'] = sort_order AFTER above switch statement - need sort_order value returned by function sortButtonToggle()
+		if (sort_order != 'distance')
+		{
+			sessionStorage['previousSort'] = sort_order;
+		}
+				
+		var user_location = html5_geolocation();
+		user_location.initiate( // calls html5 geolocation to access user location
+			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
+				if (sort_order == 'distance' && typeof user_location.latitude() == 'undefined' && typeof user_location.longitude() == 'undefined') //geolocation is blocked
+				{
+					// do nothing in scenario where user sorts by distance and latitude and longitude is not available
+				}
+				else // geolocation is allowed (and working)
+				{
+					$('#distance').off('hidden.bs.popover');
+					$('#distance').popover('hide');
+					get_list(url, sort_order, user_location.latitude(), user_location.longitude()); // load venues - passing user's latitude and longitude to server
+				}
+			},
+			function(){ // Firefox quirk:  geolocation permission is not set (user has selected "Not Now" or ignored permissions).  Hence this anonymous function provides default content which will be replaced if user selects a geolocation permission setting ("Always Allow" or "Never Allow")
+				if (sort_order != 'distance')
+				{
+					get_list(url, sort_order, '', ''); // load venues - without passing user's latitude and longitude to server
+				}
+				else if (checkLocalStorage('geolocationAuth') == 'undefined')
+				{
+					preparePopover(); // Binds necessary handlers to the "Requires sharing location" popover message when user sorts by distance.
+				}
+			}
+		);
+					
 	});
 }
 
+
+
+/*  preparePopover - Binds necessary handlers to the "Requires sharing location" popover message when user sorts by distance.  
+
+Handlers are used to:
+  1. Show the popover when a user clicks on the 'distance' sort button
+  2. Set sort button to previous sort (in the scneario that user sorts by distance but doesn't enable geolocation)
+  3. Hides popover after it is shown to user
+  4. Open a modal that provides instructions on how to enable geolocation permissions in the brower
+  
+NOTE: Popover must be initialized prior to the handler (see near the beginning of function sort_list() for how popover was initialized.  
+*/
+function preparePopover(){
+	// bind popover handlers
+	$('#distance').on('hidden.bs.popover', function(){ // sets sort button to the previous one
+		$('.sort').removeClass('active'); // removes highlighted buttons
+		$('#' + sessionStorage['previousSort']).addClass('active'); // highlights the previous sort button
+	});
+	$('#distance').on('shown.bs.popover', function() { // hides popover 5 seconds after it is shown to user
+		setTimeout(function(){
+			$('#distance').popover('hide');
+		}, 5000);
+	});
+	
+	// show popover which contains a link to geolocation instructions modal - trigger option in popover needs to be set to "manual"
+	$('#distance').popover('show');
+	
+	// bind click handler to geolocation instructions modal
+	$('#geolocation_instructions_link').on('click',function(){ // show geolocation instructions modal when user clicks on the "More" link (in popover content).
+		$('#geolocation_instructions').modal('show');
+		$('#distance').popover('hide'); // Hide popover when modal opens.
+	});
+}
 
 
 /* *****
@@ -271,6 +294,79 @@ function carousel_behavior(){
 			$(this).children("video").get(0).pause();											
 		});
 	});
+}
+
+
+
+/* *****
+checkLocalStorage - retrieves the value of variables stored in LocalStorage or if the variable doesn't exist, returns "undefined"
+
+LocalStorage Variables:
+1.  geoPermissionsModal - controls if geolocation permissions Modal window will be shown to user
+	a.  true - user has viewed modal and will not be shown Modal again.
+	b.  undefined - user has not viewed modal and will be shown the Modal.
+2.  geolocationAuth - controls if the "Requires sharing location" popover and geolocation instructions modal will be shown to user
+	a.  true - user has viewed popover (but not necessarily modal) and will not be shown popover again.
+	b.  undefined - user has not viewed popover and will be shown the Modal.
+*/
+function checkLocalStorage(variable){
+    if(typeof localStorage[variable] == "undefined")
+	{
+        return "undefined";
+	}	
+    else
+	{
+        return localStorage[variable];
+	}	
+}
+
+
+
+/* *****
+checkSessionStorage - retrieves the value of variables stored in SessionStorage or if the variable doesn't exist, returns "undefined"
+
+SessionStorage Variables:
+1.  previousSort - stores the last sort button (except 'distance') that the user used.
+	
+	Scenario: user clicks on the 'distance' sort button but has not enabled geolocation permission.  Application will take the user back 
+	to the previous sort results and highlight the appropriate sort button (stored by "previousSort").
+
+*/
+function checkSessionStorage(variable){
+    if(typeof localStorage[variable] == "undefined")
+	{
+        return "undefined";
+	}	
+    else
+	{
+        return localStorage[variable];
+	}	
+}
+
+
+
+/* *****
+get_list - sends a GET request via ajax to the server, passing in the following parameters:
+1. url - specifies the controller action along with url variables such as page(for pagination).  If no url is specified, the default value is the home action (for the sessions controller)
+2. sort_order - specifies the sort order of venues, events, or specials.  Possible values include: 
+	a. name_asc (venue name ascending order)
+	b. name_desc (venue name in descending order)
+	c. neighborhood (neighborhood in ascending order)
+	d. distance (distance of venue from user in ascending order)
+	e. event (start day/time of an event in chronological order)
+3. latitude - user's latitude (may be blank)
+4. longitude - user's longitude (may be blank)
+*/
+function get_list(url, sort_order, latitude, longitude){
+	$.get(url,
+		{sort_order: sort_order, latitude: latitude, longitude: longitude},
+		function(){ // Success callback
+			// used stored sort history since geolocation is not enabled (takes user back to previously clicked sort button)
+			$('.sort').removeClass('active'); // removes highlighted buttons
+			$('#' + sort_order).addClass('active'); // highlights the previous sort button
+		}, 
+		"script"
+	)
 }
 
 
