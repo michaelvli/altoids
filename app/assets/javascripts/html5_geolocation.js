@@ -19,17 +19,17 @@ var html5_geolocation = function () {
     initiate = function(callback, callback_no_geolocation) {
 		var options = {
 		  enableHighAccuracy: true,
-		  timeout: 3000, //doesn't work in Firefox
+		  timeout: 10000, //doesn't work in Firefox
 		  maximumAge: 0  // never stored in cache (by setting to 0)
 		};
 
 		if (navigator.geolocation)
 		{
-			location_timeout = setTimeout(handleTimeout, options.timeout); // timer is cleared getLocation or handleErrors functions
+//			location_timeout = setTimeout(handleTimeout, options.timeout); // timer is cleared getLocation or handleErrors functions
 			navigator.geolocation.getCurrentPosition(
 				// Geolocation success
 				function(position){
-					clearTimeout(location_timeout);
+//					clearTimeout(location_timeout);
 					lat = position.coords.latitude;
 					lon = position.coords.longitude;
 					localStorage['geolocationAuth'] = true; // so user doesn't see "Requires sharing location" popover again
@@ -37,7 +37,7 @@ var html5_geolocation = function () {
 				},
 				// Geolocation error
 				function(error){
-					clearTimeout(location_timeout); // location_timeout is set in initiate function
+//					clearTimeout(location_timeout); // location_timeout is set in initiate function
 					switch(error.code) 
 					{
 						case error.PERMISSION_DENIED: // User denied the request for Geolocation
@@ -76,11 +76,11 @@ var html5_geolocation = function () {
 	
 	handleTimeout = function(){
 //		alert("Timed out");
-		if (checkLocalStorage('geolocationAuth') != 'undefined')  // user changed geolocation permissions so we need to sync geolocationAuth with browser
-		{
-			preparePopover(); // Binds necessary handlers to the "Requires sharing location" popover message when user sorts by distance.
-		}
-		localStorage.removeItem('geolocationAuth') // so user will see "Requires sharing location" popover next time
+//		if (checkLocalStorage('geolocationAuth') != 'undefined')  // user changed geolocation permissions so we need to sync geolocationAuth with browser
+//		{
+//			preparePopover(); // Binds necessary handlers to the "Requires sharing location" popover message when user sorts by distance.
+//		}
+//		localStorage.removeItem('geolocationAuth') // so user will see "Requires sharing location" popover next time
 	},
 	
 	latitude = function(){

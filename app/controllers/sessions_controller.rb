@@ -1,10 +1,16 @@
 class SessionsController < ApplicationController
+  before_action :signed_in_user, :only => [:home] #see listing 9.44
 
+  # Using before_filter for rendering mobile vs. desktop versions - http://scottwb.com/blog/2012/02/23/a-better-way-to-add-mobile-pages-to-a-rails-site/
+  # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
+  # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
+  before_filter :check_for_mobile, :only => [:splash, :home, :new]
+  
 	def splash
 		if signed_in?
 			redirect_to home_path
-#		else
-#			@venue_videos = Venue.carousel_prep
+		else
+			@venues = Venue.carousel_prep
 		end	
 	end
 
@@ -13,10 +19,33 @@ class SessionsController < ApplicationController
 		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
 		# DISTINCT ensures that unique list of venue names will displayed
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
-		@venues = Venue.select("DISTINCT(venues.name) as venue_name, venues.id, venues.phone, venues.neighborhood_id, venues.file_name, neighborhoods.name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
-		@venues = @venues.joins(:neighborhood)
-		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
 		
+		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+#SELECT venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time
+#FROM "venues"
+#LEFT OUTER JOIN
+#  (SELECT venue_id, name, start_time, description, MIN(start_time) FROM venue_events GROUP BY venue_id) AS venue_events
+#ON  venue_events.venue_id = venues.id
+
+		@venue_events = VenueEvent.select('venue_id, name, start_time, description, MIN(start_time)').group('venue_id').to_sql
+		@venues = Venue.select('venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time')
+		@venues = @venues.joins("LEFT OUTER JOIN (#{@venue_events}) AS venue_events ON venues.id = venue_events.venue_id")
+		
+		else # For a PostGreSQL db
+#SELECT * FROM
+#(SELECT DISTINCT ON(venues.id) 
+#	venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time 
+#FROM "venues" 
+#LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id
+#ORDER BY venues.id, venue_events.start_time asc)
+#AS subquery
+#ORDER BY subquery.start_time asc
+
+			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
+	#		@venues = Venue.select("SELECT DISTINCT ON(venues.id), venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+	#		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
+		end
+
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
 			# Info about geocoder for methods like near() and order("distance"):
@@ -31,7 +60,6 @@ class SessionsController < ApplicationController
 
 #		@venues = @venues.search(params[:search])
 		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
-#		@sql_venues = @venues.to_sql
 		@venues = @venues.page(params[:page]).per_page(2)
 		
 		respond_to do |format|

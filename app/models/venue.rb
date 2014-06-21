@@ -60,19 +60,25 @@ class Venue < ActiveRecord::Base
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
 	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
 	
-	if (options[:venue_id])
-		select("venues.*, videos.*, videos.id as video_id")
-			.where(id: options[:venue_id])
-			.joins(:videos)
-	else
-		select("venues.*, videos.*, videos.id as video_id")
-			.joins(:videos)
-			.where(id: Video.select("DISTINCT videos.id"))
-			.joins(:venue_events)
-			.where("venue_events.start_time >= ?", Time.now)
-			.order("RANDOM()")
-			.limit(3)
-	end
+#	if (options[:venue_id])
+#		select("venues.*, videos.*, videos.id as video_id")
+#			.where(id: options[:venue_id])
+#			.joins(:videos)
+#	else
+#		select("venues.*, videos.*, videos.id as video_id")
+#			.joins(:videos)
+#			.where(id: Video.select("DISTINCT videos.id"))
+#			.joins(:venue_events)
+#			.where("venue_events.start_time >= ?", Time.now)
+#			.order("RANDOM()")
+#			.limit(3)
+#	end
+
+		select("venues.*, venue_events.*, events.*, venues.name as venue_name, venue_events.name as venue_event_name, venue_events.description as venue_event_description, events.name as event_type_name")
+			.where(id: [1, 2, 4])
+			.joins(:venue_events) #			.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
+			.joins(:events)
+			.order("RANDOM()")			
   end
   
   #  Select venues with live video to showcase on home page

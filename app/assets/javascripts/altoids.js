@@ -1,63 +1,99 @@
 /*  Custom javascript for application  */
+function set_cookie ( cookie_name, cookie_value, lifespan_in_days, valid_domain ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
+{
+    // http://www.thesitewizard.com/javascripts/cookies.shtml
+    var domain_string = valid_domain ?
+                       ("; domain=" + valid_domain) : '' ;
+    document.cookie = cookie_name +
+                       "=" + encodeURIComponent( cookie_value ) +
+                       "; max-age=" + 60 * 60 *
+                       24 * lifespan_in_days +
+                       "; path=/" + domain_string ;
+}
 
-$(function() { //on DOM ready
-//	alert("DOM ready");
-	if ($('.carousel').length)
-	{
-		carousel_behavior(); // plugin
-	}
-	
-	if ($('#venue_event_start_date').length)
-	{
-		calendar_datepicker(); // plugin
-	}
-	
-	if ($('#endless_list').length)
-	{
-//TESTING GEOLOCATION PERMISSION MODAL
+function get_cookie ( cookie_name ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
+{
+    // http://www.thesitewizard.com/javascripts/cookies.shtml
+    var cookie_string = document.cookie ;
+    if (cookie_string.length != 0) {
+        var cookie_value = cookie_string.match (
+                        '(^|;)[\s]*' +
+                        cookie_name +
+                        '=([^;]*)' );
+        return decodeURIComponent ( cookie_value[2] ) ;
+    }
+    return '' ;
+}
+
+if (get_cookie( 'device_size' ) == '') // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+{
+	setScreenSizeCookie(function(){
+		window.location.reload(); // call back used to reload the page after cookie has been set with function setScreenSizeCookie()
+	});
+}
+else
+{
+//  TESTING COOKIES FOR SCREEN SIZE
+//delete_cookie('device_size');
+
+	$(function() { //on DOM ready
+//		alert("DOM ready");
+			if ($('.carousel').length)
+			{
+				carousel_behavior(); // plugin
+			}
+			
+			if ($('#venue_event_start_date').length)
+			{
+				calendar_datepicker(); // plugin
+			}
+			
+			if ($('#endless_list').length)
+			{
+//	TESTING GEOLOCATION PERMISSION MODAL
 //localStorage.clear();
 //sessionStorage.clear();
 
-		switch(checkLocalStorage('geolocation_permissions')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
-		{
-			case 'undefined': // user is shown geolocation permissions modal unless he has clicked "Yes" or "Not Now" buttons in a previous session.
-				var Modal = ModalPrompt();
-				Modal.initiate('geolocation_permissions');
-				Modal.hide_action_on('geolocation_permissions');
-				break;
-			case 'true': // user has seen modal for geolocation permissions and has clicked "Yes" or "Not Now" buttons - no need to show modal again.
-				var user_location = html5_geolocation();
-				user_location.initiate( // calls html5 geolocation to access user location
-					function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-						get_list('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
-					},
-					function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
-						get_list('home','event', '', '');	// load venues without passing user's latitude and longitude to server 
-					}
-				);
-				break;
-		}
-		sort_list(); // bind sort buttons
-	}
-	
-	if ($('.pagination').length)
-	{
-		endless_scroll();
-	}
-	
-	if ($('.text_wrapper').length)
-	{
-		limit_captions(); // plugin
-	}
-});
-
+				switch(checkLocalStorage('geolocation_permissions')) // Check to see if geolocation permissions modal should be displayed.  LocalStorage variables are stored as text
+				{
+					case 'undefined': // user is shown geolocation permissions modal unless he has clicked "Yes" or "Not Now" buttons in a previous session.
+						var Modal = ModalPrompt();
+						Modal.initiate('geolocation_permissions');
+						Modal.hide_action_on('geolocation_permissions');
+						break;
+					case 'true': // user has seen modal for geolocation permissions and has clicked "Yes" or "Not Now" buttons - no need to show modal again.
+						var user_location = html5_geolocation();
+						user_location.initiate( // calls html5 geolocation to access user location
+							function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
+								get_list('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
+							},
+							function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
+								get_list('home','event', '', '');	// load venues without passing user's latitude and longitude to server 
+							}
+						);
+						break;
+				}
+				sort_list(); // bind sort buttons
+			}
+			
+			if ($('.pagination').length)
+			{
+				endless_scroll();
+			}
+			
+			if ($('.dotdotdot').length)
+			{
+//alert('1');			
+				limit_captions(); // plugin
+			}	
+	}); // DOM READY
+	$(document).on('page:load', page_load_functions); // Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
+	$(document).on('page:update', page_update_functions); // Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
+} // INITIAL IF STATEMENT FOR CHECKING SCREEN SIZE COOKIE
 
 /* 	
 Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
  */
-
-$(document).on('page:load', page_load_functions);
-$(document).on('page:update', page_update_functions);
 
 function page_load_functions(){
 	if ($('#venue_event_start_date').length)
@@ -68,15 +104,17 @@ function page_load_functions(){
 	{
 		endless_scroll();
 	}
-	if ($('.text_wrapper').length)
+	if ($('.dotdotdot').length)
 	{
+//alert('2');
 		limit_captions(); // plugin
 	}
 }
 
 function page_update_functions(){
-	if ($('.text_wrapper').length)
+	if ($('.dotdotdot').length)
 	{
+//alert('3');
 		limit_captions(); // plugin
 	}
 }
@@ -84,6 +122,31 @@ function page_update_functions(){
 
 
 /* ***************************************************************************************** */
+
+function setScreenSizeCookie(callback){
+
+//	alert("width: " + screen.width + " height: " + screen.height);
+	var days_before_expiring = 365 * 10;
+	var device_size;
+	if (screen.width < 768)
+	{
+	//	alert("mobile " + "width: " + screen.width + " height: " + screen.height);
+		device_size = 'xs'
+	}
+//	else if (screen.width < 992) {
+//		alert("tablet " + "width: " + screen.width + " height: " + screen.height);
+//		document.cookie="device_size=sm";
+//	}
+	else
+	{
+//		alert("laptop "  + "width: " + screen.width + " height: " + screen.height);	
+		device_size = 'md'
+	}
+	set_cookie('device_size', device_size, days_before_expiring);
+	callback();
+}
+
+
 
 /* *****
 sort_list - provides functionality for sort buttons on the home page by grabbing value of the data-sort custom attribute.
@@ -268,6 +331,11 @@ function carousel_behavior(){
 	
 	// start playing first video
 	$('div.carousel-inner').find('.active').children('video').get(0).play();
+
+	$('.carousel').on('slide.bs.carousel', function () {
+//		alert("slide method started");
+		limit_captions();
+	});
 	
 	// start/pause videos based on when carousel slides
 	$('.carousel').on('slid.bs.carousel', function () {
@@ -278,7 +346,7 @@ function carousel_behavior(){
 			2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
 			3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
 			4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
-		*/	
+		*/
 		$('div.carousel-inner').find('.active').children('video').get(0).play(); 
 		
 		/* 	pause(); all inactive videos
@@ -376,7 +444,7 @@ jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
 Shortens captions by appending three periods
 */
 function limit_captions(){
-	$('.text_wrapper').dotdotdot({
+	$('.dotdotdot').dotdotdot({
         // configuration goes here
     });
 }

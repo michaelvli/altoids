@@ -1,0 +1,17 @@
+	<!-- Jumbotron -->
+	<div class="jumbotron dark">
+		<h3><strong>CHECK OUT THE VIBE BEFORE YOU GO</strong></h3>
+		<p class="grey-text">Why read reviews when you can see for yourself?  We provide videos. You choose the venue.</p>
+	</div>
+<% if false %>
+	<!-- Carousel -->
+	<%= render partial: 'carousel', object: @venue_videos, as: 'videos' %>
+<% end %>	
+
+	<!-- Jumbotron -->
+	<div class="jumbotron">
+		<P>Watch videos</p>
+		<p>Discover events</p>
+		<p>Find specials</p>
+		<%= link_to "Create Your Free Account", new_user_path, class:"btn btn-primary btn-sm" %>
+	</div>

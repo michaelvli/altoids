@@ -8,9 +8,7 @@
 	<%= render partial: 'geolocation_instructions_modal' %>
 </div>
 
-<% if false %>			
-	VENUE SQL:<%= @sql_venues %> <br>
-<% end %>
+	VENUE SQL:<%= @venues.to_sql %> <br>
 
 <!-- Carousel -->
 <div class="container">

@@ -9,8 +9,9 @@
 						<!-- Thumbnail content - Event info -->
 								<div class="carousel-caption event">
 									<h2><strong><%= venue.venue_event_name %></strong></h2>
-									<div class='text_wrapper'>
-										<!-- class: 'text_wrapper' calls jQuery.dotdotdot plugin to truncate description -->
+									
+									<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+									<div class='dotdotdot'>
 										<p><%= venue.venue_event_description %></p>
 									</div>	
 <% if false %>

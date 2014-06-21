@@ -5,6 +5,8 @@
 
 <!-- Carousel -->
 <div id="myCarousel" class="carousel slide">
+SQL: <%= @venues.to_sql %>
+
 	<!-- Indicators -->
     <ol class="carousel-indicators">
 		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -12,72 +14,53 @@
         <li data-target="#myCarousel" data-slide-to="2"></li>
     </ol>
     <div class="carousel-inner">
-        <div class="item active">
+		<% @venues.each_with_index do |venue, index|%>
+		  <% if index == 0 %>
+			<div class="item active">
+		  <% else %>
+			<div class="item">
+		  <% end %>
 <% if false %>		
-			<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
+				<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
 <% end %>			
-			<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-			<%= tag("video", controls: false, autoplay: false, loop: true, muted: false, autobuffer: true, open: true) %>
-				<source src="https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-				Your browser does not support the video tag.
-			<%= tag("/video", {}, open: true) %>			
+				<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
+				<%= tag("video", controls: false, autoplay: false, loop: true, muted: false, autobuffer: true, open: true) %>
+					<%= tag("source", src: "https://s3.amazonaws.com/barfly_full_videos/"+venue.file_name+".mp4") %> <!-- AVC(H.264) format -->			
+<% if false %>
+					<source src='https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4' type='video/mp4' /> <!-- AVC(H.264) format -->			
+					<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+					<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+<% end %>					
+					Your browser does not support the video tag.
+				<%= tag("/video", {}, open: true) %>
 
-			<div class="carousel-caption">
-				<h4><em>Event Type</em></h4>
-				<h2><strong>Event Name</strong></h2>
-				<p class="description">Event Description</p>
-				<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
-			</div>
-			<div class="carousel-caption venue">
-				<h2>Benchmark</h2>
-				<p><em>Neighborhood</em></p>
-			</div>
+				<div class="carousel-caption">
+					<h4><em><%= venue.event_type_name %></em></h4>
+					<h2><strong><%= venue.venue_event_name %></strong></h2>
+					
+					<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+					<div class='dotdotdot'>
+						<p><%= venue.venue_event_description %></p>
+					</div>	
+					
+					<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
+				</div>
+				<div class="carousel-caption venue">
+					<h2><%= venue.venue_name %></h2>
+					<p><em><%= venue.neighborhood.name %></em></p>
+				</div>
+				
+			</div> <!-- item -->
+		<% end %>
 
-		</div>
-        <div class="item">
-<% if false %>		
-			<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
-<% end %>			
-			<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-			<%= tag("video", controls: false, autoplay: false, loop: true, muted: false, autobuffer: true, open: true) %>
-				<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-				Your browser does not support the video tag.
-			<%= tag("/video", {}, open: true) %>
-			<div class="carousel-caption">
-				<h4><em>Event Type</em></h4>
-				<h2><strong>Event Name</strong></h2>
-				<p>Event Description</p>
-				<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
-			</div>
-			<div class="carousel-caption venue">
-				<h2>Benchmark</h4>
-				<p><em>Neighborhood</em></h5>
-			</div>
-        </div>
-        <div class="item">
-<% if false %>		
-			<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
-<% end %>
-			<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-			<%= tag("video", controls: false, autoplay: false, loop: true, muted: false, autobuffer: true, open: true) %>
-				<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-				Your browser does not support the video tag.
-			<%= tag("/video", {}, open: true) %>
-			<div class="carousel-caption">
-				<h4><em>Event Type</em></h4>
-				<h2><strong>Event Name</strong></h2>
-				<p>Event Description</p>
-				<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
-			</div>
-			<div class="carousel-caption venue">
-				<h2>Benchmark</h4>
-				<p><em>Neighborhood</em></h5>
-			</div>
-        </div>
+
     </div> <!- carousel-inner -->
     <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
     <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
 </div><!-- /.carousel -->
+
+
+
 
 <!-- Marketing messaging - Wrap the rest of the page in another container to center all the content. -->
 <div class="container marketing">
