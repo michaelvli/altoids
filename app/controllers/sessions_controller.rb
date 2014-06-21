@@ -42,8 +42,8 @@ class SessionsController < ApplicationController
 #ORDER BY subquery.start_time asc
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-	#		@venues = Venue.select("SELECT DISTINCT ON(venues.id), venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
-	#		@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
+			@venues = Venue.select("SELECT DISTINCT ON(venues.id), venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
 		end
 
 		# if latitude and longitude parameters are available, show distance from venues to user
