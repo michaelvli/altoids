@@ -65,11 +65,9 @@ module SessionsHelper
 	session.delete(:section)
 	session.delete(:venue_id)
 	session.delete(:screen_width)
-	session.delete(:session_device_size)
 	session.delete(:latitude)
 	session.delete(:longitude)
-	cookies.delete(:device_size)
-	cookies.delete(:obtained_size)
+#	cookies.delete(:device_size)  #Need to keep this cookie so application will serve appropriate view template (mobile vs. desktop)
     cookies.delete(:remember_token)  # Delete the cookie with the remember_token
   end
   

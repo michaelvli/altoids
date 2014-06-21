@@ -23,6 +23,10 @@ body {
 	margin-right:auto;
 }
 
+.dotdotdot{
+		width: 100%;
+		height: 35%;
+	}
 
 /* ID specific styling
 */
@@ -92,6 +96,13 @@ body {
 	top: 120px;
 	text-align: left;
 	z-index: 5;
+	
+	// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
+	// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
+	.dotdotdot{
+		width: 100%;
+		height: 35%;
+	}
 }
 
 .carousel-caption.venue{
@@ -132,8 +143,8 @@ body {
 			font-size: 11px;
 		}
 		// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
-		// .text_wrapper is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .text_wrapper selector
-		.text_wrapper{
+		// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
+		.dotdotdot{
 			width: 100%;
 			height: 35%;
 		}
