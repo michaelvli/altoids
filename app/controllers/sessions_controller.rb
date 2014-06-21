@@ -27,8 +27,8 @@ class SessionsController < ApplicationController
 #  (SELECT venue_id, name, start_time, description, MIN(start_time) FROM venue_events GROUP BY venue_id) AS venue_events
 #ON  venue_events.venue_id = venues.id
 
-		@venue_events = VenueEvent.select('venue_id, name, start_time, description, MIN(start_time)').group('venue_id').to_sql
-		@venues = Venue.select('venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time')
+		@venue_events = VenueEvent.select("venue_id, name, start_time, description, MIN(start_time)").group("venue_id").to_sql
+		@venues = Venue.select("venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
 		@venues = @venues.joins("LEFT OUTER JOIN (#{@venue_events}) AS venue_events ON venues.id = venue_events.venue_id")
 		
 		else # For a PostGreSQL db
@@ -42,8 +42,9 @@ class SessionsController < ApplicationController
 #ORDER BY subquery.start_time asc
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-			@venues = Venue.select("SELECT DISTINCT ON(venues.id), venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+			@venues = Venue.select("DISTINCT ON(venues.id) venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
 			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
+			@venues = @venues.order("venues.id, venue_events.start_time asc")
 		end
 
 		# if latitude and longitude parameters are available, show distance from venues to user
