@@ -45,7 +45,7 @@ class SessionsController < ApplicationController
 			@venues = Venue.select("DISTINCT ON(venues.id) venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
 			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
 			@venues = @venues.order("venues.id, venue_events.start_time asc")
-			@venues = @venues.select("*").order("venue_events.start_time asc")
+			@venues = @venues.order("venue_events.start_time asc")
 			end
 
 		# if latitude and longitude parameters are available, show distance from venues to user
