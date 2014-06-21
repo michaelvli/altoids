@@ -42,7 +42,7 @@ class SessionsController < ApplicationController
 #ORDER BY venue_name asc
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-#			@subquery = Venue.select("SELECT DISTINCT ON(venues.id)	venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+#			@subquery = Venue.select("DISTINCT ON(venues.id) venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
 #			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues_id = venue_events_venue_id")
 #			@subquery = @subquery.order("venue_id, venue_events.start_time asc")
 #			@venues = @subquery
@@ -50,9 +50,10 @@ class SessionsController < ApplicationController
 
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-			@venues = Venue.select("DISTINCT ON(venues.id) venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
-			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
-			@venues = @venues.order("venues.id, venue_events.start_time asc")
+			@venues = Venue.select("DISTINCT ON(venues.id) venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events_venue_id")
+			@venues = @venues.order("venue_id, venue_events.start_time asc")
+
 
 		end
 
