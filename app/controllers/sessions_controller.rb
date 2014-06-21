@@ -46,7 +46,6 @@ class SessionsController < ApplicationController
 			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
 			@subquery = @subquery.order("venues.id, venue_events.start_time asc")
 			@venues = Arel::SelectManager.new(Arel::Table.engine, Arel.sql("(#{@subquery.to_sql}) as subquery"))
-			@venues = @venues.select("*").order("subquery.start_time asc")
 			
 
 			
