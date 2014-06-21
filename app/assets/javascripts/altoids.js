@@ -1,5 +1,5 @@
 /*  Custom javascript for application  */
-function set_cookie ( cookie_name, cookie_value, lifespan_in_days, valid_domain ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
+function set_cookie_vee ( cookie_name, cookie_value, lifespan_in_days, valid_domain ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
 {
     // http://www.thesitewizard.com/javascripts/cookies.shtml
     var domain_string = valid_domain ?
@@ -142,7 +142,7 @@ function setScreenSizeCookie(callback){
 //		alert("laptop "  + "width: " + screen.width + " height: " + screen.height);	
 		device_size = 'md'
 	}
-	set_cookie('device_size', device_size, days_before_expiring);
+	set_cookie_vee('device_size', device_size, days_before_expiring);
 	callback();
 }
 
