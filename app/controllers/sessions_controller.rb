@@ -33,8 +33,8 @@ class SessionsController < ApplicationController
 		
 		else # For a PostGreSQL db
 #SELECT * FROM
-#(SELECT DISTINCT ON(venues.id) 
-#	venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time 
+#(SELECT DISTINCT ON(venues.id)
+#	venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time 
 #FROM "venues" 
 #LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id
 #ORDER BY venues.id, venue_events.start_time asc)
@@ -42,31 +42,34 @@ class SessionsController < ApplicationController
 #ORDER BY venue_name asc
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-			@subquery = Venue.select("SELECT DISTINCT ON(venues.id)	venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
-			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues_id = venue_events_venue_id")
-			@subquery = @subquery.order("venue_id, venue_events.start_time asc")
-			@venues = @subquery
+#			@subquery = Venue.select("SELECT DISTINCT ON(venues.id)	venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+#			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues_id = venue_events_venue_id")
+#			@subquery = @subquery.order("venue_id, venue_events.start_time asc")
+#			@venues = @subquery
 #			@venues = Venue.joins("JOIN (#{@subquery}) subquery ON venues.id = subquery.id").
 
-			
 
-			
-			end
+			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
+			@venues = Venue.select("DISTINCT ON(venues.id) venues.name as venue_name, venues.phone, venues.file_name, venue_events.id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
+			@venues = @venues.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
+			@venues = @venues.order("venues.id, venue_events.start_time asc")
+
+		end
 
 		# if latitude and longitude parameters are available, show distance from venues to user
-#		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
+		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
 			# Info about geocoder for methods like near() and order("distance"):
 			# http://www.rubygeocoder.com/
 			# http://stackoverflow.com/questions/11463940/rails-geocoder-and-near
 			# NOTE: near() method has problems with includes or left outer joins.  
 			# To use near() with left outer joins, do query conditions without includes BEFORE ARel compiles and executes:
 			# https://github.com/alexreisner/geocoder/issues/99
-#			max_distance = 1000 # in km
-#			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
-#		end		
+			max_distance = 1000 # in km
+			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
+		end		
 
 #		@venues = @venues.search(params[:search])
-#		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
+		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		@venues = @venues.page(params[:page]).per_page(2)
 		
 		respond_to do |format|
