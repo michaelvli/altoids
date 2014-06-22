@@ -20,18 +20,18 @@ class SessionsController < ApplicationController
 		# DISTINCT ensures that unique list of venue names will displayed
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
 		
-		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-#SELECT venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time
+#		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+#SELECT venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time
 #FROM "venues"
 #LEFT OUTER JOIN
 #  (SELECT venue_id, name, start_time, description, MIN(start_time) FROM venue_events GROUP BY venue_id) AS venue_events
 #ON  venue_events.venue_id = venues.id
 
-		@venue_events = VenueEvent.select("venue_id, name, start_time, description, MIN(start_time)").group("venue_id").to_sql
-		@venues = Venue.select("venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
-		@venues = @venues.joins("LEFT OUTER JOIN (#{@venue_events}) AS venue_events ON venues.id = venue_events.venue_id")
+#		@venue_events = VenueEvent.select("venue_id, name, start_time, description, MIN(start_time)").group("venue_id").to_sql
+#		@venues = Venue.select("venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
+#		@venues = @venues.joins("LEFT OUTER JOIN (#{@venue_events}) AS venue_events ON venues.id = venue_events.venue_id")
 		
-		else # For a PostGreSQL db
+#		else # For a PostGreSQL db
 #SELECT * FROM
 #(SELECT DISTINCT ON(venues.id)
 #	venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time 
@@ -42,19 +42,42 @@ class SessionsController < ApplicationController
 #ORDER BY venue_name asc
 
 			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-#			@subquery = Venue.select("DISTINCT ON(venues.id) venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id as venue_events_venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")		
-#			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues_id = venue_events_venue_id")
-#			@subquery = @subquery.order("venue_id, venue_events.start_time asc")
+#			@subquery = Venue.select("DISTINCT ON(venues.id) venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
+#			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
+#			@subquery = @subquery.order("venues.id, venue_events.start_time asc")
+#			@venues = @subquery
 #			@venues = Venue.joins("JOIN (#{@subquery}) subquery ON venues.id = subquery.id").
 
+#		@venue_events = VenueEvent.select("venue_id, name, start_time, description, MIN(start_time)").group("venue_id").to_sql
+#		@venues = Venue.select("venues.name as venue_name, venues.phone, venues.file_name,  venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
+#		@venues = @venues.joins("LEFT OUTER JOIN (#{@venue_events}) AS venue_events ON venues.id = venue_events.venue_id")
 
-			# NOTE: DISTINCT ON IS ONLY FOR POSTGRESQL
-			@subquery = Venue.select("DISTINCT ON(venues.id) venues.id as venue_id, venues.name as venue_name, venues.phone, venues.file_name, venue_events.venue_id, venue_events.name as venue_event_name, venue_events.description as venue_event_description, venue_events.start_time")
-			@subquery = @subquery.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id")
-			@subquery = @subquery.order("venues.id, venue_events.start_time asc")
-			@venues = @subquery
-		end
 
+#		end
+
+
+# SELECT venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, 
+#	neighborhoods.name AS neighborhood_name, neighborhoods.id, 
+#	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+# FROM "venues" 
+# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
+# LEFT OUTER JOIN 
+#	(SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
+#	 FROM "venue_events" JOIN 
+#		(SELECT MIN(start_time) as event_start_time, venue_id 
+#		 FROM "venue_events" 
+#		 GROUP BY venue_id) subquery1 
+#	 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
+# ON subquery2.venue_id = venues.id
+
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id").group("venue_id").to_sql
+		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
+		subquery2 = subquery2.select("venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time").to_sql
+		@venues = Venue.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = venues.id")
+		@venues = @venues.select("venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, neighborhoods.name AS neighborhood_name, neighborhoods.id, subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		@venues = @venues.joins(:neighborhood)
+
+		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
 			# Info about geocoder for methods like near() and order("distance"):
@@ -109,19 +132,19 @@ class SessionsController < ApplicationController
 		if (sort_parameter_list.include?(params[:sort_order]))
 			case params[:sort_order]
 			when 'name_asc'
-				return 'venues.name asc'
+				return 'venue_name asc'
 			when 'name_desc'
-				return 'venues.name desc'
+				return 'venue_name desc'
 			when 'neighborhood'
-				return 'neighborhoods.name asc, venues.name asc'
+				return 'neighborhood_name asc, venue_name asc'
 			when 'distance'
 				return 'distance'
 			when 'event'
 				# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
 				if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-					return 'venue_events.start_time is null, venue_events.start_time asc'
+					return 'event_start_time is null, event_start_time asc'
 				else
-					return 'venue_events.start_time asc NULLS LAST'
+					return 'event_start_time asc NULLS LAST'
 				end
 			end
 		end
