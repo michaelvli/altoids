@@ -40,8 +40,20 @@ else
 //		alert("DOM ready");
 			if ($('.carousel').length)
 			{
-				carousel_behavior(); // plugin
+				carousel_behavior();
 			}
+			
+			if ($('.dotdotdot').length)
+			{
+				limit_captions(function(){
+					$( ".active.item" ).each(function( index ) {
+						if(index != 0){
+							$(this).removeClass('active');
+						}
+					});
+				});
+			}	
+
 			
 			if ($('#venue_event_start_date').length)
 			{
@@ -81,11 +93,6 @@ else
 				endless_scroll();
 			}
 			
-			if ($('.dotdotdot').length)
-			{
-//alert('1');			
-				limit_captions(); // plugin
-			}	
 	}); // DOM READY
 	$(document).on('page:load', page_load_functions); // Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
 	$(document).on('page:update', page_update_functions); // Additional page events are needed or else Turbolinks may prevent some functions from loading - https://github.com/rails/turbolinks
@@ -107,7 +114,7 @@ function page_load_functions(){
 	if ($('.dotdotdot').length)
 	{
 //alert('2');
-		limit_captions(); // plugin
+//		limit_captions(); // plugin
 	}
 }
 
@@ -331,11 +338,6 @@ function carousel_behavior(){
 	
 	// start playing first video
 	$('div.carousel-inner').find('.active').children('video').get(0).play();
-
-	$('.carousel').on('slide.bs.carousel', function () {
-//		alert("slide method started");
-		limit_captions();
-	});
 	
 	// start/pause videos based on when carousel slides
 	$('.carousel').on('slid.bs.carousel', function () {
@@ -443,10 +445,14 @@ function get_list(url, sort_order, latitude, longitude){
 jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
 Shortens captions by appending three periods
 */
-function limit_captions(){
+function limit_captions(callback){
 	$('.dotdotdot').dotdotdot({
         // configuration goes here
     });
+	if (callback != null)
+	{
+		callback();
+	}	
 }
 
 

@@ -55,8 +55,34 @@ class Venue < ActiveRecord::Base
     end
   end
   
-  #  Select random venues for carousel on home page
-  def self.carousel_prep(options={})
+  def self.venues_with_or_without_events(options={}) # only returns venues that have events
+	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
+	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
+	
+# SELECT venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, 
+#	neighborhoods.name AS neighborhood_name, neighborhoods.id, 
+#	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+# FROM "venues" 
+# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
+# LEFT OUTER JOIN 
+#	(SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
+#	 FROM "venue_events" JOIN 
+#		(SELECT MIN(start_time) as event_start_time, venue_id 
+#		 FROM "venue_events" 
+#		 GROUP BY venue_id) subquery1 
+#	 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
+# ON subquery2.venue_id = venues.id
+			
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id").group("venue_id").to_sql
+		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
+		subquery2 = subquery2.select("venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time").to_sql
+		@venues = Venue.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = venues.id")
+		@venues = @venues.select("venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, neighborhoods.name AS neighborhood_name, neighborhoods.id, subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		@venues = @venues.joins(:neighborhood)
+			
+  end
+  
+  def self.venues_with_events_only(options={}) # only returns venues that have events
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
 	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
 	
@@ -74,11 +100,35 @@ class Venue < ActiveRecord::Base
 #			.limit(3)
 #	end
 
-		select("venues.*, venue_events.*, events.*, venues.name as venue_name, venue_events.name as venue_event_name, venue_events.description as venue_event_description, events.name as event_type_name")
-			.where(id: [1, 2, 4])
-			.joins(:venue_events) #			.joins("LEFT OUTER JOIN venue_events ON venues.id = venue_events.venue_id AND venue_events.id = (SELECT venue_events.id FROM venue_events ORDER BY venue_events.start_time asc LIMIT 1)")
-			.joins(:events)
-			.order("RANDOM()")			
+#SELECT venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, 
+#	neighborhoods.name AS neighborhood_name, neighborhoods.id, 
+#	events.name AS event_type_name, 
+#	subquery2.name AS venue_event_name, subquery2.event_id, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+#FROM "venues" 
+#INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
+#LEFT OUTER JOIN 
+#	(SELECT venue_events.venue_id, venue_events.event_id AS event_id, venue_events.name, venue_events.description, venue_events.start_time 
+#	FROM "venue_events" 
+#	JOIN 
+#		(SELECT MIN(start_time) as event_start_time, venue_id 
+#		FROM "venue_events" 
+#		GROUP BY venue_id) subquery1 
+#	ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
+#ON subquery2.venue_id = venues.id
+#INNER JOIN "events" ON "events"."id" = subquery2.event_id
+			
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id").group("venue_id").to_sql
+		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
+		subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id, venue_events.name, venue_events.description, venue_events.start_time").to_sql
+		@venues = Venue.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = venues.id")
+		@venues = @venues.where(id: [1, 2, 4]) # Just for development purposes - remove for production
+		@venues = @venues.select("venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, 
+			neighborhoods.name AS neighborhood_name, neighborhoods.id, 
+			events.name AS event_type_name,
+			subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		@venues = @venues.joins(:neighborhood)
+		@venues = @venues.joins("INNER JOIN events ON events.id = subquery2.event_id")
+			
   end
   
   #  Select venues with live video to showcase on home page
