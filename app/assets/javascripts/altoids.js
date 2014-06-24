@@ -119,7 +119,7 @@ function page_load_functions(){
 }
 
 function page_update_functions(){
-	if ($('.dotdotdot').length)
+	if ($('.dotdotdot').length && $('.carousel').length == 0) // Need to make sure there is no carousel or else limit_captions() will write over the original dotdotdot for the carousel -prob because the .active class has been stripped already.
 	{
 //alert('3');
 		limit_captions(); // plugin
