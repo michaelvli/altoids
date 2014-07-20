@@ -3,61 +3,13 @@
 	<%= render 'sessions/signup_modal' %>
 </div>
 
-<!-- Carousel -->
+<!-- Carousel --> <!-- "data-ride='carousel'" is the data attribute that starts the carousel's sliding automatically upon page load -->				
 <div id="myCarousel" class="carousel slide">
-
 <% if false %>
 	SQL: <%= @venues.to_sql %>
 <% end %>
-
-	<!-- Indicators -->
-    <ol class="carousel-indicators">
-		<li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <div class="carousel-inner">
-		<% @venues.each_with_index do |venue, index|%>
-			<div class="item active"> <!-- need for all items to be active initially in order for jQuery dotdotdot to execute then hide non-active items post dotdotdot. -->
-<% if false %>		
-				<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
-<% end %>			
-				<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true}, open: true) %>
-					<%= tag("source", src: "https://s3.amazonaws.com/barfly_full_videos/"+venue.file_name+".mp4") %> <!-- AVC(H.264) format -->			
-<% if false %>
-					<source src='https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4' type='video/mp4' /> <!-- AVC(H.264) format -->			
-					<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-					<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-<% end %>					
-					Your browser does not support the video tag.
-				<%= tag("/video", {}, open: true) %>
-
-				<div class="carousel-caption">
-					<h4><em><%= venue.event_type_name %></em></h4>
-					<h2><strong><%= venue.venue_event_name %></strong></h2>
-					
-					<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
-					<div class='dotdotdot'>
-						<p><%= venue.venue_event_description %></p>
-					</div>	
-					
-					<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
-				</div>
-				<div class="carousel-caption venue">
-					<h2><%= venue.venue_name %></h2>
-					<p><em><%= venue.neighborhood.name %></em></p>
-				</div>
-				
-			</div> <!-- item -->
-		<% end %>
-
-
-    </div> <!- carousel-inner -->
-    <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-    <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-</div><!-- /.carousel -->
-
+	<%= render 'sessions/carousel' %>
+</div><!-- .carousel -->
 
 
 
@@ -69,26 +21,26 @@
 <% if false %>	
         <div class="col-lg-3 pull-right vee-blue">
 			<%= render 'sessions/form_signup' %>
-        </div><!-- /.col-lg-4 -->
+        </div><!-- .col-lg-4 -->
 <% end %>		
 		<div class="col-lg-4">
 			<img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
 			<h2>Watch Videos</h2>
 			<p>Insert marketing message about videos, live and recorded.</p>
 			<p><a class="btn btn-default" href="#" role="button">View videos</a></p>
-        </div><!-- /.col-lg- -->
+        </div><!-- .col-lg- -->
         <div class="col-lg-4">
 			<img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
 			<h2>Discover Events</h2>
 			<p>Insert marketing message about events.</p>
 			<p><a class="btn btn-default" href="#" role="button">View events &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
+        </div><!-- .col-lg-4 -->
         <div class="col-lg-4">
 			<img class="img-circle" data-src="holder.js/140x140" alt="Generic placeholder image">
 			<h2>Find Specials</h2>
 			<p>Insert marketing message about specials.</p>
 			<p><a class="btn btn-default" href="#" role="button">View specials &raquo;</a></p>
-        </div><!-- /.col-lg-4 -->
-    </div><!-- /.row -->
+        </div><!-- .col-lg-4 -->
+    </div><!-- .row -->
 
-</div><!-- /.container -->
+</div><!-- .container -->

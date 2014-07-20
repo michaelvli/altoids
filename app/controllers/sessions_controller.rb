@@ -76,21 +76,21 @@ class SessionsController < ApplicationController
 		sort_parameter_list = ['name_asc', 'name_desc', 'neighborhood', 'distance', 'event']
 		if (sort_parameter_list.include?(params[:sort_order]))
 			case params[:sort_order]
-			when 'name_asc'
-				return 'venue_name asc'
-			when 'name_desc'
-				return 'venue_name desc'
-			when 'neighborhood'
-				return 'neighborhood_name asc, venue_name asc'
-			when 'distance'
-				return 'distance'
-			when 'event'
-				# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
-				if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-					return 'event_start_time is null, event_start_time asc'
-				else
-					return 'event_start_time asc NULLS LAST'
-				end
+				when 'name_asc'
+					return 'venue_name asc'
+				when 'name_desc'
+					return 'venue_name desc'
+				when 'neighborhood'
+					return 'neighborhood_name asc, venue_name asc'
+				when 'distance'
+					return 'distance'
+				when 'event'
+					# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
+					if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+						return 'event_start_time is null, event_start_time asc'
+					else
+						return 'event_start_time asc NULLS LAST'
+					end
 			end
 		end
 	end	

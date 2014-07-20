@@ -1,172 +1,33 @@
-						<div class="venue-container">
-						
-							<div class="venue_button_window">
-								<span class="glyphicon glyphicon-play-circle" ></span>
-							</div>
-							
-							<!-- parameter variables, device and file_name, are passed to partial file, "stand_alone_pages\_video.html.erb" -->
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+video.file_name+"-00001.png", class: "poster-responsive")  %>							
-
-							<%= tag("video", controls: false, autoplay: false, loop: true, muted: true, autobuffer: true, class: "video-responsive", open: true) %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_hls_streams/"+"phone"+"/"+video.file_name+"/"+video.video_id.to_s+"/"+video.file_name+".m3u8") %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_mp4_streams/"+"phone"+"/"+video.file_name+"/"+video.video_id.to_s+"/"+video.file_name+".mp4") %>
-							<%= tag("/video", {}, open: true) %>
-
-							<% if video.live == true %>
-								<div class="live-caption">
-									<heading>LIVE</heading>
-								</div>
-							<% else %>
-								<div class="recorded-caption">
-									<heading>RECORDED</heading>
-								</div>
-							<% end %>	
-				
-							<% if params[:action] != 'tearsheet' %>
-							
-								<!-- container for captions about the venue -->
-								<div class="carousel-caption portrait-visible landscape-never-visible fade-toggle">
-									<heading><%= video.name %></heading><br>
-									<subheading><%= video.neighborhood.name %></subheading><br>
-								</div>
-
-								<div class="carousel-caption portrait-hidden landscape-visible">
-									<heading><%= video.name %></heading>
-									<subheading>&nbsp;(<%= video.neighborhood.name %>)</subheading><br>
-									<subheading>
-										<%= video.address %>,&nbsp;<%= video.city %>,&nbsp;<%= video.state %>
-									</subheading>
-								</div>
-							<% end %>	
-						</div> <!-- venue-container -->
-
-						<% if params[:action] != 'tearsheet' %>
-							<div class="event-container">
-
-								<div class="venue portrait-hidden landscape-never-visible slide-toggle">
-									<heading><%= video.name %></heading><br>
-									<div class="form-group">
-										<subheading><%= video.address %></subheading><br>
-										<subheading><%= video.city %>,&nbsp;<%= video.state %></subheading><br>
-									</div>	
-								</div>
-
-								<%= link_to "More", {controller: "stand_alone_pages", action: "tearsheet", id: video.venue_id}, class:"btn btn-xs btn-primary portrait-hidden landscape-never-visible slide-toggle" %>				
-								<div class="event">
-									<% video.venue_events.upcoming_event.each do |event|%>
-										<heading><%= event.name %></heading><br>
-										<div class="form-group portrait-hidden landscape-always-visible slide-toggle" >
-											<subheading>
-												<%= event.description %>
-												<%= link_to "More...", "", class:"text-link portrait-never-visible landscape-visible" %>
-											</subheading>
-										</div>
-									<% end %>
-								</div>
-															
-								<div class="date-time">	
-									<% video.venue_events.upcoming_event.each do |event|%>
-										<subheading><%= event.start_time.strftime('%a, %b %e @ %l:%M %p') %></subheading><br>
-									<% end %>	
-								</div>
-								
-								<div class="event_button_window landscape-never-visible">
-									<span class="glyphicon glyphicon-collapse-down"></span>
-									<span class="glyphicon glyphicon-collapse-up"></span>
-								</div>
-
-							</div> <!-- event-container -->
-						<% end %>
-
-
-
-						
-
-
-<% if false %>
-						<div class="venue-container">
-						
-							<div class="venue_button_window">
-								<span class="glyphicon glyphicon-play-circle" ></span>
-							</div>
-							
-							<!-- parameter variables, device and file_name, are passed to partial file, "stand_alone_pages\_video.html.erb" -->
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+@carousel_array[i].file_name+"-00001.png", class: "poster-responsive")  %>							
-							
-							<%= tag("video", controls: false, autoplay: false, loop: true, muted: true, autobuffer: true, class: "video-responsive") %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_hls_streams/"+"phone"+"/"+@carousel_array[i].file_name+".m3u8") %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_mp4_streams/phone/"+@carousel_array[i].file_name+".mp4") %>
-							<%= tag("/video") %>					
-<% if false %>
-							<!-- the link_to below uses DATA-REMOTE=TRUE!!!! -->
-							<%= link_to image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+@carousel_array[i].file_name+"-00001.png", class: "poster-responsive"), {:controller => "stand_alone_pages", :action => "play_video", :device => "phone", :file_name => @carousel_array[i].file_name}, :"data-remote" => true  %>
-
-								<video id="benchmark-video" class="video-responsive" loop controls poster="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png">
-									<source src="https://s3.amazonaws.com/barfly_hls_streams/phone/benchmark.m3u8" />
-									<source src="https://s3.amazonaws.com/barfly_mp4_streams/phone/benchmark.mp4" />
-									<source src="http://vjs.zencdn.net/v/oceans.mp4" />
-									<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.MOV" />
-									Your browser can't play this video.
-								</video>
-
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+@carousel_array[i].file_name+"-00001.png", class: "poster-responsive") %>
-
-							<%= tag("video", controls: false, autoplay: false, loop: true, muted: true, autobuffer: true, class: "video-responsive") %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_hls_streams/"+"phone"+"/"+@carousel_array[i].file_name+".m3u8") %>
-								<%= tag("source", src: "https://s3.amazonaws.com/barfly_mp4_streams/phone/"+@carousel_array[i].file_name+".mp4") %>
-							<%= tag("/video") %>
+			<div class="item active"> <!-- need for all items to be active initially in order for jQuery dotdotdot to execute then hide non-active items post dotdotdot. -->
+<% if false %>		
+				<img src="https://s3.amazonaws.com/barfly_thumbnails/phone/benchmark-00001.png" alt="Second slide">
 <% end %>
-							<!-- container for captions about the venue -->
-							<div class="carousel-caption portrait-visible landscape-never-visible fade-toggle">
-								<heading><%= @carousel_array[i].name %></heading><br>
-								<subheading><%= @carousel_array[i].neighborhood.name %></subheading><br>
-							</div>
-
-							<div class="carousel-caption portrait-hidden landscape-visible">
-								<heading><%= @carousel_array[i].name %></heading>
-								<subheading>&nbsp;(<%= @carousel_array[i].neighborhood.name %>)</subheading>
-								<br>
-								<subheading>
-									<%= @carousel_array[i].address %>,&nbsp;<%= @carousel_array[i].city %>,&nbsp;<%= @carousel_array[i].state %>
-								</subheading>
-							</div>
-						</div> <!-- venue-container -->
-
-						<div class="event-container">
-
-							<div class="venue portrait-hidden landscape-never-visible slide-toggle">
-								<heading><%= @carousel_array[i].name %></heading><br>
-								<div class="form-group">
-									<subheading><%= @carousel_array[i].address %></subheading><br>
-									<subheading><%= @carousel_array[i].city %>,&nbsp;<%= @carousel_array[i].state %></subheading><br>
-								</div>	
-							</div>
-							
-							<%= link_to "More Info", "", class:"btn btn-xs btn-primary portrait-hidden landscape-never-visible slide-toggle" %>
-			
-							<div class="event">
-								<heading>
+	
+				<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
+				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true}, open: true) %>
+					<%= tag("source", src: "https://s3.amazonaws.com/barfly_full_videos/"+venue.file_name+".mp4") %> <!-- AVC(H.264) format -->			
+<% if false %>
+					<source src='https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4' type='video/mp4' /> <!-- AVC(H.264) format -->			
+					<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+					<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+<% end %>					
+					Your browser does not support the video tag.
+				<%= tag("/video", {}, open: true) %>
 								
-									<% @carousel_array[0].each do |venue_test| %>
-										venue_test_name
-									<% end %>
-								</heading><br>
-								<div class="form-group portrait-hidden landscape-always-visible slide-toggle" >
-									<subheading>
-										Event description: not sure how many characters will fit in this box but let's give it a shot and see.
-										<%= link_to "More...", "", class:"text-link portrait-never-visible landscape-visible" %></subheading>
-								</div>
-							</div>
-														
-							<div class="date-time">	
-								<subheading>Wed, Jan 31 @ 12:59 PM</subheading><br>
-							</div>
-							
-							<div class="event_button_window landscape-never-visible">
-								<span class="glyphicon glyphicon-collapse-down"></span>
-								<span class="glyphicon glyphicon-collapse-up"></span>
-							</div>
+				<div class="carousel-caption">
+					<h4><em><%= venue.event_type_name %></em></h4>
+					<h2><strong><%= venue.venue_event_name %></strong></h2>
+					
+					<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+					<div class='dotdotdot'>
+						<p><%= venue.venue_event_description %></p>
+					</div>	
+					
+					<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
+				</div>
+				<div class="carousel-caption venue">
+					<h2><strong><%= venue.venue_name %></strong></h2>
+					<p><em><%= venue.neighborhood.name %></em></p>
+				</div>
 				
-						</div> <!-- event-container -->
-						
-<% end %>
+			</div> <!-- item -->

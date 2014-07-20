@@ -11,11 +11,14 @@ $color-light: #e6e6e6;
 $color-lighter: #f0f0f0;
 $color-lightest: #fafafa;
 
+// device sizes for responsive design
+$device-max-width-phone: 767px;
+$device-max-width-tablet: 768px;
 
 body {
 // navbar-fixed-top.css
 //  min-height: 2000px;
-	padding-top: 70px;
+	padding-top: 50px;
 	background-color: $color-darker;
 	color: $color-light;
 	max-width: 1450px; // video in carousel doesn't need to be bigger than 1450px
@@ -23,10 +26,11 @@ body {
 	margin-right:auto;
 }
 
+// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
+// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
 .dotdotdot{
 		width: 100%;
 		height: 35%;
-//		@extend .vee-red;
 	}
 
 
@@ -39,12 +43,65 @@ body {
   letter-spacing: -1px;
 }
 
+@media (min-width: $device-max-width-tablet) {
+//	.navbar-nav.navbar-right:last-child,
+//	.navbar-form.navbar-right:last-child{
+//		margin-right: 10px;
+//	}
+//	.navbar-form {
+//		.checkbox {
+//	border-style: solid !important;
+//	border-width: 1px !important;
+//	border-color: red !important;
+//		}	
+//	}
 
-/* Navbar
-*/
+	#signup-heading {
+		font-size: 35px;
+	}
+}
+
+
+/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/*/
+.slide-container {
+  position: relative;
+  overflow: hidden;
+  @extend .vee-red;
+}
+
+.slide-container .slide-content {
+  position: relative;
+//  left: 0;
+//  bottom: 0;
+	z-index: 10;
+  @extend .vee-yellow;
+  
+}
+
+.slide-container .hidden-content {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  z-index: 5;
+  @extend .vee-blue;
+}
+
+
+/* Navbar */
 .navbar-inverse {
-  border-color: #080808;
-  background-color:rgba(0,0,0,0.7); // matches $color-darker
+  border-color: $color-dark;
+//  background-color:rgba(0,0,0,0.7); // matches $color-darker
+  background-color:rgba(0,0,0,1); // matches $color-darker
+  border: 0 1px 0 0;
+}
+  
+@media (max-width: $device-max-width-phone) {
+	.navbar-toggle {
+//		border-color: transparent !important;
+	}
+	.navbar-toggle:hover, .navbar-toggle:focus {
+//		background-color: transparent !important;
+	}
 }
 
 .padding {
@@ -58,7 +115,77 @@ body {
 		display: inline;
 	}
 }
-	
+
+
+
+/* Footer */
+.show-filters-fixed-bottom, .apply-filters-fixed-bottom {
+  position: fixed;
+  bottom: 20px;
+  right: 0;
+  left: 0;
+  margin-bottom: 0;
+  border-width: 1px 0 0;
+  z-index: 1060;
+  text-align: center;
+}
+
+.apply-filters-fixed-bottom {
+	display: none;
+	bottom: 0px;
+	padding: 10px 15px 10px 15px;
+	background-color: $color-dark;
+}
+
+#show-filters {
+	color: white;
+	font-size: 110%;
+	font-weight: bold;
+//	background-color: black;
+	background-color:rgba(0,0,0,0.5);
+	border: 1px solid $color-medium;
+	border-radius: 15px;
+//	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+//	opacity: 0.5;
+//	filter: alpha(opacity=50);
+	width: 35%;
+}
+
+#show-filters:active, #show-filters.active {
+	color: $color-dark;
+//	background-color: $color-light;
+	background-color:rgba(230,230,230,0.5);
+}
+
+#apply-filters{
+	border-radius: 0px;
+	padding: 10px 0px 10px 0px;
+	font-weight: bold;
+}
+
+
+
+/* Jumbotron */	
+
+.jumbotron{
+//	@extend .vee-red;
+//	margin-top: -20px; // positions jumbotron right under navbar
+	color: initial;
+	text-align: center;
+	margin-bottom: 0px;
+	background: -webkit-linear-gradient($color-light, #b5b5b5); /* For Safari */
+	background: -o-linear-gradient($color-light, #b5b5b5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient($color-light, #b5b5b5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient($color-light, #b5b5b5); /* Standard syntax (must be last) */	
+}
+
+.jumbotron.dark{
+	color: $color-light;
+	background: initial;
+	background-color: $color-dark;
+}
+
+
 
 /* Carousel
 */
@@ -98,14 +225,7 @@ body {
 	left: 65%;
 	top: 120px;
 	text-align: left;
-	z-index: 5;
-	
-	// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
-	// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
-//	.dotdotdot{
-//		width: 100%;
-//		height: 35%;
-//	}
+	z-index: 5;	
 }
 
 .carousel-caption.venue{
@@ -115,16 +235,91 @@ body {
 	text-align: left;
 }
 
+@media (max-width: $device-max-width-phone) {
+	.carousel { // overide carousel-theme.css
+		height: auto;
+		margin-bottom: 0px;
+	}
+	
+	.carousel .item { // overide carousel-theme.css
+		height: initial; 
+	}
+	
+	.carousel-inner > .item > img { // overide carousel-theme.css
+		position: initial;
+	}
+	
+	.carousel-caption{
+		position: absolute;
+		right: 10%;
+		left: 55%;
+		top: 10%;
+		text-align: left;
+		z-index: 5;
+		h2{
+			font-size: 12px;
+			margin-bottom: 5px;
+		}
+		p{
+			font-size: 10px;
+			margin-bottom: 5px;
+		}
+	}	
+	
+	.dotdotdot{
+		width: 100%;
+		height: 40%;
+	}
+}
+
 
 /* Thumbnails */
 
 .thumbnail-container{
+    text-align: center;
+	@media (max-width: $device-max-width-phone) {
+		padding: 0;
+	}
+
 	.thumbnail {
 		padding: 1px; // creates the border around thumbnail images
 		background-color: $color-medium-dark;
 		border: 1px solid $color-medium-dark;
 		border-radius: 0;
+		@media (max-width: $device-max-width-phone) {		
+			padding: 0;
+			margin: 0;
+			border-radius: 0;
+			border: 0;
+			border-top: 1px solid $color-dark;
+			border-bottom: 1px solid $color-dark;
+			font-size: 95%;
+		    text-align: center;
+		}
 	}
+	
+	.live-caption{
+		position: absolute;
+		z-index: 10;
+		top: 5%;
+		left: 5%;
+		text-align: left;
+		color: #ffffff;
+		font-size: .9em;
+		font-weight: bold;
+	}
+
+	.recorded-caption{
+		position: absolute;
+		z-index: 10;
+		top: 5%;
+		left: 5%;
+		text-align: left;
+		color: red;
+		font-size: .9em;
+		font-weight: bold;
+	}
+		
 	.carousel-caption{
 		position: absolute;
 		right: 7%;
@@ -145,13 +340,8 @@ body {
 		p{
 			font-size: 11px;
 		}
-		// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
-		// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
-//		.dotdotdot{
-//			width: 100%;
-//			height: 35%;
-//		}
 	}
+	
 	.carousel-caption.venue{
 		position: absolute;
 		left: 7%;
@@ -160,19 +350,52 @@ body {
 		top: initial;
 		text-align: left;
 		padding: 0;
+		@media (max-width: $device-max-width-phone) {
+			left: 5%;
+			bottom: 7%;
+		}
 		h2{
 			display: inline;
 			font-size: 13px;
 			font-weight: bold;
 			margin-bottom: 0;
 			margin-top: 0;
+			@media (max-width: $device-max-width-phone) {
+				font-size: 12px;
+			}
 		}
 		p{
 			font-size: 12px;
 			margin-bottom: 0;
+			@media (max-width: $device-max-width-phone) {
+				font-size: 11px;
+			}
 		}
 	}
+	
+	.video-responsive {
+		display: none;
+		max-width: 100%;
+		z-index: 5;  // start with video "beneath" images
+	}
+	
+	.glyphicon-play-circle {
+	//	@extend .vee-red;
+		position: absolute;
+		left: 0; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+		right: 0; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+		top: 40%;
+		font-size: 3em;
+		color: #ffffff;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+		opacity: 0.2;
+		filter: alpha(opacity=20);
+		z-index: 5;
+	}
+
 }
+
+
 
 /* Sort and Filter*/
 .btn-group, .btn-group-vertical {
@@ -247,23 +470,6 @@ body {
 }
 
 
-@media (min-width: 768px) {
-//	.navbar-nav.navbar-right:last-child,
-//	.navbar-form.navbar-right:last-child{
-//		margin-right: 10px;
-//	}
-//	.navbar-form {
-//		.checkbox {
-//	border-style: solid !important;
-//	border-width: 1px !important;
-//	border-color: red !important;
-//		}	
-//	}
-
-	#signup-heading {
-		font-size: 35px;
-	}
-}
  
 /* debugging 
 */
