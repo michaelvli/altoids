@@ -17,13 +17,24 @@
 	<header>
 		<%= render 'layouts/navigation' %>
 	</header>
-	
+			
 	<div class="container">
 		<%= render 'layouts/messages', flash: flash %>
 	</div>
 
-	<%= yield %>
+<% if false %>	
+	<div class="slide-container">
+		<div class="slide-content">
+			<%= yield %>
+		</div>
+		<div class="hidden-content">
+			test test test test test test test test test test test test test test test test
+		</div>
+	</div>
+<% end %>
 	
+	<%= yield %>
+		
 	<footer>
 		<%= render 'layouts/footer' %>
 	</footer>

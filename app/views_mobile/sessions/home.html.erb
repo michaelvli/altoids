@@ -1,0 +1,29 @@
+<!-- Carousel -->
+<div class="container">
+	<div class="row">
+		<!-- Thumbnails -->
+		<div class="col-md-9">
+			<div class="row" id="endless_list">
+				<!--  Venue thumbnails are inserted here via AJAX -->
+			</div>
+			
+			<!-- Pagination -->
+			<div id="pagination-links" class="text-center">	
+				<%= image_tag("loading-arrows.gif", id: "loading-indicator")%>
+				<%= will_paginate @venues %>
+			</div>
+		</div>
+
+		<!-- Sort and Filter -->
+		<div id="filter-container" class="col-md-3 collapse">
+			<%= form_tag home_path, :method => 'get' do %>
+				<%= hidden_field_tag :sort_order, params[:sort_order], {id:'hidden_field_sort'} %>
+				<%= hidden_field_tag :latitude, params[:latitude], {id:'hidden_field_latitude'} %>
+				<%= hidden_field_tag :longitude, params[:longitude], {id:'hidden_field_longitude'} %>
+				
+				<%= render partial: "sort" %>
+			<% end %>
+		</div>
+	</div>
+	
+</div><!-- container -->

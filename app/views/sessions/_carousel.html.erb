@@ -1,0 +1,18 @@
+	<!-- Indicators -->
+	<ol class="carousel-indicators">
+		<% @venues.each_with_index do |venue, index|%>
+			<% if index == 0 %>
+				<li data-target="#myCarousel" data-slide-to="<%= index %>" class="active"></li>
+			<% else %>
+				<li data-target="#myCarousel" data-slide-to="<%= index %>"></li>
+			<% end %>
+		<% end %>
+	</ol>
+
+    <div class="carousel-inner">
+		<% @venues.each_with_index do |venue, index|%>
+			<%= render 'sessions/carousel_items', venue: venue %>
+		<% end %>
+    </div> <!- carousel-inner -->
+    <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>

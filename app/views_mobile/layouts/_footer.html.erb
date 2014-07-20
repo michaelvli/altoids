@@ -1,0 +1,17 @@
+    <% if params[:action] == "home" %>
+	
+		<nav class="show-filters-fixed-bottom">
+
+			<% if false %>
+				<%= link_to "Filters", {:controller => "stand_alone_pages", :action => "show_filters"}, :id => "show-filters", :class => "btn btn-sm", :"data-remote" => true, :"data-toggle" => "modal", :"data-target" => "#barflyModal" %>
+			<% end %>
+
+			<button class="btn btn-sm" id="show-filters" data-toggle="modal" data-target="#FilterSortModal" >Filters</button>
+
+		</nav>
+		
+		<nav class="apply-filters-fixed-bottom">
+			<button class="btn btn-primary col-xs-12" id="apply-filters">Apply Filters</button>
+		</nav>
+		
+	<% end %>
