@@ -48,7 +48,7 @@ gem 'debugger', group: [:development, :test]
 gem 'bootstrap-sass', '~> 3.1.1'
 
 #	Datepicker from jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
-gem 'jquery-ui-rails' # for datepicker gem... requires 'rails', '~>4.0.0' (instead of gem 'rails', '4.0.0')
+gem 'jquery-ui-rails', '~> 4.2.1' # for datepicker gem... requires 'rails', '~>4.0.0' (instead of gem 'rails', '4.0.0')
 
 #  	Combined time fields - https://github.com/excid3/combined_time_select
 gem 'combined_time_select', '~> 1.0.1'
