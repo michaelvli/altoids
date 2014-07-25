@@ -13,6 +13,7 @@ class SessionsController < ApplicationController
 			@venues = Venue.venues_with_events_only
 			@venues = @venues.order("RANDOM()")
 			@venues = @venues.limit(5)
+			@user = User.new
 		end	
 	end
 

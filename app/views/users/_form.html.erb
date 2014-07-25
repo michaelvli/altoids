@@ -22,7 +22,7 @@
 		<% end %>	
 	<% end %>
 	
-	<% if !@user.nil? %>
+	<% if !current_user.nil? && current_user.account_type == "admin" %>
 		<%= f.form_group :active, label: { text: "Active" } do %>
 			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@user.active == true if !@user.nil?) %>
 			<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@user.active == false if !@user.nil?) %>

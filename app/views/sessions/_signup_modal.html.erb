@@ -3,23 +3,43 @@
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h2 id="signup-heading">Sign Up! <span class="text-muted">It's free!</span></h2>
+				<span>Join BarFly</span>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			</div>	
+			<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+				<%= f.alert_message "Please fix the errors below:" %>				
+				<div class="modal-body padding">
+					<%= render 'users/form', f: f %>
+				</div>
+				<div class="modal-footer">
+					<%= f.submit 'Sign Up', class: 'btn btn-success' %>
+				</div>
+			<% end %>
 		</div>
-		<%= bootstrap_form_for(:user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
-			<%= f.alert_message "Please fix the errors below:" %>
-<% if false %>  Debugging only
-			<%= f.error_summary %>
-<% end %>
+	</div>	
+
+<% if false %>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h2 id="signup-heading">Sign Up! <span class="text-muted">It's free!</span></h2>
+			</div>
+			<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+				<%= f.alert_message "Please fix the errors below:" %>
+	<% if false %>  Debugging only
+				<%= f.error_summary %>
+	<% end %>
+					
+				<div class="modal-body padding">
+					<%= render 'users/form', f: f %>
+				</div>
 				
-			<div class="modal-body padding">
-				<%= render 'users/form', f: f %>
-			</div>
-			
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<%= f.submit 'Sign Up', class: 'btn btn-success' %>
-			</div>
-		<% end %>
-    </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<%= f.submit 'Sign Up', class: 'btn btn-success' %>
+				</div>
+			<% end %>
+		</div>
   </div>
+<% end %>  

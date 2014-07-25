@@ -18,13 +18,14 @@ $device-max-width-tablet: 768px;
 body {
 // navbar-fixed-top.css
 //  min-height: 2000px;
-	padding-top: 50px;
+	padding-top: 55px;
 	background-color: $color-darker;
 	color: $color-light;
 	max-width: 1450px; // video in carousel doesn't need to be bigger than 1450px
 	margin-left:auto;
 	margin-right:auto;
 }
+
 
 // jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
 // .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
@@ -42,7 +43,7 @@ body {
   line-height: 1;
   letter-spacing: -1px;
 }
-
+			
 @media (min-width: $device-max-width-tablet) {
 //	.navbar-nav.navbar-right:last-child,
 //	.navbar-form.navbar-right:last-child{
@@ -61,30 +62,45 @@ body {
 	}
 }
 
+#sign_up_form, #log_in_form{
+	display: none;
+}
+
+
 
 /* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/*/
 .slide-container {
-  position: relative;
-  overflow: hidden;
-  @extend .vee-red;
+	position: relative;
+	overflow: hidden;
 }
 
 .slide-container .slide-content {
-  position: relative;
-//  left: 0;
-//  bottom: 0;
+	position: relative;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
 	z-index: 10;
-  @extend .vee-yellow;
-  
 }
 
 .slide-container .hidden-content {
-  position: fixed;
-  top: 50px;
-  left: 50px;
-  z-index: 5;
-  @extend .vee-blue;
+//	@extend .vee-red;
+	position: fixed;
+	top: 55px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: $color-darkest;
+	z-index: 5;
+	padding: 0 15px 0 15px; // top right bottom  left
+	margin-right: auto;
+	margin-left: auto;
+	overflow: auto;
+//  overflow-y: scroll;
+//  -webkit-overflow-scrolling: touch;
 }
+
 
 
 /* Navbar */
@@ -117,6 +133,13 @@ body {
 }
 
 
+/* Labels */
+
+@media (max-width: $device-max-width-phone) {
+	label.control-label{
+		display: none;
+	}
+}
 
 /* Footer */
 .show-filters-fixed-bottom, .apply-filters-fixed-bottom {
@@ -165,7 +188,7 @@ body {
 
 
 
-/* Jumbotron */	
+/* General */	
 
 .jumbotron{
 //	@extend .vee-red;
@@ -185,13 +208,45 @@ body {
 	background-color: $color-dark;
 }
 
+.section:first-child{
+	padding: 0 0 0 0; // top right bottom  left
+	margin: 15px 0 15px 0; // top right bottom  left
+	color: $color-light;
+	font-size: 1.2em;
+}
+
+
+
+/* Modal 
+*/
+.modal-header {
+	border-bottom: 0px solid #e5e5e5;
+	color: $color-light;
+	font-weight: bold;
+	background: -webkit-linear-gradient($color-darker, $color-medium-dark); /* For Safari */
+	background: -o-linear-gradient($color-darker, $color-medium-dark); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient($color-darker, $color-medium-dark); /* For Firefox 3.6 to 15 */
+	background: linear-gradient($color-darker, $color-medium-dark); /* Standard syntax (must be last) */	
+	button {
+		color: white;
+	}
+}
+
+
+.modal-content{
+	color: $color-dark;
+	font-size: 1em;
+	padding: 0 0 0 0;
+	margin: 10px;
+}
+
 
 
 /* Carousel
 */
 
 .carousel {
-	margin-top: -20px; // positions video right under navbar
+//	margin-top: -20px; // positions video right under navbar
 	position: relative; // necessary for centering oversized video in carousel
     overflow: hidden; // necessary for centering oversized video in carousel
 }
@@ -237,7 +292,7 @@ body {
 
 @media (max-width: $device-max-width-phone) {
 	.carousel { // overide carousel-theme.css
-		height: auto;
+		height: initial;
 		margin-bottom: 0px;
 	}
 	
@@ -247,6 +302,7 @@ body {
 	
 	.carousel-inner > .item > img { // overide carousel-theme.css
 		position: initial;
+		height: initial;
 	}
 	
 	.carousel-caption{
