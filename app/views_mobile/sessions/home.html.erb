@@ -8,8 +8,10 @@
 			</div>
 			
 			<!-- Pagination -->
-			<div id="pagination-links" class="text-center">	
+			<div id="pagination-links" class="text-center">
+<% if false %>			
 				<%= image_tag("loading-arrows.gif", id: "loading-indicator")%>
+<% end %>				
 				<%= will_paginate @venues %>
 			</div>
 		</div>

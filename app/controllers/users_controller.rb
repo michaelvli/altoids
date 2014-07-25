@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:index, :destroy]
 
-  before_filter :check_for_mobile, :only => [:new, :edit]
+  before_filter :check_for_mobile, :only => [:new, :edit, :create]
   
   def index
 	@users = User.all
@@ -26,8 +26,15 @@ class UsersController < ApplicationController
 		  redirect_to users_path
 		end
     else
-	  flash.now[:error] = "Uh oh... please fix your info"
-      render 'new'
+		@venues = Venue.venues_with_events_only
+		@venues = @venues.order("RANDOM()")
+		@venues = @venues.limit(5)
+	  if current_user && current_user.account_type == "admin" # if user has signed in already, then creating a new user must be done by an admin in which case admin should be taken to users/new.html.erb
+		flash.now[:error] = "Uh oh... please fix your info"
+		render 'new' 
+	  else  # if user has not logged in and received an error message, then user needs to be taken to splash page with appropriate window displayed
+		render :template => "sessions/splash"
+	  end
     end
   end
 

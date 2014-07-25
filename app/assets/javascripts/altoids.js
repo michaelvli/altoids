@@ -1,5 +1,5 @@
 /*  Custom javascript for application  */
-function set_cookie_vee ( cookie_name, cookie_value, lifespan_in_days, valid_domain ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
+function set_cookie ( cookie_name, cookie_value, lifespan_in_days, valid_domain ) // Need to define get_cookie at beginning since it is used before DOM is loaded.
 {
     // http://www.thesitewizard.com/javascripts/cookies.shtml
     var domain_string = valid_domain ?
@@ -49,25 +49,67 @@ else
 //		alert("DOM ready");
 
 			// load jquery used for mobile version
-			if (get_cookie( 'device_size' ) == 'xs')
-//			if (get_cookie( 'device_size' ) == 'md' || get_cookie( 'device_size' ) == 'xs') // for development only
+//			if (get_cookie( 'device_size' ) == 'xs')
+			if (get_cookie( 'device_size' ) == 'md' || get_cookie( 'device_size' ) == 'xs') // for development only
 			{
 				show_sort_filter_panel(); // controls display of sort & filter panel
 				
 				$('.slide-left').on('click', function(){ // slides screen content to the left to reveal menu options
+				
 					var slideContent = $('.slide-content');
+					var button = $(this).data('button');
+/*					
 					slideContent.animate({
 						// slideContent.outerWidth() : width of .slide-content (including padding and margin)
 						// $(this).outerWidth() - 15*2 : width of navbar-toggle button + left margin (15px) + right margin (15px)
 						// parseInt : parses a string and returns an integer.  In this case, the '10' is the radix indicating use of the decimal system
-				//		left: parseInt(slideContent.css('left'),10) == 0 ? - (slideContent.outerWidth()-$(this).outerWidth() - 15*2):0 //Ternary operator: "If the left css property equals zero, move the element to the left as many pixels as it is wide (including padding and border), otherwise, move it back to zero"
-						left: parseInt(slideContent.css('left'),10) == 0 ? - (slideContent.outerWidth() - 30 ):0 //Ternary operator: "If the left css property equals zero, move the element to the left as many pixels as it is wide (including padding and border), otherwise, move it back to zero"
+						left: parseInt(slideContent.css('left'),10) == 0 ? - (slideContent.outerWidth()-$(this).outerWidth() - 15*2):0 //Ternary operator: "If the left css property equals zero, move the element to the left as many pixels as it is wide (including padding and border), otherwise, move it back to zero"
 					});
+*/
+					// If the left css property equals zero, move the element to the left as many pixels as it is wide (including padding and border).					
+					if (parseInt(slideContent.css('left'),10) == 0)
+					{
+						if (button == 'login')
+						{
+							$('#log_in_form').css('display', 'block');
+						}
+						else
+						{
+							$('#sign_up_form').css('display', 'block');
+						}
+						// open slider to reveal hidden content
+						slideContent.animate({
+							left: -(slideContent.outerHeight())
+							}, 
+							function(){
+								slideContent.css('z-index', 0);
+							}
+						);
+						$('#log_in_button').text('  Close  '); // modify text in "Log in" button to "Close"
+					}
+					else // Otherwise, close slider
+					{
+						slideContent.css('z-index', 10);
+						slideContent.animate({
+							left: 0
+							},
+							function(){
+								$('#log_in_form, #sign_up_form').css('display', 'none');
+							}
+						);
+						$('#log_in_button').text('Log in'); // modify text in "Close" button to "Log in"
+					}
+					
 				});
 			}
 
 			if ($('div.alert').length) // fading out flash message alerts
 			{
+//				alert('TEXT: ' + $('div.alert').text().indexOf('Please fix the errors below')); // problem with "creating a free account" from mobile splash page
+				if ($('div.alert').text().indexOf('Please fix the errors below') >= 0) // problem with "creating a free account" from mobile splash page
+				{
+					$('.sign_up_button').trigger("click");
+				}
 				setTimeout(function(){
 					$("div.alert").fadeTo(5000, 0).slideUp(500, function(){
 						$(this).remove();
@@ -98,7 +140,6 @@ else
 			
 			if ($('#endless_list').length)
 			{
-
 //	TESTING GEOLOCATION PERMISSION MODAL
 //localStorage.clear();
 //sessionStorage.clear();
@@ -163,16 +204,15 @@ function page_load_functions(){
 		endless_scroll();
 	}
 	if ($('.dotdotdot').length) // adding ellipsis to end of truncated text
-			{
-				limit_captions(function(){
-					$( ".active.item" ).each(function( index ) { // callback for remove .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-						if(index != 0){
-							$(this).removeClass('active');
-						}
-					});
-				});
-			}
-
+	{
+		limit_captions(function(){
+			$( ".active.item" ).each(function( index ) { // callback for remove .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+				if(index != 0){
+					$(this).removeClass('active');
+				}
+			});
+		});
+	}
 }
 
 function page_update_functions(){
@@ -206,7 +246,7 @@ function setScreenSizeCookie(callback){
 //		alert("laptop "  + "width: " + screen.width + " height: " + screen.height);	
 		device_size = 'md'
 	}
-	set_cookie_vee('device_size', device_size, days_before_expiring);
+	set_cookie('device_size', device_size, days_before_expiring);
 	callback();
 }
 
@@ -216,7 +256,7 @@ function setScreenSizeCookie(callback){
 show_sort_filter_panel - displays sort & filter panel on home page when user clicks on the "filter" button (in footer for mobile page).
 */
 function show_sort_filter_panel(){
-	$('#show-filters, #cancel-filters, #apply-filters').click(function(){
+	$('#show-filters, #cancel-filters, #apply-filters').on('click', function(){
 		$('.show-filters-fixed-bottom, .apply-filters-fixed-bottom, #filter-container, #pagination-links, #endless_list').slideToggle(200);
 		$('html, body').animate({ scrollTop: 0 }, 0);
 	});
@@ -547,7 +587,7 @@ jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
 Shortens captions by appending three periods
 */
 function limit_captions(callback){
-//alert("Capitions are screwing up because pictures haven't been fully loaded yet by the time dotdotdot executes - need to call dotdotdot after pictures have been loaded");
+//alert("Captions are screwing up because pictures haven't been fully loaded yet by the time dotdotdot executes - need to call dotdotdot after pictures have been loaded");
 	$('.dotdotdot').dotdotdot({
         // configuration goes here
     });

@@ -1,12 +1,3 @@
-<!-- Modal -->
-<div class="modal fade" id="signupModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<%= render 'sessions/signup_modal' %>
-</div>
-
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<%= render 'sessions/login_modal' %>
-</div>
-
 	<!-- Carousel -->
 	<div id="myCarousel" class="carousel slide">
 	<% if false %>
@@ -29,5 +20,7 @@
 <% if false %>		
 		<a class="btn btn-primary btn-sm" href="#newUser">Create Your Free Account</a>
 <% end %>
-		<%= link_to "Create Your Free Account", new_user_path, class:"btn btn-primary btn-sm" %>
+		<%= button_tag class:"btn btn-primary slide-left sign_up_button", :data => { :button => 'signup' } do %>
+			Create Your Free Account
+		<% end %>
 	</div>

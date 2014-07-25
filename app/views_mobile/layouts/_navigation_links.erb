@@ -1,7 +1,12 @@
 <%# Non-administrator management menu - located on right side of navigation bar %>
 
-<ul class="nav navbar-nav navbar-right">
-	<% if current_user %>		
+<ul class="nav nav-pills nav-stacked">
+	<% if current_user %>
+	
+		<li class= <%= navbar_active_helper('sessions') %> ><%= link_to "Venues", home_path %></li>
+		<li class= <%= navbar_active_helper('sessions') %> ><%= link_to "Events", home_path(current_user.id) %></li>
+		<li class= <%= navbar_active_helper('sessions') %> ><%= link_to "Specials", home_path(current_user.id) %></li>
+
 		<!-- Venue Management dropdown menu -->
 		<% if current_user.account_type == "venue" %>
 			<li class="dropdown">
@@ -12,9 +17,7 @@
 				</ul>
 			</li>
 		<% end %>
-
-		<li class= <%= navbar_active_helper('sessions') %> ><%= link_to "Home", home_path %></li>		
-
+		
 		<!-- User dropdown menu -->
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Hi,&nbsp;<%= current_user.first_name %>! <b class="caret"></b></a>
@@ -25,14 +28,14 @@
 		</li>	
 	<% else %>
 		<!-- Signing up for new account modal window -->
-		<li><%= link_to "Sign Up", '#!', class:"sign_up_button", :"data-toggle" => "modal", :"data-target" => "#myModal" %></li>
+		<li><%= link_to "Sign Up", '#', :"data-toggle" => "modal", :"data-target" => "#myModal" %></li>
 		<!-- Log in dropdown form -->
 		<li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown">Log In<b class="caret"></b></a>
 			<ul class="dropdown-menu padding">
 				<%= bootstrap_form_for(:session, url: sessions_path, layout: :horizontal, label_col: "col-sm-0", control_col: "col-sm-12") do |f| %>
 					<%= render 'sessions/login_form', f: f %>
-					<%= f.form_group do %>
+					<%= f.form_group do %>  <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
 						<%= f.submit 'Sign In', class: 'btn btn-success btn-sm' %>
 					<% end %>
 				<% end %>
