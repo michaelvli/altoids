@@ -1,0 +1,93 @@
+				<!-- MENU -->
+				<nav id='menu' class='collapsible collapse'>
+					<div class="section">
+						HOME
+					</div>
+					<div class="btn-group-vertical">
+						<%= link_to "Venues", home_path, class:"btn btn-glass", :data =>{ :button => "#venues" } %>
+						<%= link_to "Events", events_list_path, class:"btn btn-glass", :data =>{ :button => "#events" } %>
+						<%= link_to "Specials", "#", class:"btn btn-glass", :data =>{ :button => "#specials" } %>
+					</div>
+					
+					<div class="section">
+						MY ACCOUNT
+					</div>
+					<div class="btn-group-vertical">					
+						<label class="btn btn-glass">
+							Profile
+						</label>
+						<label class="btn btn-glass">
+							<%= link_to "Log out", session_path(current_user.id), method: :delete %>
+						</label>
+					</div>
+					
+					<div class="section">
+						ADMIN
+					</div>
+					<div class="btn-group-vertical">					
+						<label class="btn btn-glass">
+							Venue Info
+						</label>
+						<label class="btn btn-glass">
+							Events
+						</label>
+						<label class="btn btn-glass">
+							Features
+						</label>
+						<label class="btn btn-glass">
+							Neighborhoods
+						</label>
+					</div>					
+				</nav>
+
+
+<% if false %>
+				<!-- MENU -->
+				<div id='menu' class='collapsible collapse'>
+	
+					<div class="section">
+						HOME
+					</div>
+					<div class="btn-group-vertical">
+						<label class="btn btn-glass" data-button="#venues">
+							Venues
+						</label>
+						<label class="btn btn-glass" data-button="#events">
+							Events
+						</label>
+						<label class="btn btn-glass" data-button="#specials">
+							Specials
+						</label>
+					</div>
+					
+					<div class="section">
+						MY ACCOUNT
+					</div>
+					<div class="btn-group-vertical">					
+						<label class="btn btn-glass">
+							Profile
+						</label>
+						<label class="btn btn-glass">
+							<%= link_to "Log out", session_path(current_user.id), method: :delete %>
+						</label>
+					</div>
+					
+					<div class="section">
+						ADMIN
+					</div>
+					<div class="btn-group-vertical">					
+						<label class="btn btn-glass">
+							Venue Info
+						</label>
+						<label class="btn btn-glass">
+							Events
+						</label>
+						<label class="btn btn-glass">
+							Features
+						</label>
+						<label class="btn btn-glass">
+							Neighborhoods
+						</label>
+					</div>					
+				</div>
+<% end %>				

@@ -16,9 +16,7 @@ $device-max-width-phone: 767px;
 $device-max-width-tablet: 768px;
 
 body {
-// navbar-fixed-top.css
-//  min-height: 2000px;
-	padding-top: 55px;
+	padding-top: 53px;
 	background-color: $color-darker;
 	color: $color-light;
 	max-width: 1450px; // video in carousel doesn't need to be bigger than 1450px
@@ -27,172 +25,48 @@ body {
 }
 
 
-// jQuery.dotdotdot - https://github.com/BeSite/jQuery.dotdotdot
-// .dotdotdot is the element selector that puts a "..." at after the last line of unfinished text (in the child element of .dotdotdot selector
-.dotdotdot{
-		width: 100%;
-		height: 35%;
-	}
-
-
 	
-/* ID specific styling
-*/
-#signup-heading{
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-			
-@media (min-width: $device-max-width-tablet) {
-//	.navbar-nav.navbar-right:last-child,
-//	.navbar-form.navbar-right:last-child{
-//		margin-right: 10px;
-//	}
-//	.navbar-form {
-//		.checkbox {
-//	border-style: solid !important;
-//	border-width: 1px !important;
-//	border-color: red !important;
-//		}	
-//	}
-
-	#signup-heading {
-		font-size: 35px;
-	}
-}
-
-#sign_up_form, #log_in_form{
-	display: none;
-}
-
-
-
-/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/*/
-.slide-container {
-	position: relative;
-	overflow: hidden;
-}
-
-.slide-container .slide-content {
-	position: relative;
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	z-index: 10;
-}
-
-.slide-container .hidden-content {
-//	@extend .vee-red;
-	position: fixed;
-	top: 55px;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	background: $color-darkest;
-	z-index: 5;
-	padding: 0 15px 0 15px; // top right bottom  left
-	margin-right: auto;
-	margin-left: auto;
-	overflow: auto;
-//  overflow-y: scroll;
-//  -webkit-overflow-scrolling: touch;
-}
-
-
-
-/* Navbar */
-.navbar-inverse {
-  border-color: $color-dark;
-//  background-color:rgba(0,0,0,0.7); // matches $color-darker
-  background-color:rgba(0,0,0,1); // matches $color-darker
-  border: 0 1px 0 0;
-}
-  
-@media (max-width: $device-max-width-phone) {
-	.navbar-toggle {
-//		border-color: transparent !important;
-	}
-	.navbar-toggle:hover, .navbar-toggle:focus {
-//		background-color: transparent !important;
-	}
-}
-
-.padding {
-	min-width: 300px;
-	padding: 15px;
-	.form-group {
-		margin: 0 0 10px 0;
-//		@extend .vee-blue;
-	}
-	.form-inline label {
-		display: inline;
-	}
-}
-
-
-/* Labels */
-
-@media (max-width: $device-max-width-phone) {
-	label.control-label{
-		display: none;
-	}
-}
-
-/* Footer */
-.show-filters-fixed-bottom, .apply-filters-fixed-bottom {
-  position: fixed;
-  bottom: 20px;
-  right: 0;
-  left: 0;
-  margin-bottom: 0;
-  border-width: 1px 0 0;
-  z-index: 1060;
-  text-align: center;
-}
-
-.apply-filters-fixed-bottom {
-	display: none;
-	bottom: 0px;
-	padding: 10px 15px 10px 15px;
-	background-color: $color-dark;
-}
-
-#show-filters {
-	color: white;
-	font-size: 110%;
-	font-weight: bold;
-//	background-color: black;
-	background-color:rgba(0,0,0,0.5);
-	border: 1px solid $color-medium;
-	border-radius: 15px;
-//	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-//	opacity: 0.5;
-//	filter: alpha(opacity=50);
-	width: 35%;
-}
-
-#show-filters:active, #show-filters.active {
-	color: $color-dark;
-//	background-color: $color-light;
-	background-color:rgba(230,230,230,0.5);
-}
-
-#apply-filters{
-	border-radius: 0px;
-	padding: 10px 0px 10px 0px;
-	font-weight: bold;
-}
-
-
-
 /* General */	
 
+.heading {
+	padding: 15px 0 15px 0; //top right bottom left
+}
+
+.section, .subsection{
+	padding: 10px 15px 10px 0px; // top right bottom left
+	color: $color-light;
+	font-size: 1.0em;
+}
+
+@media (max-width: $device-max-width-phone) {
+	.section{
+		padding: 10px 15px 10px 15px; // top right bottom left
+		background: -webkit-linear-gradient($color-dark, $color-medium-dark); /* For Safari */
+		background: -o-linear-gradient($color-dark, $color-medium-dark); /* For Opera 11.1 to 12.0 */
+		background: -moz-linear-gradient($color-dark, $color-medium-dark); /* For Firefox 3.6 to 15 */
+		background: linear-gradient($color-dark, $color-medium-dark); /* Standard syntax (must be last) */
+	}	
+}	
+
+@media (max-width: $device-max-width-phone) {
+	.content{
+		.container{
+			padding: 5px 15px 5px 15px; //top right bottom left
+		}
+		.container:first-child{
+			padding-top: 15px;
+		}
+		.container:last-child{
+			padding-bottom: 15px;
+		}
+	}
+}
+
+.text-center{
+	margin: 0 -50px 0 -50px;
+}
+
 .jumbotron{
-//	@extend .vee-red;
-//	margin-top: -20px; // positions jumbotron right under navbar
 	color: initial;
 	text-align: center;
 	margin-bottom: 0px;
@@ -206,27 +80,94 @@ body {
 	color: $color-light;
 	background: initial;
 	background-color: $color-dark;
+}	
+
+
+
+/* Navbar */
+.navbar-inverse {
+  border-color: $color-dark;
+//  background-color:rgba(0,0,0,0.7); // matches $color-darker
+  background-color:rgba(0,0,0,1); // matches $color-darker
+  border: 0 1px 0 0;
 }
 
-.section:first-child{
+  
+@media (max-width: $device-max-width-phone) {
+	.navbar-header{
+		.btn{
+			float: right;
+			margin-top: 10px;
+			margin-right: 15px;
+			outline: none;
+		}
+	}
+}
+
+
+
+/* Forms */
+@media (max-width: $device-max-width-phone) {
+	label.control-label{
+		display: none;
+	}
+}
+
+#menu{
 	padding: 0 0 0 0; // top right bottom  left
-	margin: 15px 0 15px 0; // top right bottom  left
-	color: $color-light;
-	font-size: 1.2em;
+	.btn-group-vertical {
+		width: 100%;
+		a{
+			padding: 15px 30px 15px 30px; //top right bottom left
+		}
+		a:last-child{
+			margin: 0 0 0 0; //top right bottom left
+		}
+	}
+}
+
+#navbar_back_arrow_button{
+	padding: 8px 10px 3px 10px; //top right bottom left
+	span{
+		margin: -5px 0px -10px 0px; //top right bottom left
+		font-size: 1.5em;
+	}
+}
+
+#log_in_form{
+	min-width: 300px;
+	padding: 15px;
+	.form-group {
+		margin: 0 0 10px 0;
+//		@extend .vee-blue;
+	}
+	.form-inline label {
+		display: inline;
+	}
 }
 
 
 
-/* Modal 
-*/
+@media (max-width: $device-max-width-phone) {
+	#sign_up_form, #log_in_form{
+		padding: 0 15px 0 15px; // top right bottom  left
+	}
+}
+
+
+
+/* Modal */
 .modal-header {
+	border: 1px solid $color-light;
+	border-top-right-radius: 6px;
+	border-top-left-radius: 6px;
 	border-bottom: 0px solid #e5e5e5;
 	color: $color-light;
 	font-weight: bold;
-	background: -webkit-linear-gradient($color-darker, $color-medium-dark); /* For Safari */
-	background: -o-linear-gradient($color-darker, $color-medium-dark); /* For Opera 11.1 to 12.0 */
-	background: -moz-linear-gradient($color-darker, $color-medium-dark); /* For Firefox 3.6 to 15 */
-	background: linear-gradient($color-darker, $color-medium-dark); /* Standard syntax (must be last) */	
+	background: -webkit-linear-gradient($color-dark, $color-medium-dark); /* For Safari */
+	background: -o-linear-gradient($color-dark, $color-medium-dark); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient($color-dark, $color-medium-dark); /* For Firefox 3.6 to 15 */
+	background: linear-gradient($color-dark, $color-medium-dark); /* Standard syntax (must be last) */	
 	button {
 		color: white;
 	}
@@ -242,6 +183,257 @@ body {
 
 
 
+/* Footer */
+.footer-fixed-bottom{
+	position: fixed;
+	bottom: 20px;
+	right: 0;
+	left: 0;
+	margin-bottom: 0;
+	border-width: 5px 0 0;
+	z-index: 1060;
+	text-align: center;
+}
+
+#filter_button {
+	color: white;
+	font-size: 110%;
+	font-weight: bold;
+	background-color:rgba(0,0,0,0.5);
+	border: 1px solid $color-medium;
+	border-radius: 15px;
+//	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+//	opacity: 0.5;
+//	filter: alpha(opacity=50);
+	width: 35%;
+}
+
+#filter_button:active, #filter_button.active {
+	color: $color-dark;
+//	background-color: $color-light;
+	background-color:rgba(230,230,230,0.5);
+}
+
+#apply-filters-fixed-bottom {
+	bottom: 0px;
+	padding: 10px 15px 10px 15px;
+	background-color: $color-dark;
+}
+
+#apply_filters_button{
+	border-radius: 0px;
+	padding: 10px 0px 10px 0px;
+	font-weight: bold;
+}
+
+
+
+
+	
+/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
+@media (max-width: $device-max-width-phone) {
+	#slider-container {
+		#main-content {
+			position: relative;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			z-index: 10;
+			background-color: $color-darkest; // needed in order to "cover up" .hidden-content when sliding
+		}
+		#hidden-content {
+			position: fixed;
+			top: 55px;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+//			z-index: 5;
+			padding: 0 0 0 0; // top right bottom  left
+			margin-right: auto;
+			margin-left: auto;
+			overflow: auto;
+		//  overflow-y: scroll;
+			-webkit-overflow-scrolling: touch; // for touch screens 
+		}
+	}
+}
+
+
+
+/* Buttons 
+	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
+	1.  initial state - button is initially loaded
+	2.  .active class - button is pushed
+	3.  :hover pseudoclass - final state of released button
+	
+	BUTTON STATES - mouse click
+	1.  initial state
+	2.  :hover pseudoclass - mouse hovering over button
+	3.  :active pseudoclass - button is clicked
+	4.  .active class
+*/
+
+.navbar-toggle.collapse {
+  padding: 4px 18px 6px 18px; //top right bottom left
+  margin-top: 9px;
+  margin-right: 15px;
+  margin-bottom: 8px;
+}
+ 
+.navbar-toggle.collapse.signedIn{
+  padding: 4px 13px 6px 14px; //top right bottom left
+}
+
+.btn-group, .btn-group-vertical {
+	width: 100%;
+	label:last-child{
+		margin: 0 0 15px 0; //top right bottom left
+	}
+}
+
+.btn-group {
+	.btn-glass {
+		border-color: white;
+		font-size: 1em;
+	}
+	.glyphicon{
+		font-size: 200%;
+	}
+}
+
+.btn-group-vertical { 
+	.btn-glass {
+		padding: 10px 20px;
+		font-size: 1em;
+		text-align: left;
+	}	
+}
+		
+.btn-group{
+	.btn-glass, .btn-glass:hover{
+		color: white;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass:active, .btn-glass.active{
+		color: $color-dark;
+		background-color: white;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass.hoverClass{
+		color: $color-medium;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+}
+
+.btn-group{
+	a.btn-glass, a.btn-glass:hover, a.btn-glass.active{
+		color: white;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	a.btn-glass:active{
+		color: $color-dark;
+		background-color: white;
+		border-color: white;
+		font-size: 1em;
+	}
+	a.btn-glass.hoverClass{
+		color: $color-medium;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+}
+
+/*
+.btn-group{
+	.btn-glass{
+		color: white;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass:hover{
+		color: yellow;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass:active{
+		color: green;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass.active{
+		color: blue;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+	.btn-glass.hoverClass{
+		color: red;
+		background-color: transparent;
+		border-color: white;
+		font-size: 1em;
+	}
+}
+*/
+
+
+	
+.btn-group > .btn,
+.btn-group-vertical > .btn {
+	border-radius: 0 !important;
+}
+
+.btn-group > .btn{
+	width: 25%;
+}
+	
+@media (max-width: $device-max-width-phone) {
+	.btn-group > .btn{
+		width: 20%;
+	}
+}
+
+
+
+/* ID specific settings */
+	
+@media (max-width: $device-max-width-phone) {
+	#filter-container{
+		.subsection{
+			border: 1px solid red;
+			padding: 5px 0 5px 0; // top right bottom  left
+			margin: 0 0 0 0; // top right bottom  left
+			color: $color-medium;
+			width: 100%;
+		}
+		.content{
+			font-size: 0.8em;
+			padding: 10px 15px 10px 15px; // top right bottom left
+		}
+		.btn-group-vertical {
+			.btn{
+//				border: 1px solid green;
+				padding: 10px 15px 10px 15px; // top right bottom left
+			}
+//			border: 1px solid yellow;
+		}
+	}
+}
+
+
+
 /* Carousel
 */
 
@@ -253,7 +445,7 @@ body {
 
 .carousel-inner{
 	.item{
-		background-color: $color-darkest !important;
+		background-color: $color-darkest;
 	}
 	video{
 		display: block;
@@ -274,13 +466,16 @@ body {
 } 
   
 .carousel-caption{
-//	@extend .vee-red;
 	position: absolute;
 	right: 10%;
 	left: 65%;
 	top: 120px;
 	text-align: left;
-	z-index: 5;	
+	z-index: 5;			
+	.dotdotdot{ // https://github.com/BeSite/jQuery.dotdotdot - '.dotdotdot' element selector uses ellipsis to truncate text (in the child element of .dotdotdot selector)
+		width: 100%;
+		height: 30%;
+	}
 }
 
 .carousel-caption.venue{
@@ -288,6 +483,7 @@ body {
 	left: 10%;
 	top: initial;
 	text-align: left;
+	overflow: visible;
 }
 
 @media (max-width: $device-max-width-phone) {
@@ -320,13 +516,13 @@ body {
 			font-size: 10px;
 			margin-bottom: 5px;
 		}
+		.dotdotdot{
+			width: 100%;
+			height: 40%;
+		}
 	}	
-	
-	.dotdotdot{
-		width: 100%;
-		height: 40%;
-	}
 }
+
 
 
 /* Thumbnails */
@@ -453,77 +649,110 @@ body {
 
 
 
-/* Sort and Filter*/
-.btn-group, .btn-group-vertical {
-	padding: 15px 0 15px 0; // top right bottom  left
-	width: 100%;
-}
-
-.btn-group > .btn,
-.btn-group-vertical > .btn {
-	border-radius: 0 !important;
-}
-
-.btn-group > .btn{
-	width: 25%;
-	font-size: 0.6em;
-}
-
-.btn-group {
-	.btn-glass {
+/* Event buttons - contains date, time, description (toggles between truncated and full), venue name, event name */
+#events, #tearsheet{
+	font-size: 0.8em;
+	.btn-group-vertical {
+		
+		border-bottom-width: 1px;
+		border-bottom-style: solid;
+		border-bottom-color: $color-dark;
+		.btn-glass{
+			padding: 0 0 0 0; //top right bottom left
+		}
+		// for container on the left side (contains the calendar-day icon)
+		.container{
+			float: left;
+			width: 6em;
+			height: 7.5em;
+			padding: 12px 0 0 0; //top right bottom left
+			margin: 0 0 0 0; //top right bottom left
+			.dotdotdot{
+				width: 100%;
+				height: 53%;
+			}
+		}
+		// for container on the right side (contains event type, event name, and event description)
+		.container:last-child{
+			float: initial;
+			width: 100%;
+			height: 7.5em;
+			padding: 12px 12px 6px 0; //top right bottom left
+			font-size: 12px;
+			font-weight: bold;
+			color: white;
+			.event-time{
+				font-size: 10px;
+				font-weight: initial;
+				color: white;
+				text-align: left;
+				padding: 0 0 0 0 // top right bottom left
+			}
+		}
+		.preheadline{
+			font-size: 10px;
+		}
+		.headline{
+			display: block;
+		}
+		.event-description{
+			font-size: 10px;
+			color: $color-medium;
+			padding: 3px 0 0 12px; // top right bottom left
+		}			
+	}
+	.event-date {
+		background-color: $color-light;
+		width: 4em;
+		height: 4em;
+		margin: 0 auto 0 auto; // top right bottom left
+		padding: 3px 2px 3px 0; // top right bottom left
+		border-radius: 6px;
+		day-of-week{
+			display: block;
+			text-align: center;
+			font-size: 9px;
+			color: red;
+		}
+		calendar-day{
+			display: block;
+			text-align: center;
+			font-size: 22px;
+			color: $color-darker;
+		}
+	}
+	.event-time{
+		font-size: 10px;
 		color: white;
-		background-color: transparent;
-		border-color: white;
-		font-size: 0.8em;
+		text-align: center;
+		padding: 6px 0 0 0 // top right bottom left
 	}
-	.glyphicon{
-		font-size: 300%;
-	}
-}
-
-.btn-group-vertical > .btn-glass {	
-	//  @extend .vee-red;
-		color: white;
-		background-color: transparent;
-		border-color: $color-dark;
-		border-width: 0 0 1px 0;
-		padding: 10px 20px;
-		font-size: 1em;
-		text-align: left;
-}
-
-.btn-group, .btn-group-vertical {
-	.btn-glass:hover, .btn-glass:active, .btn-glass.active {
-		color: $color-dark;
-		background-color: white;
-		border-color: white;
-		background-image: none;
-	}		
-}
-
-
-
-/* Admin Panels */
-.panel-heading > h3 {
-	display:inline;
-}
-
-
-/* Additional styling
-*/
-
-// handles left and right margin problem by nesting the inline form within the horizontal form
-.form-inline .form-group{
-    margin-left: 0;
-    margin-right: 0;
-}
-
-.time-select{
-	.col-sm-2 {
-//		@extend .vee-red;
-//		height: 36px; // This was set at auto but there was too much height for the hours selection box.
+	.venue-description{
+		height: 5.5em;
+		.dotdotdot{
+			width: 100%;
+			height: 100%;
+		}
 	}
 }
+
+
+
+/* Google Maps */
+#map{
+	img{
+		width: 100%;
+		height: 100%;
+		margin-bottom: 15px;
+	}
+	.btn{
+		width: 100%;
+	}
+}
+
+
+
+
 
 
  

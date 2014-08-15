@@ -1,4 +1,36 @@
 module ApplicationHelper
+
+	# helper used to present time in the venue modal window (see venues/_show.html.erb)
+	def retrieve_time (arg, day)
+		if (day == "now")
+			var = "venue_" + arg + "_" + Time.zone.now.strftime('%a').downcase
+		else
+			var = "venue_" + arg + "_" + day.to_s[0..2].downcase
+		end	
+		# For more info about rails and timezones, see:  http://danilenko.org/2012/7/6/rails_timezones/
+		# Rails db is always in GMT.
+		# in_time_zone method:  uses Time.zone as the local zone 
+		 @venue.send(var).in_time_zone
+		
+		# localtime method: uses operating system’s time zone.
+		# @venue.send(var).in_time_zone
+	end
+
+	# helper used to present venue and kitchen hours in the venue show page (see venues/show.html.erb)
+	def retrieve_hour (venue_kitchen, open_close, day_of_week)
+		var = venue_kitchen + "_" + open_close + "_" + day_of_week.to_s[0..2]
+		@venue.send(var)
+	end
+	
+	# Used with filters to identify selected features
+	def filter_selection(filter_array, field, checked_or_active)	
+		if !filter_array.nil? && filter_array.include?(field)
+			return checked_or_active
+		else
+			return nil
+		end	
+	end
+
 	def navbar_active_helper(link)
 		if link == params[:controller]
 			return 'active'

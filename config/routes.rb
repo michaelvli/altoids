@@ -11,10 +11,12 @@ Altoids::Application.routes.draw do
   #   get 'products/:id' => 'catalog#view'
 	match '/splash', to: 'sessions#splash', via: 'get'
   	match '/home', to: 'sessions#home', via: 'get'
-
+	match '/events_list', to: 'sessions#events_list', via: 'get'
+	match '/tearsheet', :to => "sessions#tearsheet", via: 'get'
+	
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-
+	
   # Example resource route (maps HTTP verbs to controller actions automatically):
 	resources :products
 	resources :sessions, only: [:new, :create, :destroy]

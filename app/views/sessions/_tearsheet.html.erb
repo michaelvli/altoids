@@ -1,0 +1,111 @@
+<div id="tearsheet">
+	<!-- Carousel -->
+	<% if false %>
+		<%= render partial: 'carousel', object: @venues, as: 'venues' %>
+	<% end %>
+	INSERT VIDEO CAROUSEL HERE
+
+	<div class="section">
+		<%= @venue.name.upcase %>
+	</div>
+	<div class="content">
+		<div class="container">
+			<%= @venue.address %>, <%= @venue.city %>, <%= @venue.state %> <%= @venue.zip_code %>
+		</div>
+		
+		<div class="container venue-description">	
+			<div class="dotdotdot">
+				<em>"<%= @venue.description %>"</em>
+			</div>
+		</div>
+		
+		<!-- TEARSHEET BUTTONS - used for revealing hidden content -->
+		<div class="container">
+			<div class="btn-group" data-toggle="buttons">
+				<label class="btn btn-glass" data-button="map">
+					<input type="radio">
+						<span class="glyphicon glyphicon-pushpin"></span><br>
+						<span class="text-center">Map</span>
+					</input>	
+				</label>
+
+				<label class="btn btn-glass" data-button="hours">
+					<input type="radio">
+						<span class="glyphicon glyphicon-time"></span><br>
+						<span class="text-center">Hours</span>
+					</input>	
+				</label>
+
+				<label class="btn btn-glass" data-button="features">
+					<input type="radio">
+						<span class="glyphicon glyphicon-ok"></span><br>
+						<span class="text-center">Features</span>						
+					</input>	
+				</label>
+
+				<%= link_to 'http://' + @venue.website, class:"btn btn-glass", target:"_blank", :data =>{ :button => "website" } do%>
+					<span class="glyphicon glyphicon-cloud"></span><br>
+					<span class="text-center">Website</span>
+				<% end %>
+
+				<%= link_to 'tel:'+@venue.phone, class:"btn btn-glass", :data =>{ :button => "phone" } do%>
+					<span class="glyphicon glyphicon-earphone"></span><br>
+					<span class="text-center">Call</span>
+				<% end %>
+			</div> <!-- btn btn-glass -->
+		</div> <!-- container -->
+		
+		<!-- GOOGLE MAP -->		
+		<div id="map" class="container collapse">
+			<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
+			<!-- http://railscasts.com/episodes/273-geocoder -->
+			<!-- Responsive iFrame: http://niklausgerber.com/blog/responsive-google-or-bing-maps/ -->
+			<%= image_tag "http://maps.google.com/maps/api/staticmap?size=450x300&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %>
+			<%= link_to "Get Directions", "https://maps.google.com/?q="+@venue.name+","+@venue.address+","+@venue.zip_code, :target => "_blank", class:"btn btn-sm btn-success", :data =>{ :button => "get_directions" } %>
+		</div>	<!-- #map container -->	
+	
+		<!-- HOURS -->
+		<div id="hours" class="container collapse">
+			<table class="table table-condensed no-margin bottom">
+				<% @days_of_week.each do |day_of_week| %>
+					<tr>
+						<td class="text-right no-border">
+							<small>
+								<%= day_of_week.to_s.capitalize %>
+							</small>
+						</td>
+						<td class="text-left no-border">
+							<small>
+								<%= retrieve_time("open", day_of_week).strftime("%l:%M %p") %>
+								&nbsp;-&nbsp;
+								<%= retrieve_time("close", day_of_week).strftime("%l:%M %p") %>
+							</small>	
+						</td>
+					</tr>
+				<% end %>
+			</table>
+		</div>	<!-- #hours container -->	
+		
+		<!-- FEATURES -->
+		<div id="features" class="container collapse">
+			<% Feature.all.each do |feature| %>
+				<div class="checkbox add-margin left">
+					<label>
+						<%= check_box_tag "venue[feature_ids][]", feature.id, @venue.feature_ids.include?(feature.id), class:"regular-checkbox", onclick:"return false"%>
+						<small><%= feature.name %></small><br>
+					</label>
+				</div>
+			<% end %>
+		</div>	<!-- #features container -->	
+				
+	</div> <!-- content -->
+	
+	<div class="section">
+		EVENTS
+	</div>
+	<div class="content">
+		<% @venue_events.each do |venue_event| %>
+			<%= render 'events', event: venue_event %>
+		<% end %>
+	</div>	
+</div>

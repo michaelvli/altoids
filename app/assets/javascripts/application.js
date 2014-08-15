@@ -16,5 +16,10 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require turbolinks
-//= require_tree .
+//= require jquery.cookie
+//= require jquery.dotdotdot
+//= require detectDeviceType
+//= require html5_geolocation
+//= require altoids
 //= require jquery.ui.datepicker
+//= require modernizr

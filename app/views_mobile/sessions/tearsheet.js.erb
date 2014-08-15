@@ -1,0 +1,2 @@
+alert("Used AJAX to get tearsheet");
+$('#dynamic-content').html("<%= escape_javascript(render partial: 'tearsheet', locals: {venue: @venue, venue_events: @venue_events}) %>");

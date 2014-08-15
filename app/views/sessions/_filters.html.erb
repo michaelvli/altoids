@@ -1,0 +1,53 @@
+			<!-- FILTER -->
+<% if (cookies[:deviceType] != 'desktop') %>
+				<div class="section">
+					<span>FILTERS</span>
+				</div>
+	
+<% end %>
+			<div class="content">
+				<div class="subsection">
+					<span>SEARCH</span>
+				</div>
+		
+				<p>
+					<%= text_field_tag :search, params[:search] %>
+<% if false %>					
+					<%= submit_tag "Search", :name => nil %>
+<% end %>					
+				</p>
+					
+				<div class="subsection">
+					FEATURES
+				</div>
+				
+				<!-- data-toggle="buttons" disables links -->
+				<div class="btn-group-vertical">
+					<% for feature in Feature.all do %>
+						<label class="btn btn-glass filter_feature">
+							<input id="<%= feature.name %>" name="feature[]" type="checkbox" value="<%= feature.name %>" <%= filter_selection(params[:feature], feature.name, "checked") %> />&nbsp;<%= feature.name %>
+						</label>
+					<% end %>
+				</div>
+		
+				<div class="subsection">
+					NEIGHBORHOOD
+				</div>
+				
+				<!-- data-toggle="buttons" disables links -->
+				<div class="btn-group-vertical">
+					<% for neighborhood in Neighborhood.all do %>
+						<label class="btn btn-glass filter_neighborhood">
+							<input id="<%= neighborhood.name %>" name="neighborhood[]" type="checkbox" value="<%= neighborhood.name %>" <%= filter_selection(params[:neighborhood], neighborhood.name, "checked") %> />&nbsp;<%= neighborhood.name %>
+						</label>
+					<% end %>
+<% if false %>
+					<label class="btn btn-glass filter_neighborhood">
+						<input id="Lincoln Park" name="neighborhood[]" type="checkbox" value="Lincoln Park" <%= filter_selection(params[:neighborhood], "Lincoln Park", "checked") %> /> Lincoln Park
+					</label>
+					<label class="btn btn-glass filter_neighborhood">
+						<input id="Old Town" name="neighborhood[]" type="checkbox" value="Old Town" <%= filter_selection(params[:neighborhood], "Old Town", "checked") %> /> Old Town
+					</label>
+<% end %>					
+				</div>
+			</div>
