@@ -17,10 +17,7 @@
 		<P>Watch videos</p>
 		<p>Discover events</p>
 		<p>Find specials</p>
-<% if false %>		
-		<a class="btn btn-primary btn-sm" href="#newUser">Create Your Free Account</a>
-<% end %>
-		<%= button_tag class:"btn btn-primary slide-left sign_up_button", :data => { :button => 'signup' } do %>
+		<%= button_tag class:'btn btn-primary slideToggler', id:'sign_up', :data => { :button => '#sign_up_form' } do %>
 			Create Your Free Account
 		<% end %>
 	</div>

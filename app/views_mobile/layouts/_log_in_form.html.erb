@@ -1,0 +1,11 @@
+				<div id='log_in_form' class='collapsible collapse'>
+					<div class="heading">
+						Sign in
+					</div>
+					<%= bootstrap_form_for(:session, url: sessions_path, layout: :horizontal, label_col: "col-sm-0", control_col: "col-sm-12") do |f| %>
+						<%= render 'sessions/log_in_fields', f: f %>
+						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
+							<%= f.submit 'Sign In', class: 'btn btn-success col-xs-12' %>
+						<% end %>	
+					<% end %>
+				</div>

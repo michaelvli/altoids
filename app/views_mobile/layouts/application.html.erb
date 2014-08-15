@@ -12,8 +12,12 @@
   <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
 
+<% if (cookies[:deviceType] == 'desktop' || cookies[:deviceType] == 'tablet' || cookies[:deviceType] == 'phone') %>
+	<body>
+<% else %>
+	<body class='collapse'> <!-- use <body ontouchstart=""> to simulate a "click" when hitting a button for touch screen devices - http://stackoverflow.com/questions/3885018/active-pseudo-class-doesnt-work-in-mobile-safari -->
+<% end %>	
 	<header>
 		<%= render 'layouts/navigation' %>
 	</header>
@@ -21,40 +25,22 @@
 	<div class="container">
 		<%= render 'layouts/messages', flash: flash %>
 	</div>
-	<div class="slide-container">	
-		<div class="slide-content">
+	
+	<div id="slider-container"> <!-- slider needs slider-container -->
+		<div id="main-content">
 			<%= yield %>
 		</div>
-		<div class="hidden-content">
+		<div id="hidden-content">
 			<% if current_user %>
-				<%= render 'layouts/navigation_links' %>
+				<!-- MENU -->
+				<%= render 'layouts/menu' %>
 			<% else %>
-				<div id='log_in_form'>
-					<div class="section">
-						Sign in
-					</div>
-					<%= bootstrap_form_for(:session, url: sessions_path, layout: :horizontal, label_col: "col-sm-0", control_col: "col-sm-12") do |f| %>
-						<%= render 'sessions/login_form', f: f %>
-						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
-							<%= f.submit 'Sign In', class: 'btn btn-success col-xs-12' %>
-						<% end %>	
-					<% end %>
-				</div>
-				<div id='sign_up_form'>
-					<div class="section">
-						Join BarFly
-					</div>
-					<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
-						<%= f.alert_message "Please fix the errors below:" %>
-						<%= render 'users/form', f: f %>
-						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
-							<%= f.submit 'Sign Up', class: 'btn btn-success col-xs-12' %>
-						<% end %>	
-						<p>By signing up, you agree to the Terms of Use and Privacy Policy</p>
-					<% end %>
-				</div>	
+				<!-- SIGN UP/LOG IN FORMS -->
+				<%= render 'layouts/log_in_form' %>
+				<%= render 'layouts/sign_up_form' %>
 			<% end %>
 		</div>
+		
 	</div>
 		
 	<footer>

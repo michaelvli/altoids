@@ -11,8 +11,8 @@ class ApplicationController < ActionController::Base
   # http://railscasts.com/episodes/199-mobile-devices
   
   def check_for_mobile
-#	use_mobile_pages # For development only: controls if I see mobile or desktop version of a page.  Uncomment line below for production.
-	use_mobile_pages unless desktop? # priority is to use a pages from the 'views_mobile' folder over those from the 'views' folder
+	use_mobile_pages # For development only: controls if I see mobile or desktop version of a page.  Uncomment line below for production.
+#	use_mobile_pages unless desktop? # priority is to use a pages from the 'views_mobile' folder over those from the 'views' folder
   end
 
   def use_mobile_pages
@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
 
   def desktop?
-    if (cookies[:device_size] == 'md')
+    if (cookies[:deviceType] == 'desktop')
 		return true
 	else
 		return false

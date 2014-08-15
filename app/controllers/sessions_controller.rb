@@ -1,10 +1,10 @@
 class SessionsController < ApplicationController
-  before_action :signed_in_user, :only => [:home] #see listing 9.44
+  before_action :signed_in_user, :only => [:home, :events_list, :tearsheet] #see listing 9.44
 
   # Using before_filter for rendering mobile vs. desktop versions - http://scottwb.com/blog/2012/02/23/a-better-way-to-add-mobile-pages-to-a-rails-site/
   # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
   # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
-  before_filter :check_for_mobile, :only => [:splash, :home, :new]
+  before_filter :check_for_mobile, :only => [:splash, :new, :home, :events_list, :tearsheet]
   
 	def splash
 		if signed_in?
@@ -17,12 +17,13 @@ class SessionsController < ApplicationController
 		end	
 	end
 
+	
 	def home
 		# Setting up activerecord relation between venues, neighborhoods, and venue_events.
 		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
-		
 		@venues = Venue.venues_with_or_without_events
+#		@venue_events = VenueEvent.upcoming_events(options={}) # for mobile only
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
@@ -34,18 +35,46 @@ class SessionsController < ApplicationController
 			# https://github.com/alexreisner/geocoder/issues/99
 			max_distance = 1000 # in km
 			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
-		end		
-
+#			@venue_events = @venue_events.joins(:venue).merge(Venue.near([params[:latitude], params[:longitude]], max_distance, :select => "venues.*, venue_events.*")) # for mobile only			
+		end
+			
 #		@venues = @venues.search(params[:search])
 		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		@venues = @venues.page(params[:page]).per_page(2)
-		
+
+#		@venue_event_months = @venue_events.group_by { |month| month.start_time.strftime("%B") }
+
 		respond_to do |format|
 			format.html
 			format.js { render :template => 'sessions/home.js.erb', locals: {scroll: params[:scroll]} }
 		end
 	end
+
+	def events_list
+		@venue_events = VenueEvent.upcoming_events(options={}) # for mobile only
+
+		# if latitude and longitude parameters are available, show distance from venue events to user
+		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
+			# see above 'home' action in this controller for info about geocoder plugin methods such as near() and order("distance")
+			max_distance = 1000 # in km
+			@venue_events = @venue_events.joins(:venue).merge(Venue.near([params[:latitude], params[:longitude]], max_distance, :select => "venues.*, venue_events.*")) # for mobile only			
+		end
+
+		@venue_event_months = @venue_events.group_by { |month| month.start_time.strftime("%B") }
+	end
+	
+	def tearsheet
+		@venue = Venue.find(params[:id])
 		
+# temporarily use @venues until integrate the use of the video table.  
+# @venues is used in the 'carousel' partial but using the 'video' table, should feed @videos (i.e. dumdums used '@venue_videos' below) to the 'carousel' partial.
+		@venues = @venue 
+#		@venue_videos = Venue.carousel_prep(:venue_id => (params[:id]))		
+
+		@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+		@venue_events = VenueEvent.upcoming_events(venue_id: params[:id])
+	end
+	
 	def new
 	end
 

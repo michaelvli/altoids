@@ -65,6 +65,9 @@ gem 'will_paginate', '> 3.0'
 #  Squeel gem provides a comprehensive DSL for writing SQL queries in Ruby. http://railscasts.com/episodes/354-squeel?view=asciicast
 gem 'squeel'
 
+#  Modernizr gem provides feature detection library for HTML5/CSS3
+gem 'modernizr-rails'
+
 group :development, :test do
 	#### Use sqlite3 as the database for Active Record
 	gem 'sqlite3'

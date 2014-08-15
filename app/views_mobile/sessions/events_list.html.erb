@@ -1,0 +1,7 @@
+Used HTML to get event list
+<div id="dynamic-content">
+	<%= render partial: 'events_list', locals: { venue_event_months: @venue_event_months } %>
+</div>
+
+<!-- Sort and Filter -->
+<%= render partial: 'filter_sort' %>

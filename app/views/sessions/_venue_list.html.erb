@@ -1,0 +1,31 @@
+					<!-- Venue Thumbnail -->
+					<div class="col-md-6 thumbnail-container">
+					
+						<!-- Thumbnail image-->
+						<a href="#!" class="thumbnail">
+							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
+						</a>
+						
+						<!-- Thumbnail content - Event info -->
+								<div class="carousel-caption event">
+									<h2><strong><%= venue.venue_event_name %></strong></h2>
+									
+									<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+									<div class='dotdotdot'>
+										<p><%= venue.venue_event_description %></p>
+									</div>	
+<% if false %>
+									<p><a class="btn btn-xs btn-primary" href="#" role="button">More</a></p>
+<% end %>									
+								</div>
+							
+						<!-- Thumbnail content - Venue info -->
+						<div class="carousel-caption venue">
+							<h2><%= venue.venue_name %></h2>&nbsp;
+							<% if !venue.try(:distance).nil? %>
+								<small>(<%= venue.distance.round(1) %> miles)</small>
+							<% end %>	
+							<p><em><%= venue.neighborhood.name %></em></p>
+						</div>
+						
+					</div><!-- Venue Thumbnail -->

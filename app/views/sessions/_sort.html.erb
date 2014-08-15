@@ -1,19 +1,10 @@
+		<div class="section">
 			<span>SORT BY</span>
-			<button type="button" class="btn btn-xs btn-primary pull-right" id="cancel-filters" data-dismiss="modal"><strong>Cancel</strong></button>
-			
-<% if false %>						
-			<div class="btn-group">
-
-				<%= link_to 'Distance', params.merge(:sort => 'distance', :page => nil), {class:'btn btn-glass sort'} %>
-				
-				<%= link_to 'A-Z', params.merge(:sort => 'name asc', :page => nil), {class:'btn btn-glass sort'} %>	
-				
-				<%= link_to 'Z-A', params.merge(:sort => 'name desc', :page => nil), {class:'btn btn-glass sort'} %>	
-
-				<%= link_to 'Hood', params.merge(:sort => 'neighborhoods.name asc, name asc', :page => nil), {class:'btn btn-glass sort'} %>
-
-			</div>
-<% end %>			
+			<% if (cookies[:deviceType] != 'desktop') %>
+				<button type="button" class="btn btn-xs btn-primary slideToggler-vert pull-right" id="cancel_filters_button" data-dismiss="modal"><strong>Cancel</strong></button>
+			<% end %>	
+		</div>
+		<div class="content">
 <% if false %>			
 			<div class="btn-group">
 
@@ -46,27 +37,34 @@
 				<!-- Default selection: featured -->
 				<%= link_to home_path, class:'btn btn-glass sort active', id:'event', :data => { :sort => 'event' } do %>
 					<span class="glyphicon glyphicon-ok"></span><br>
-					<%= radio_button_tag 'sort', 'event' %>Featured
+					<%= radio_button_tag 'sort', 'feature' %>
+					<span class="text-center">Featured</span>
 				<% end %>
+
 
 				<%= link_to home_path, class:'btn btn-glass sort', id:'distance', :data => { :sort => 'distance' } do %>
 					<span class="glyphicon glyphicon-map-marker"></span><br>
-					<%= radio_button_tag 'sort', 'distance' %>Distance
+					<%= radio_button_tag 'sort', 'distance' %>
+					<span class="text-center">Distance<span>
 				<% end %>
 
 				<%= link_to home_path, class:'btn btn-glass sort', id:'name_asc', :data => { :sort => 'name_asc' } do %>
 					<span class="glyphicon glyphicon-arrow-down"></span><br>
-					<%= radio_button_tag 'sort', 'name_asc' %>A-Z
+					<%= radio_button_tag 'sort', 'name_asc' %>
+					<span class="text-center">A-Z</span>
 				<% end %>
 				
 				<%= link_to home_path, class:'btn btn-glass sort', id:'name_desc', :data => { :sort => 'name_desc' } do %>
 					<span class="glyphicon glyphicon-arrow-up"></span><br>
-					<%= radio_button_tag 'sort', 'name_desc' %>Z-A
+					<%= radio_button_tag 'sort', 'name_desc' %>
+					<span class="text-center">Z-A</span>
 				<% end %>
 				
 				<%= link_to home_path, class:'btn btn-glass sort', id:'neighborhood', :data => { :sort => 'neighborhood' } do %>
 					<span class="glyphicon glyphicon-pushpin"></span><br>
-					<%= radio_button_tag 'sort', 'neighborhood' %>Hood
+					<%= radio_button_tag 'sort', 'neighborhood' %>
+					<span class="text-center">Hood</span>
 				<% end %>
 				
 			</div>
+		</div>
