@@ -2,10 +2,13 @@
 	$('#venues').append("<%= escape_javascript(render partial: 'venue_list', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
 <% else %>
 	$('#venues').html("<%= escape_javascript(render partial: 'venue_list', collection: @venues, as: 'venue' || "There are no venues at the moment") %>");
+//	console.log("<%= escape_javascript(@venues.to_sql) %>");
 <% end %>
+
+truncateText();
 
 <% if @venues.next_page %>
 	$('.pagination').replaceWith('<%= j will_paginate(@venues) %>');
 <% else %>
-	$('.pagination').remove();
+	$('.pagination').hide();
 <% end %>

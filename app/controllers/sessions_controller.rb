@@ -22,8 +22,15 @@ class SessionsController < ApplicationController
 		# Setting up activerecord relation between venues, neighborhoods, and venue_events.
 		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
-		@venues = Venue.venues_with_or_without_events
-#		@venue_events = VenueEvent.upcoming_events(options={}) # for mobile only
+		@venues = Venue.get_venues
+		
+		if (params.has_key?(:features)) # needs to come before neighborhoods filter bc of LEFT JOIN
+			@venues = @venues.filter_features(params[:features])
+		end
+		
+		if (params.has_key?(:neighborhoods)) # needs to come after features filter
+			@venues = @venues.where("neighborhoods.name" => params[:neighborhoods]) #uses WHERE IN which has same effect as OR
+		end
 		
 		# if latitude and longitude parameters are available, show distance from venues to user
 		if (params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?)
@@ -35,14 +42,20 @@ class SessionsController < ApplicationController
 			# https://github.com/alexreisner/geocoder/issues/99
 			max_distance = 1000 # in km
 			@venues = @venues.near([params[:latitude], params[:longitude]], max_distance)
-#			@venue_events = @venue_events.joins(:venue).merge(Venue.near([params[:latitude], params[:longitude]], max_distance, :select => "venues.*, venue_events.*")) # for mobile only			
+		end
+
+		# Initially, param[:search] is blank for the html response which is why it should be excluded (or else @venues will return nothing and pagination links will not be present)
+		# But, the first set of venues is retrieved via ajax through the getVenues link so a '%%' is passed in for the search parameter which means all venues should be returned.
+		# CAUTION: URL and debug parameters are NOT accurate for debugging this.  While params[:search] may be present in the browser url and debug parameters, these values are 
+		# passed in the AJAX call since dynamic content is all retrieved via AJAX.  Use Network panel in developer tools to confirm (check url listed there to see which parameters 
+		# are passed)
+		if (params.has_key?(:search) && !params[:search].blank?)
+			@venues = @venues.where("venues.name LIKE ?", "%#{params[:search]}%")
 		end
 			
-#		@venues = @venues.search(params[:search])
+		
 		@venues = @venues.order(sort_order) # Ensures only the most recent upcoming event is used for sorting (if user sorts by event start time).  Since this is only an activerecord relation, the query is not executed.
 		@venues = @venues.page(params[:page]).per_page(2)
-
-#		@venue_event_months = @venue_events.group_by { |month| month.start_time.strftime("%B") }
 
 		respond_to do |format|
 			format.html

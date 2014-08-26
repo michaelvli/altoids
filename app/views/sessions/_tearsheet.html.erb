@@ -66,24 +66,22 @@
 	
 		<!-- HOURS -->
 		<div id="hours" class="container collapse">
-			<table class="table table-condensed no-margin bottom">
-				<% @days_of_week.each do |day_of_week| %>
-					<tr>
-						<td class="text-right no-border">
-							<small>
-								<%= day_of_week.to_s.capitalize %>
-							</small>
-						</td>
-						<td class="text-left no-border">
-							<small>
-								<%= retrieve_time("open", day_of_week).strftime("%l:%M %p") %>
-								&nbsp;-&nbsp;
-								<%= retrieve_time("close", day_of_week).strftime("%l:%M %p") %>
-							</small>	
-						</td>
-					</tr>
-				<% end %>
-			</table>
+			<% @days_of_week.each do |day_of_week| %>
+				<div class="row">
+					<div class="col-xs-5 text-right">
+						<small>
+							<%= day_of_week.to_s.capitalize %>
+						</small>
+					</div>	
+					<div class="col-xs-7">	
+						<small>
+							<%= retrieve_time("open", day_of_week).strftime("%l:%M %p") %>
+							&nbsp;-&nbsp;
+							<%= retrieve_time("close", day_of_week).strftime("%l:%M %p") %>
+						</small>
+					</div>	
+				</div>		
+			<% end %>
 		</div>	<!-- #hours container -->	
 		
 		<!-- FEATURES -->
