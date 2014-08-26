@@ -12,7 +12,6 @@
 	SQL:<%= @venues.to_sql %> <br>
 <% end %>
 
-<!-- Carousel -->
 <div class="container">
 	<div class="row">
 		<!-- Venue thumbnails -->
@@ -30,18 +29,8 @@
 		</div>
 		
 		<!-- Sort and Filter -->
-		<div class="col-md-3">
-			<%= form_tag home_path, :method => 'get' do %>
-<% if false %>				
-				<%= hidden_field_tag :sort_order, params[:sort_order], {id:'hidden_field_sort'} %>
-<% end %>				
-				<%= hidden_field_tag :latitude, params[:latitude], {id:'hidden_field_latitude'} %>
-				<%= hidden_field_tag :longitude, params[:longitude], {id:'hidden_field_longitude'} %>
-				
-				<%= render partial: "sort" %>
-				<%= render partial: "filters" %>	
-			<% end %>
-		
+		<div id="filter-container" class="col-md-3">
+			<%= render partial: 'filter_sort' %>
 		</div>
 	</div>
 	

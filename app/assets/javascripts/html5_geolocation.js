@@ -16,10 +16,11 @@ var html5_geolocation = function () {
     var lon;
 	var location_timeout;
 	
-    initiate = function(callback, callback_no_geolocation) {
+//    initiate = function(callback, callback_no_geolocation) {
+    initiate = function(callback) {
 		var options = {
-		  enableHighAccuracy: true,
-		  timeout: 10000, //doesn't work in Firefox
+		  enableHighAccuracy: false,
+		  timeout: 5000, //doesn't work in Firefox
 		  maximumAge: 0  // never stored in cache (by setting to 0)
 		};
 
@@ -27,6 +28,7 @@ var html5_geolocation = function () {
 		{
 //			location_timeout = setTimeout(handleTimeout, options.timeout); // timer is cleared getLocation or handleErrors functions
 			navigator.geolocation.getCurrentPosition(
+//			navigator.geolocation.watchPosition(
 				// Geolocation success
 				function(position){
 //					clearTimeout(location_timeout);
@@ -41,24 +43,24 @@ var html5_geolocation = function () {
 					switch(error.code) 
 					{
 						case error.PERMISSION_DENIED: // User denied the request for Geolocation
-//							alert("User denied the request for Geolocation");
+							alert("User denied the request for Geolocation");
 // 							callback(); // prob don't need since callback_no_geolocation is executed before geolocation can return error.
 							localStorage.removeItem('geolocationAuth') // so user will see "Requires sharing location" popover next time
 							break;
 						case error.POSITION_UNAVAILABLE:
 							alert("Location information is unavailable.");
 							localStorage['geolocationAuth'] = true; // so user doesn't see "Requires sharing location" popover again
-							callback();
+//							callback();
 							break;
 						case error.TIMEOUT:
 							alert("The request to get user location timed out.");
 							localStorage['geolocationAuth'] = true; // so user doesn't see "Requires sharing location" popover again
-							callback();
+//							callback();
 							break;
 						case error.UNKNOWN_ERROR:
 							alert("An unknown error occurred.");
 							localStorage['geolocationAuth'] = true; // so user doesn't see "Requires sharing location" popover again
-							callback();
+//							callback();
 							break;
 					}
 				},
@@ -69,9 +71,9 @@ var html5_geolocation = function () {
 		{
 			alert("Geolocation is not supported by this browser");
 			localStorage.removeItem('geolocationAuth') // browser does not support geolocation
-			callback();
+//			callback();
 		}
-		callback_no_geolocation(); // need this default in case user selects "Not Now" in Firefox which bypasses both the geolocation Success and Error handlers.
+//		callback_no_geolocation(); // need this default in case user selects "Not Now" in Firefox which bypasses both the geolocation Success and Error handlers.
     },
 	
 	handleTimeout = function(){

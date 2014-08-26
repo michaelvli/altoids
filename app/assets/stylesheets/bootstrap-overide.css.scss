@@ -66,6 +66,12 @@ body {
 	margin: 0 -50px 0 -50px;
 }
 
+@media (max-width: $device-max-width-phone) {
+	label.control-label{
+		display: none;
+	}
+}
+
 .jumbotron{
 	color: initial;
 	text-align: center;
@@ -81,186 +87,6 @@ body {
 	background: initial;
 	background-color: $color-dark;
 }	
-
-
-
-/* Navbar */
-.navbar-inverse {
-  border-color: $color-dark;
-//  background-color:rgba(0,0,0,0.7); // matches $color-darker
-  background-color:rgba(0,0,0,1); // matches $color-darker
-  border: 0 1px 0 0;
-}
-
-  
-@media (max-width: $device-max-width-phone) {
-	.navbar-header{
-		.btn{
-			float: right;
-			margin-top: 10px;
-			margin-right: 15px;
-			outline: none;
-		}
-	}
-}
-
-
-
-/* Forms */
-@media (max-width: $device-max-width-phone) {
-	label.control-label{
-		display: none;
-	}
-}
-
-#menu{
-	padding: 0 0 0 0; // top right bottom  left
-	.btn-group-vertical {
-		width: 100%;
-		a{
-			padding: 15px 30px 15px 30px; //top right bottom left
-		}
-		a:last-child{
-			margin: 0 0 0 0; //top right bottom left
-		}
-	}
-}
-
-#navbar_back_arrow_button{
-	padding: 8px 10px 3px 10px; //top right bottom left
-	span{
-		margin: -5px 0px -10px 0px; //top right bottom left
-		font-size: 1.5em;
-	}
-}
-
-#log_in_form{
-	min-width: 300px;
-	padding: 15px;
-	.form-group {
-		margin: 0 0 10px 0;
-//		@extend .vee-blue;
-	}
-	.form-inline label {
-		display: inline;
-	}
-}
-
-
-
-@media (max-width: $device-max-width-phone) {
-	#sign_up_form, #log_in_form{
-		padding: 0 15px 0 15px; // top right bottom  left
-	}
-}
-
-
-
-/* Modal */
-.modal-header {
-	border: 1px solid $color-light;
-	border-top-right-radius: 6px;
-	border-top-left-radius: 6px;
-	border-bottom: 0px solid #e5e5e5;
-	color: $color-light;
-	font-weight: bold;
-	background: -webkit-linear-gradient($color-dark, $color-medium-dark); /* For Safari */
-	background: -o-linear-gradient($color-dark, $color-medium-dark); /* For Opera 11.1 to 12.0 */
-	background: -moz-linear-gradient($color-dark, $color-medium-dark); /* For Firefox 3.6 to 15 */
-	background: linear-gradient($color-dark, $color-medium-dark); /* Standard syntax (must be last) */	
-	button {
-		color: white;
-	}
-}
-
-
-.modal-content{
-	color: $color-dark;
-	font-size: 1em;
-	padding: 0 0 0 0;
-	margin: 10px;
-}
-
-
-
-/* Footer */
-.footer-fixed-bottom{
-	position: fixed;
-	bottom: 20px;
-	right: 0;
-	left: 0;
-	margin-bottom: 0;
-	border-width: 5px 0 0;
-	z-index: 1060;
-	text-align: center;
-}
-
-#filter_button {
-	color: white;
-	font-size: 110%;
-	font-weight: bold;
-	background-color:rgba(0,0,0,0.5);
-	border: 1px solid $color-medium;
-	border-radius: 15px;
-//	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-//	opacity: 0.5;
-//	filter: alpha(opacity=50);
-	width: 35%;
-}
-
-#filter_button:active, #filter_button.active {
-	color: $color-dark;
-//	background-color: $color-light;
-	background-color:rgba(230,230,230,0.5);
-}
-
-#apply-filters-fixed-bottom {
-	bottom: 0px;
-	padding: 10px 15px 10px 15px;
-	background-color: $color-dark;
-}
-
-#apply_filters_button{
-	border-radius: 0px;
-	padding: 10px 0px 10px 0px;
-	font-weight: bold;
-}
-
-
-
-
-	
-/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
-@media (max-width: $device-max-width-phone) {
-	#slider-container {
-		#main-content {
-			position: relative;
-			top: 0;
-			right: 0;
-			left: 0;
-			bottom: 0;
-			z-index: 10;
-			background-color: $color-darkest; // needed in order to "cover up" .hidden-content when sliding
-		}
-		#hidden-content {
-			position: fixed;
-			top: 55px;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-//			z-index: 5;
-			padding: 0 0 0 0; // top right bottom  left
-			margin-right: auto;
-			margin-left: auto;
-			overflow: auto;
-		//  overflow-y: scroll;
-			-webkit-overflow-scrolling: touch; // for touch screens 
-		}
-	}
-}
-
-
 
 /* Buttons 
 	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
@@ -387,8 +213,6 @@ body {
 	}
 }
 */
-
-
 	
 .btn-group > .btn,
 .btn-group-vertical > .btn {
@@ -396,23 +220,210 @@ body {
 }
 
 .btn-group > .btn{
-	width: 25%;
+	width: 20%;
 }
 	
+
+
+/* Navbar */
+.navbar-inverse {
+  border-color: $color-dark;
+//  background-color:rgba(0,0,0,0.7); // matches $color-darker
+  background-color:rgba(0,0,0,1); // matches $color-darker
+  border: 0 1px 0 0;
+}
+
+  
 @media (max-width: $device-max-width-phone) {
-	.btn-group > .btn{
-		width: 20%;
+	.navbar-header{
+		.btn{
+			float: right;
+			margin-top: 10px;
+			margin-right: 15px;
+			outline: none;
+		}
+	}
+}
+
+
+
+/* Modal */
+.modal-header {
+	border: 1px solid $color-light;
+	border-top-right-radius: 6px;
+	border-top-left-radius: 6px;
+	border-bottom: 0px solid #e5e5e5;
+	color: $color-light;
+	font-weight: bold;
+	background: -webkit-linear-gradient($color-dark, $color-medium-dark); /* For Safari */
+	background: -o-linear-gradient($color-dark, $color-medium-dark); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient($color-dark, $color-medium-dark); /* For Firefox 3.6 to 15 */
+	background: linear-gradient($color-dark, $color-medium-dark); /* Standard syntax (must be last) */	
+	button {
+		color: white;
+	}
+}
+
+
+.modal-content{
+	color: $color-dark;
+	font-size: 1em;
+	padding: 0 0 0 0;
+	margin: 10px;
+}
+
+
+
+/* Footer */
+.footer-fixed-bottom{
+	position: fixed;
+	bottom: 20px;
+	right: 0;
+	left: 0;
+	margin-bottom: 0;
+	border-width: 5px 0 0;
+	z-index: 1060;
+	text-align: center;
+}
+
+#filter_button {
+	color: white;
+	font-size: 110%;
+	font-weight: bold;
+	background-color:rgba(0,0,0,0.5);
+	border: 1px solid $color-medium;
+	border-radius: 15px;
+//	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+//	opacity: 0.5;
+//	filter: alpha(opacity=50);
+	width: 35%;
+}
+
+#filter_button:active, #filter_button.active {
+	color: $color-dark;
+//	background-color: $color-light;
+	background-color:rgba(230,230,230,0.5);
+}
+
+#apply-filters-fixed-bottom {
+	bottom: 0px;
+	padding: 10px 15px 10px 15px;
+	background-color: $color-dark;
+}
+
+#apply_filters_button{
+	border-radius: 0px;
+	padding: 10px 0px 10px 0px;
+	font-weight: bold;
+}
+
+
+	
+/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
+@media (max-width: $device-max-width-phone) {
+	#slider-container {
+		#main-content {
+			position: relative;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			z-index: 10;
+			background-color: $color-darkest; // needed in order to "cover up" .hidden-content when sliding
+		}
+		#hidden-content {
+			position: fixed;
+			top: 55px;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+//			z-index: 5;
+			padding: 0 0 0 0; // top right bottom  left
+			margin-right: auto;
+			margin-left: auto;
+			overflow: auto;
+		//  overflow-y: scroll;
+			-webkit-overflow-scrolling: touch; // for touch screens 
+		}
 	}
 }
 
 
 
 /* ID specific settings */
+
+#menu{
+	padding: 0 0 0 0; // top right bottom  left
+	.btn-group-vertical {
+		width: 100%;
+		a{
+			padding: 15px 30px 15px 30px; //top right bottom left
+		}
+		a:last-child{
+			margin: 0 0 0 0; //top right bottom left
+		}
+		a.btn-glass, a.btn-glass:hover, a.btn-glass.active{
+			color: white;
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+			border-bottom-color: $color-dark;
+		}
+		a.btn-glass:active{
+			color: $color-dark;
+			background: white;
+		}
+		a.btn-glass.hoverClass{
+			color: $color-medium;
+			border-bottom-width: 1px;
+			border-bottom-style: solid;
+			border-bottom-color: $color-dark;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+	
+#navbar_back_arrow_button{
+	padding: 8px 10px 3px 10px; //top right bottom left
+	span{
+		margin: -5px 0px -10px 0px; //top right bottom left
+		font-size: 1.5em;
+	}
+}
+
+#log_in_form{
+	min-width: 300px;
+	padding: 15px;
+	.form-group {
+		margin: 0 0 10px 0;
+//		@extend .vee-blue;
+	}
+	.form-inline label {
+		display: inline;
+	}
+}
+
+
+
+@media (max-width: $device-max-width-phone) {
+	#sign_up_form, #log_in_form{
+		padding: 0 15px 0 15px; // top right bottom  left
+	}
+}
 	
 @media (max-width: $device-max-width-phone) {
 	#filter-container{
 		.subsection{
-			border: 1px solid red;
+//			border: 1px solid red;
 			padding: 5px 0 5px 0; // top right bottom  left
 			margin: 0 0 0 0; // top right bottom  left
 			color: $color-medium;

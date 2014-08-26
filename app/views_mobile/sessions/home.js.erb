@@ -2,6 +2,7 @@
 	$('.pagination').remove(); // Need to remove previous pagination because a new one will get inserted below (line 9).  This is because 'mobile/sessions/_venue_list', which gets called repeatedly, contains a pagination element.
 	$('#venues').append("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
 <% else %>
+//	alert("Used AJAX to get venue list");
 	$('#dynamic-content').html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
 <% end %>
 

@@ -48,7 +48,7 @@ $(function() {
 //	$(document).on('page:fetch', page_fetch_functions); // starting to fetch a new target page
 //	$(document).on('page:receive', page_receive_functions); // the page has been fetched from the server, but not yet parsed
 //	$(document).on('page:change', page_change_functions); // is triggered by page:change - https://github.com/rails/turbolinks
-	$(document).on('page:update', page_update_functions); // is triggered by page:change PLUS on jQuery's ajaxSucess, if jQuery is available (otherwise you can manually trigger it when calling XMLHttpRequest in your own code) - https://github.com/rails/turbolinks
+//	$(document).on('page:update', page_update_functions); // is triggered by page:change PLUS on jQuery's ajaxSucess, if jQuery is available (otherwise you can manually trigger it when calling XMLHttpRequest in your own code) - https://github.com/rails/turbolinks
 //	$(document).on('page:load', page_load_functions); // is fired at the end of the loading process. - https://github.com/rails/turbolinks
 		
 function page_before_change_functions(){
@@ -64,35 +64,29 @@ function page_change_functions(){
 	alert("page_change");
 }
 function page_update_functions(){
-//	alert("page_update");
-	if ($('.dotdotdot').length){
-		truncateText();
-	}
+	alert("page_update");
+//	truncateText();
 }
 
 function page_load_functions(){
 	alert("page_load");
+//	truncateText();
 }
-
-function sortButtonUpdate(sort_order){
-	$('.sort').removeClass('active'); // removes highlighted buttons
-	$('#' + sort_order).addClass('active'); // highlights the previous sort button
-}
-
-
 
 function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove desktop (and maybe tablet) from the if statement below 
 	// Mobile functions only:
-	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-//	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	{
-		initSlideToggler();
+//	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+	{	
+		initSlideToggler();  // enables mobile screen to toggle left/right to show menu or up/down to show filters
 		hijackMenuButtons();
+		initPopState(); // 1) binds popstate event, 2) loads url contents via ajax
 		getTearsheet();
 		initTouchButtons();
 		initTearsheetIconButtons();
 		initTearsheetEvents();
+		initApplyFilterButton();	
 	}
 
 // DEVELOPMENT ONLY - need to remove pohne (and maybe tablet) from the if statement below 	
@@ -101,40 +95,25 @@ function load_DOM_functions(){
 	if ($.cookie( 'deviceType' ) == 'desktop')
 	{
 		enableHover();
+		if ($('#venues').length){
+			loadContent('home'); // default parameters for getting venues, sorted by events
+		}
+		initSortFilterButtons();
 	}
 	
 	// Ubiquitous functions
-	if ($('.dotdotdot').length)
-	{
-		truncateText(function(){
-			initCarouselActiveSlide();
-		});
-	}
-	if ($('#myCarousel').length) // defining carousel interval and play/pause videos in carousel
-	{
-		initCarouselBehavior();
-	}	
-	if ($('#venues').length)
-	{
-		var user_location = html5_geolocation();
-		user_location.initiate( // calls html5 geolocation to access user location
-			function(){ // anonymous callback function to ensure that user location info from client is retrieved before sending info server via ajax
-				loadContent('home','event', user_location.latitude(), user_location.longitude());	// load venues - passing user's latitude and longitude to server 
-			},
-			function(){ // gets list of venues immediately in case user doesn't set geolocation permission in browser
-				loadContent('home','event', '', '');	// load venues without passing user's latitude and longitude to server 
+	truncateText(function(){
+		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+		$( ".active.item" ).each(function( index ) {
+			if(index != 0){
+				$(this).removeClass('active');
 			}
-		);
-		endlessScroll(); // creates delegated event for endless scrolling
-	}
-	
+		});	
+	});
+	initCarouselBehavior(); // defining carousel interval and play/pause videos in carousel
 	initVideoBehavior(); // binds play button to thumbnail videos
-	
-	if ($('div.alert').length) // fading out flash message alerts
-	{
-		fadeOutFlashes();	
-	}
-	
+	fadeOutFlashes(); // fading out flash message alerts	
+	endlessScroll(); // creates delegated event for endless scrolling
 	if ($('#venue_event_start_date').length)
 	{
 //		calendar_datepicker(); // plugin
@@ -145,17 +124,6 @@ function load_DOM_functions(){
 
 /* ***************************************************************************************** */
 
-
-function initCarouselActiveSlide(){
-	$( ".active.item" ).each(function( index ) { // callback for remove .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-		if(index != 0){
-			$(this).removeClass('active');
-		}
-	});
-}
-
-
-			
 /* *****
 Function: initTouchButtons
 
@@ -170,19 +138,19 @@ Bootstrap's functionality does not allow for individual control of the hiding an
 Platform: mobile
 */
 function initTouchButtons(){
-	$('#tearsheet').on('touchstart mousedown', '.btn', function(event){
+	$(document).on('touchstart mousedown', '#tearsheet .btn, #menu .btn', function(event){
 		 $(this).addClass('active');
 	});
-	$('#tearsheet').on('touchend mouseup', '.btn', function(event){
+	$(document).on('touchend mouseup', '#tearsheet .btn, #menu .btn', function(event){
 		 $(this).removeClass('active');
 	});
 }
 
 function enableHover(){
-	$('#tearsheet').on('mouseenter', '.btn', function(e){
+	$(document).on('mouseenter', '#tearsheet .btn', function(e){
 		 $(this).addClass('hoverClass');
 	});
-	$('#tearsheet').on('mouseleave', '.btn', function(e){
+	$(document).on('mouseleave', '#tearsheet .btn', function(e){
 		 $(this).removeClass('hoverClass');
 	});
 }
@@ -195,14 +163,17 @@ Purpose: Binds event "buttons" on the sessions/event_list.html.erb to take user 
 Platform: mobile
 */
 function getTearsheet(){
-	if ($('#events').length)
-	{
-		$('#events').on('click', 'a.btn-glass', function(event){
-			var url = $(this).attr('href') // get the url of the venue website
-			updateDynamicPage(url);
-			event.preventDefault();
-		});
-	}
+	$(document).on('click', '#events a.btn-glass', function(event){
+		var url = $(this).attr('href') // get the url of the venue website
+		
+		// change the url without a page refresh and add a history entry.
+		history.pushState(null, null, url);
+
+		// load the content
+		loadContent(url);
+		
+		event.preventDefault();
+	});
 }
 
 
@@ -225,7 +196,7 @@ Platform: mobile
 */
 function initTearsheetIconButtons(){
 	// controls sliding action to show hidden content (i.e. map, features, or hours)
-	$('#tearsheet .btn-group').on('click', '.btn', function(event){
+	$(document).on('click', '#tearsheet .btn-group .btn', function(event){
 		var button = $(this).data('button'); // find out which button was pressed
 		
 		if (button == 'website' || button == 'get_directions')  // open the link in a new browser window
@@ -268,7 +239,7 @@ Platform: mobile
 */
 function initTearsheetEvents(){
 	// enables the event buttons (i.e. event date, name, description) to toggle between the partial and full description (as well as start vs start/end times) of an event
-	$('#tearsheet .btn-group-vertical').on('click', 'a.btn-glass', function(event){
+	$(document).on('click', '#tearsheet .btn-group-vertical a.btn-glass', function(event){
 		var event_container = $(this).find('.container');
 		var start_stop_time = event_container.find('.event-time.collapse');
 		var event_description = event_container.find('.dotdotdot');
@@ -305,7 +276,6 @@ function initTearsheetEvents(){
 				}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
 			});
 		}
-
 		event.preventDefault(); // stop browser from loading a hyperlink
 	});
 }
@@ -361,7 +331,7 @@ Platform: mobile only
 */				
 function initSlideToggler(){
 	// Vertical sliding
-	$('.slideToggler-vert').on('click', function(){
+	$(document).on('click', '#filter_button, #apply_filters_button, #down_arrow', function(){ // select for .slideToggler-vert elements - but using ID in delegated event handling is faster than using Class
 		var button = $(this).data('button');
 		$('.slideToggler').not('.collapse').toggle(1); // toggle only the .slideToggler elements that are visible (i.e. menu icon but not back arrow icon)
 		$('.slideToggler-vert' ).toggle(1); // (i.e. down arrow icon)
@@ -371,7 +341,7 @@ function initSlideToggler(){
 	});
 
 	// Horizontal sliding
-	$('.slideToggler').on('click', function(){
+	$(document).on('click', '#menu_button, #back_arrow, #log_in, #sign_up', function(){ // select for .slideToggler elements - but using ID in delegated event handling is faster than using Class
 		var slideContent = $('#main-content');
 		var collapsibleContent = $('.collapsible');
 		var button = $(this).data('button');		
@@ -416,9 +386,15 @@ function hijackMenuButtons(){
 	
 	if (Modernizr.history){ // checks for html5 history.pushstate is supported
 //		console.log("history.pushState is supported");
-		$('#menu a.btn').on('click', function(event){
-			var url = $(this).attr('href') // get the url of the venue website			
-			updateDynamicPage(url);
+		$(document).on('click', '#menu a.btn', function(event){
+			var url = $(this).attr('href'); // get the url of the venue website			
+			
+			// change the url without a page refresh and add a history entry.
+			history.pushState(null, null, url);
+
+			// load the content
+			loadContent(url);
+	
 			event.preventDefault();
 		});
 	}
@@ -432,56 +408,23 @@ function hijackMenuButtons(){
 
 
 /* *****
-Function: updateDynamicPage
+Function: initPopState
 
-Functionality:
-1) loads ajax content, and 
-2) synchronizes it with browser history, enabling use of forward and back buttons in the browser
+Browser inconsistency:
+1.  http://stackoverflow.com/questions/4688164/window-bind-popstate - The HTML5 spec states that popstate 
+	should not fire on page load. Firefox 4 and Chrome 34 got this right but Safari mobile and Chrome mobile seems to fire 
+	popstate on page load (which actually is good for us).
 
 Source: http://css-tricks.com/rethinking-dynamic-page-replacing-content/
 Platform: mobile only
 */
-function updateDynamicPage(url){
-	// change the url without a page refresh and add a history entry.
-	history.pushState(null, null, url);
-
-	// load the content
-	loadContent(url);
-	
-	$(window).bind('popstate', function(){
+function initPopState(){
+	$(window).on('popstate', function(){
 	   url = location.pathname.replace(/^.*[\\\/]/, ''); //get filename only
+//	   console.log("called popstate: " + url);
 	   loadContent(url);
 	});
 }
-
-
-/* *****
-Function: hijackMenuButtons - binds buttons that cause the page to slide left, revealing 1) the navigation menu, 2) new user sign up form, or 3) user log in fields.
-
-Platform: desktop and mobile
-*/
-function loadContent(url, sort_order, latitude, longitude){
-	var sort_order = sort_order || '',
-		latitude = latitude || '',
-		longitude = longitude || '';
-		
-	$.get(	url,
-			{sort_order: sort_order, latitude: latitude, longitude: longitude},
-			function(){
-				$('#back_arrow:visible').trigger('click'); //ensures content is hidden before menu slides back
-				
-			},
-			"script"
-	);
-}
-
-
-
-
-
-
-
-
 
 
 
@@ -492,7 +435,7 @@ Platform: desktop and mobile
 */
 function initVideoBehavior(){
 	//  use selector within "on" method to bind to dynamically retrieved (via AJAX) play buttons found in "#main-content" container
-	$('#main-content').on('click', '.glyphicon-play-circle', function(){
+	$(document).on('click', '#main-content .glyphicon-play-circle', function(){
 		var selected_image = $(this).siblings('.thumbnail').first().children('img');
 		var selected_video = $(this).siblings('video').first();
 		var video_listener = selected_video.get(0);
@@ -637,4 +580,256 @@ function checkSessionStorage(variable){
 	{
         return sessionStorage[variable];
 	}	
+}
+
+
+
+/* *****
+Function: initApplyFilterButton - binds the "Apply Filters" button which is displayed when user is on the 
+sort and filter from a mobile device.
+
+Platform: mobile
+*/
+function initApplyFilterButton(){
+	// Search form - using "Apply Filters" button
+	$(document).on('click', '#apply_filters_button', function(){
+		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path
+
+		serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+		// url is from the form and shouldn't contain sort_order (i.e. /home) 
+		// thus, to add serializedData, we need to use a question mark vs. an ampersand
+		url = url + '?' + serializedData; 
+	
+		sort_order = getURLParameters(url, 'sort_order');
+		if (sort_order == 'distance')
+		{
+			getGeolocation(function(){				
+				loadContent(url); // retrieve venue list based on sort_order		
+			});
+		}
+		else
+		{
+			loadContent(url); // retrieve venue list based on sort_order		
+		}
+	});
+}
+
+
+
+/* *****
+Function: initSortFilterButtons - provides functionality for 
+	1.  sort buttons on the home page by grabbing value of the data-sort custom attribute.
+	2.  search field
+
+Possible values of data-sort:
+	1. name_asc (venue name ascending order)
+	2. name_desc (venue name in descending order)
+	3. neighborhood (neighborhood in ascending order)
+	4. distance (distance of venue from user in ascending order)
+	5. event (start day/time of an event in chronological order)
+
+Platform: desktop	
+*/
+function initSortFilterButtons(){
+	// Initializing popover prior to binding to click handler or else popover will require two clicks - http://stackoverflow.com/questions/12333585/twitter-bootstrappopovers-are-not-showing-up-on-first-click-but-show-up-on-seco
+//	$('#distance').popover({trigger: 'manual',
+//							delay: {show: 0, hide: 0},
+//							content: "Requires location sharing. <a id='geolocation_instructions_link' href='#'>More</a>",
+//							placement: 'top',
+//							html: 'true'
+//	});
+	
+//	if (checkSessionStorage('previousSort') == 'undefined')
+//	{
+//		sessionStorage['previousSort'] = 'event'; //default value is "Featured" on screen
+//	}
+	
+	// Search form - instant response (i.e. not using "Apply Filters" button)
+	$(document).on('click', '.filter', function(){
+		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path		
+		var serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+		loadContent(url, serializedData);
+	});
+  
+	// Sort buttons
+	$(document).on('click', '.sort', function(){
+		var url = $(this).attr('href'), // url contains parameters specifying sort, search, etc.
+			sort_order = '',
+//			sort_order = $(this).data('sort'), // grabs the value of the custom attribute, data-sort
+			serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+
+		// url is from the link and contains sort_order (i.e. /home?sort_order='neighborhood') 
+		// thus, to add serializedData, we need to use an ampersand vs. a question mark
+		url = url + '&' + serializedData;  // adds serialized form parameters (such as sort_order) to the url
+		
+		sort_order = getURLParameters(url, 'sort_order'); // get the value of the url parameter, sort_order
+
+		if (sort_order == 'distance')
+		{
+			getGeolocation(function(){				
+				loadContent(url); // retrieve venue list based on sort_order
+			});
+		}
+		else
+		{
+			loadContent(url); // retrieve venue list based on sort_order		
+		}
+	});
+}
+
+
+
+/* *****
+Function: loadContent
+
+Description: Uses AJAX to load dynamic content.  loadContent() also manipulates the data (i.e. serializedData)
+that accompanies .get(), adding items such as latitude and longitude while excluding redundant parameters such
+as sort_order.
+
+Notes:
+1.  url - can contain url parameters such as sort_order, search, latitude, longitude
+	
+2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
+	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
+	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
+	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
+	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
+	
+		$("#sortFilter_form input[name!='sort_order']").serialize();
+
+	The statement above says serialize all parameters, hidden and visible, from the form, #sortFilter_form with
+	the exception of the sort_order parameter.
+
+
+Platform: desktop and mobile
+*/
+function loadContent(url, serializedData){
+	var latitude = checkSessionStorage('latitude'), 
+		longitude = checkSessionStorage('longitude'),
+		serializeData = serializedData || '';
+		
+	// add latitude and longitude information if it exists to the serialized data
+	if (latitude != 'undefined' &&  longitude!= 'undefined')
+	{
+		var userLocation = {latitude: latitude, longitude: longitude};
+		serializedData = serializedData + '&' + $.param( userLocation ); // $.param creates a serialized representation of the userLocation object		
+	}
+	
+	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
+	$.get(	url,
+		serializedData,
+		function(){
+			$('#back_arrow:visible').trigger('click'); //ensures content is hidden before menu slides back
+		},
+		"script"
+	);
+}
+
+
+
+/* *****
+Function: getCleanSerializedData()
+
+Description: 
+1.  Returns serialized string of parameters, ready to be added to a url
+2.  Removing redundant variables found in the form, #sortFilter_form, and url input.
+
+Inputs:
+1.  url
+
+Platform: desktop and mobile
+*/
+function getCleanSerializedData(url){
+	var serializedData = $("#sortFilter_form").serialize(), // serializes all parameters from the form, #sortFilter_form
+	paramNamesArray = getURLParameters(url),
+	excludeSelector = ''; // getURLParameters returns an array of the names of url parameters
+		
+	// remove redundant url parameters
+	$.each(paramNamesArray, function(index, value){	// cycle through all names of URL parameters 
+		position = serializedData.indexOf(value); //  see if any parameters match those in serializedData variable.
+		if (position > 0){ // if there is a match
+			excludeSelector = excludeSelector + "input[name!='" + value + "'] " // add the variable to the selector in order to exclude the extraneous parameter
+		}
+	})
+	excludeSelector = excludeSelector.trim(); // removes whitespace at beginning and end
+	
+	serializedData = $("#sortFilter_form " + excludeSelector).serialize(); // create a serialized list of parameters from the form, #sortFilter_form, excluding those already found in the passed url
+	return serializedData;
+}
+
+
+
+/*
+Function: getURLParameters
+
+Description:
+1.  Returns an array of the names (but not values) of url parameters.
+2.  Returns the value of a single url parameter
+
+Notes:
+1.  url - can contain url parameters such as sort_order, search, latitude, longitude
+	
+2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
+	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
+	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
+	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
+	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
+	
+		$("#sortFilter_form input[name!='sort_order']").serialize();
+
+	The statement above says serialize all parameters, hidden and visible, from the form, #sortFilter_form with
+	the exception of the sort_order parameter.
+	
+	Thus, because of this function, url parameters have priority of form parameters (hidden and visible).
+
+
+Platform: desktop and mobile
+*/
+
+
+
+function getURLParameters(url, paramSearch){
+	var urlArray = url.split("?"), // create a url Array where the [0] element is the href while the [1] element contains the paramters
+		paramNamesArray = [], // array that holds the names (without values) of each parameter in the url
+		paramSearch = paramSearch || '', // the specific url parameter that is being searched for
+		paramValue = ''; // holds the value of the url parameter that matches paramSearch
+		
+	if (urlArray[1] != undefined) // check to make sure that there are url parameters
+	{
+		entireParamsString = urlArray[1].toString(); // 2nd array element has all the parameter names and values
+		
+		entireParamsArray = entireParamsString.split("&"); // use array to hold all paramaters (name and value)
+		
+		// store only the name (without the value) of each parameter in a new array
+		$.each(entireParamsArray, function(index, value) {
+			paramName = value.toString().split("=")[0].toString(); // separate the name of the parameter from its value
+			if (paramName == paramSearch)
+			{
+				paramValue = value.toString().split("=")[1].toString(); // separate the value of the parameter from its name
+				return paramValue;
+			}
+			paramNamesArray.push(paramName); // push the name of the parameter into a new array
+		});
+	}
+	if (paramValue != '')
+	{
+		return paramValue; // returns value of a specific parameter in the url
+	}
+	else
+	{
+		return paramNamesArray; // returns an array of parameter names found in the url
+	}	
+}
+
+
+
+function getGeolocation(callback){
+		var user_location = html5_geolocation();
+		user_location.initiate( // calls html5 geolocation to access user location
+			function(){
+				sessionStorage['latitude'] = user_location.latitude();
+				sessionStorage['longitude'] = user_location.longitude();
+				callback();
+			}
+		);
 }

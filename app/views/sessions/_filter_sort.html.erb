@@ -1,0 +1,9 @@
+	<%= form_tag home_path, :method => 'get', :id => "sortFilter_form" do %>
+		<%= hidden_field_tag :sort_order, params[:sort_order], {id:'sort_order'} %>
+<% if false %>
+		<%= hidden_field_tag :latitude, params[:latitude], {id:'hidden_field_latitude'} %>
+		<%= hidden_field_tag :longitude, params[:longitude], {id:'hidden_field_longitude'} %>
+<% end %>		
+		<%= render partial: "sort" %>
+		<%= render partial: "filters" %>	
+	<% end %>
