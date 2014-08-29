@@ -524,10 +524,10 @@ Function: endlessScroll - uses ajax to load additional pagination elements as us
 From Ryan Bates - http://railscasts.com/episodes/114-endless-page-revised
 
 Notes:
-	1.  Use session variable, "endless_scroll_status", to control calling function in the case the user scrolls down too quickly (which results in duplicate results retrieved).
+	1.  Use "activeRequest" variable to control calling function multiple times in the case the user scrolls 
+		down too quickly (which results in duplicate results retrieved).
 */ 
 function endlessScroll(){
-
 		// Ensures additional videos are loaded incrementally (vs. a large number at once):
 		$(window).scroll(function(event){
 			var url = $('.pagination .next_page').attr('href'); // global variable - http://learn.jquery.com/javascript-101/scope/
@@ -536,16 +536,16 @@ function endlessScroll(){
 			// 2. Check if user has scrolled near bottom of page
 			// 3. Check if initial set of venues (loaded by function locate_user) has been loaded		
 //			console.log($(window).scrollTop() + " : " + $(document).height() + " : " + $(window).height())
-			if ((url) && $('#venues').children().length > 0 && checkSessionStorage('endless_scroll_status') != 'busy' && $(window).scrollTop() > $(document).height() - $(window).height() - 200)
+			var activeRequest = false; // holds the status of the .get() request to make sure only one request is sent out at a time
+			if ((url) && $('#venues').children().length > 0 && !activeRequest && $(window).scrollTop() > $(document).height() - $(window).height() - 200)
 			{
-// alert(url);
-				sessionStorage['endless_scroll_status'] = 'busy';				
+				activeRequest = true;  // .get() request is about to be called
 				$('.pagination').html('<br><h4>Loading...</h4>');
 				$.get(	url,
 						{scroll: true},
 						function(){
 //							alert( "Success: endless_scroll " );
-							sessionStorage['endless_scroll_status'] = 'ready';
+							activeRequest = false; // .get() request is finished
 						}, 
 						"script"
 				)				

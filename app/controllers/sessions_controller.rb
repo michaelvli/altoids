@@ -10,9 +10,12 @@ class SessionsController < ApplicationController
 		if signed_in?
 			redirect_to home_path
 		else
-			@venues = Venue.venues_with_events_only
+			# returns a Activerecord collection vs. a single Activerecord object
+			@venues = Venue.joins(:videos) # only select for venues that have videos
+			@venues = @venues.find_events # retrieves only venues that have upcoming events
 			@venues = @venues.order("RANDOM()")
-			@venues = @venues.limit(5)
+			@venues = @venues.limit(5) 		
+			
 			@user = User.new
 		end	
 	end
@@ -77,13 +80,12 @@ class SessionsController < ApplicationController
 	end
 	
 	def tearsheet
-		@venue = Venue.find(params[:id])
-		
-# temporarily use @venues until integrate the use of the video table.  
-# @venues is used in the 'carousel' partial but using the 'video' table, should feed @videos (i.e. dumdums used '@venue_videos' below) to the 'carousel' partial.
-		@venues = @venue 
-#		@venue_videos = Venue.carousel_prep(:venue_id => (params[:id]))		
-
+		@venue = Venue.find(params[:id]) # returns a single Activerecord object vs. a collection
+		# @venue = Venue.where(id: params[:id]) # returns a Activerecord collection even though there's only 1 item
+		@videos = Video.where(venue_id: params[:id])
+		@videos = @videos.joins(:venue)
+		@videos = @videos.select("videos.*, venues.file_name AS file_name")
+																  
 		@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 		@venue_events = VenueEvent.upcoming_events(venue_id: params[:id])
 	end
