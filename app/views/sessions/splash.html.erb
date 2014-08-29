@@ -5,13 +5,9 @@
 
 <!-- Carousel --> <!-- "data-ride='carousel'" is the data attribute that starts the carousel's sliding automatically upon page load -->				
 <div id="myCarousel" class="carousel slide">
-<% if false %>
-	SQL: <%= @venues.to_sql %>
-<% end %>
-	<%= render 'sessions/carousel' %>
+	<!-- @venues is an ActiveRecord collection -->
+	<%= render partial: 'carousel', object: @venues, as: 'videos' %>
 </div><!-- .carousel -->
-
-
 
 <!-- Marketing messaging - Wrap the rest of the page in another container to center all the content. -->
 <div class="container marketing">

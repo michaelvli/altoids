@@ -661,8 +661,8 @@ body {
 
 
 /* Event buttons - contains date, time, description (toggles between truncated and full), venue name, event name */
+
 #events, #tearsheet{
-	font-size: 0.8em;
 	.btn-group-vertical {
 		
 		border-bottom-width: 1px;
@@ -728,7 +728,7 @@ body {
 		calendar-day{
 			display: block;
 			text-align: center;
-			font-size: 22px;
+			font-size: 20px;
 			color: $color-darker;
 		}
 	}
@@ -747,6 +747,33 @@ body {
 	}
 }
 
+#tearsheet
+{
+	.carousel-inner {
+		@extend .vee-red;
+		display: block;
+		position: relative;
+		height: 500px;
+		video{
+			display: block;
+			max-width: 100%;
+			margin: auto; // necessary for centering oversized video in carousel
+		}
+	
+	}
+	calendar-month{
+		display: block;
+		text-align: center;
+		font-size: 9px;
+		color: $color-darker;
+	}
+}
+
+#events { 
+	calendar-month{
+		display: none;
+	}	
+}
 
 
 /* Google Maps */

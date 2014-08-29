@@ -4,6 +4,7 @@
 							<div class="event-date">
 								<day-of-week><%= event.start_time.strftime("%a") %></day-of-week>
 								<calendar-day><%= event.start_time.strftime("%e") %></calendar-day>
+								<calendar-month><%= event.start_time.strftime("%B") %></calendar-month>
 							</div>
 							<div class="event-time">
 								<%= event.start_time.strftime("%l:%M %p") %>

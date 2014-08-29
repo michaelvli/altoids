@@ -1,17 +1,25 @@
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
-		<% @venues.each_with_index do |venue, index|%>
-			<% if index == 0 %>
-				<li data-target="#myCarousel" data-slide-to="<%= index %>" class="active"></li>
-			<% else %>
-				<li data-target="#myCarousel" data-slide-to="<%= index %>"></li>
+		<!-- No need to show indicators if there is only one video -->
+		<% if videos.many? %>
+			<% videos.each_with_index do |video, index| %>
+				<% if index == 0 %>
+					<li data-target="#myCarousel" data-slide-to="<%= index %>" class="active"></li>
+				<% else %>
+					<li data-target="#myCarousel" data-slide-to="<%= index %>"></li>
+				<% end %>
 			<% end %>
-		<% end %>
+		<% end %>	
 	</ol>
+	
+	<!-- Carousel videos -->
     <div class="carousel-inner">
-		<% @venues.each_with_index do |venue, index|%>
-			<%= render 'sessions/carousel_items', venue: venue %>
-		<% end %>
+		<%= render partial: 'carousel_items', collection: videos, as: 'video' %>
     </div> <!- carousel-inner -->
-    <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-    <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+	
+	<!-- Carousel Controls -->
+	<!-- No need to show carousel controls if there is only one video -->
+	<% if videos.many? %>
+		<a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+		<a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+	<% end %>

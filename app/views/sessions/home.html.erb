@@ -8,6 +8,13 @@
 	<%= render partial: 'geolocation_instructions_modal' %>
 </div>
 
+<!-- Tearsheet Modal -->
+<% if false %>
+<div class="modal fade" id="tearsheetModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<%= render partial: 'tearsheet' %>
+</div>
+<% end %>	
+
 <% if false %>
 	SQL:<%= @venues.to_sql %> <br>
 <% end %>

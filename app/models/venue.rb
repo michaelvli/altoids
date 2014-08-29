@@ -101,7 +101,7 @@ class Venue < ActiveRecord::Base
   end
   
   
-  def self.venues_with_events_only(options={}) # only returns venues that have events
+  def self.find_events(options={}) # only returns venues that have events
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
 	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
 	
