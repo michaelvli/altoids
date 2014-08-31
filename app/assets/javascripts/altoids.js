@@ -439,7 +439,6 @@ function initVideoBehavior(){
 	// Click events don't bubble to the "document" level on apple touch devices so need to add "touch" 
 	// events: http://stackoverflow.com/questions/10165141/jquery-on-and-delegate-doesnt-work-on-ipad
 	$(document).on('click touchend', '#main-content .glyphicon-play-circle', function(){
-alert("clicked");	
 		var selected_image = $(this).siblings('.thumbnail').first().children('img');
 		var selected_video = $(this).siblings('video').first();
 		var video_listener = selected_video.get(0);
