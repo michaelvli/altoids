@@ -3,7 +3,7 @@
 	<% if false %>
 		SQL: <%= @venues.to_sql %>
 	<% end %>
-		<%= render 'sessions/carousel' %>
+		<%= render partial: 'carousel', object: @venues, as: 'videos' %>
 	</div><!-- /.carousel -->
 
 	<!-- Jumbotron -->
