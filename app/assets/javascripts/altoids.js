@@ -76,8 +76,8 @@ function page_load_functions(){
 function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove desktop (and maybe tablet) from the if statement below 
 	// Mobile functions only:
-//	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+//	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
 	{	
 		initSlideToggler();  // enables mobile screen to toggle left/right to show menu or up/down to show filters
 		hijackMenuButtons();
@@ -92,7 +92,7 @@ function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove pohne (and maybe tablet) from the if statement below 	
 	// Desktop functions only:
 //	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	if ($.cookie( 'deviceType' ) == 'desktop')
+	if ($.cookie( 'deviceType' ) != 'desktop')
 	{
 		enableHover();
 		if ($('#venues').length){
@@ -434,8 +434,12 @@ Function: initVideoBehavior - plays, unhides, hides videos from thumbnails
 Platform: desktop and mobile
 */
 function initVideoBehavior(){
-	//  use selector within "on" method to bind to dynamically retrieved (via AJAX) play buttons found in "#main-content" container
-	$(document).on('click', '#main-content .glyphicon-play-circle', function(){
+	// use selector within "on" method to bind to dynamically retrieved (via AJAX) play buttons 
+	// found in "#main-content" container.
+	// Click events don't bubble to the "document" level on apple touch devices so need to add "touch" 
+	// events: http://stackoverflow.com/questions/10165141/jquery-on-and-delegate-doesnt-work-on-ipad
+	$(document).on('click touchend', '#main-content .glyphicon-play-circle', function(){
+alert("clicked");	
 		var selected_image = $(this).siblings('.thumbnail').first().children('img');
 		var selected_video = $(this).siblings('video').first();
 		var video_listener = selected_video.get(0);
