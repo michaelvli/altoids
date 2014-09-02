@@ -38,6 +38,42 @@ body {
 	font-size: 1.0em;
 }
 
+.live-caption{
+	position: absolute;
+	z-index: 10;
+	top: 5%;
+	left: 5%;
+	text-align: left;
+	color: #ffffff;
+	font-size: .9em;
+	font-weight: bold;
+}
+
+.recorded-caption{
+	position: absolute;
+	z-index: 10;
+	top: 5%;
+	left: 5%;
+	text-align: left;
+	color: red;
+	font-size: .9em;
+	font-weight: bold;
+}
+	
+.glyphicon-play-circle {
+//	@extend .vee-red;
+	position: absolute;
+	left: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+	right: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+	top: 40%;
+	font-size: 3em;
+	color: #ffffff;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+	opacity: 0.2;
+	filter: alpha(opacity=20);
+	z-index: 5;
+}	
+	
 @media (max-width: $device-max-width-phone) {
 	.section{
 		padding: 10px 15px 10px 15px; // top right bottom left
@@ -537,7 +573,6 @@ body {
 
 
 /* Thumbnails */
-
 .thumbnail-container{
     text-align: center;
 	@media (max-width: $device-max-width-phone) {
@@ -559,28 +594,6 @@ body {
 			font-size: 95%;
 		    text-align: center;
 		}
-	}
-	
-	.live-caption{
-		position: absolute;
-		z-index: 10;
-		top: 5%;
-		left: 5%;
-		text-align: left;
-		color: #ffffff;
-		font-size: .9em;
-		font-weight: bold;
-	}
-
-	.recorded-caption{
-		position: absolute;
-		z-index: 10;
-		top: 5%;
-		left: 5%;
-		text-align: left;
-		color: red;
-		font-size: .9em;
-		font-weight: bold;
 	}
 		
 	.carousel-caption{
@@ -640,20 +653,6 @@ body {
 		display: none;
 		max-width: 100%;
 		z-index: 5;  // start with video "beneath" images
-	}
-	
-	.glyphicon-play-circle {
-	//	@extend .vee-red;
-		position: absolute;
-		left: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
-		right: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
-		top: 40%;
-		font-size: 3em;
-		color: #ffffff;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-		opacity: 0.2;
-		filter: alpha(opacity=20);
-		z-index: 5;
 	}
 
 }
