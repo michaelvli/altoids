@@ -5,9 +5,9 @@
 						<span class="glyphicon glyphicon-play-circle play_button" ></span>
 						
 						<!-- Thumbnail image-->
-						<a href="#!" class="thumbnail">
+						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail") do %>
 							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
-						</a>
+						<% end %>
 						
 						<!-- Thumbnail video-->
 						<%= tag("video", {class: "video-responsive"}, open: true) %>
