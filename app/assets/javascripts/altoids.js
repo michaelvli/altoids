@@ -47,7 +47,7 @@ $(function() {
 //	$(document).on('page:before-change', page_before_change_functions); // a Turbolinks-enabled link has been clicked
 //	$(document).on('page:fetch', page_fetch_functions); // starting to fetch a new target page
 //	$(document).on('page:receive', page_receive_functions); // the page has been fetched from the server, but not yet parsed
-//	$(document).on('page:change', page_change_functions); // is triggered by page:change - https://github.com/rails/turbolinks
+	$(document).on('page:change', page_change_functions); // is triggered by page:change - https://github.com/rails/turbolinks
 //	$(document).on('page:update', page_update_functions); // is triggered by page:change PLUS on jQuery's ajaxSucess, if jQuery is available (otherwise you can manually trigger it when calling XMLHttpRequest in your own code) - https://github.com/rails/turbolinks
 //	$(document).on('page:load', page_load_functions); // is fired at the end of the loading process. - https://github.com/rails/turbolinks
 		
@@ -61,7 +61,15 @@ function page_receive_functions(){
 	alert("page_receive");
 }
 function page_change_functions(){
-	alert("page_change");
+//	alert("page_change");
+	truncateText(function(){
+		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+		$( ".active.item" ).each(function( index ) {
+			if(index != 0){
+				$(this).removeClass('active');
+			}
+		});	
+	});
 }
 function page_update_functions(){
 	alert("page_update");
@@ -74,8 +82,8 @@ function page_load_functions(){
 function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove desktop (and maybe tablet) from the if statement below 
 	// Mobile functions only:
-	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-//	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+//	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
 	{	
 		initSlideToggler();  // enables mobile screen to toggle left/right to show menu or up/down to show filters
 		hijackMenuButtons();
@@ -90,8 +98,9 @@ function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove pohne (and maybe tablet) from the if statement below 	
 	// Desktop functions only:
 //	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	if ($.cookie( 'deviceType' ) != 'desktop')
+	if ($.cookie( 'deviceType' ) == 'desktop')
 	{
+		initCarouselVideos(); // play/pause videos in carousel
 		enableHover();
 		if ($('#venues').length){
 			loadContent('home'); // default parameters for getting venues, sorted by events
@@ -108,7 +117,12 @@ function load_DOM_functions(){
 			}
 		});	
 	});
-	initCarouselBehavior(); // defining carousel interval and play/pause videos in carousel
+	
+	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
+	$('.carousel').carousel({
+		interval: 5000
+	});
+	
 	initVideoBehavior(); // binds play button to thumbnail videos
 	fadeOutFlashes(); // fading out flash message alerts	
 	endlessScroll(); // creates delegated event for endless scrolling
@@ -293,27 +307,25 @@ Source: jQuery.dotdotdot - http://dotdotdot.frebsite.nl/
 */
 function truncateText(callback){
 //alert("Captions are screwing up because pictures haven't been fully loaded yet by the time dotdotdot executes - need to call dotdotdot after pictures have been loaded");
-	$(document).on('page:load', function(){	
-		$('.dotdotdot').dotdotdot({
-			watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
-			callback: function( isTruncated, orgContent ){
-				var dotdotdotParent = $(this).parent(); // gets the parent of the selector
-	//			alert("truncation: " + isTruncated);
-	//			alert("content" + orgContent.text());
+	$('.dotdotdot').dotdotdot({
+		watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
+		callback: function( isTruncated, orgContent ){
+			var dotdotdotParent = $(this).parent(); // gets the parent of the selector
+//			alert("truncation: " + isTruncated);
+//			alert("content" + orgContent.text());
 
-				// checks for "venue-description" class, using toLowerCase to make case insensitive
-				// check for truncation
-				if (dotdotdotParent.attr("class").toLowerCase().indexOf("venue-description") >= 0 && isTruncated == false)
-				{
-					$(dotdotdotParent).css('height', 'auto'); // adjust the height to auto not have a bunch of extra blank lines beneath	
-				}
-				
-				if (callback != null)
-				{
-					callback();
-				}	
+			// checks for "venue-description" class, using toLowerCase to make case insensitive
+			// check for truncation
+			if (dotdotdotParent.attr("class").toLowerCase().indexOf("venue-description") >= 0 && isTruncated == false)
+			{
+				$(dotdotdotParent).css('height', 'auto'); // adjust the height to auto not have a bunch of extra blank lines beneath	
 			}
-		});
+			
+			if (callback != null)
+			{
+				callback();
+			}	
+		}
 	});
 }
 
@@ -459,46 +471,41 @@ function initVideoBehavior(){
 
 
 /* *****
-Function initCarouselBehavior - defines carousel behavior in terms of 1)frequency of carousel advancing videos, 2)start/stop of active video
+Function initCarouselVideos - defines carousel behavior in terms of:
+1)frequency of carousel advancing videos, 
+2)start/stop of active video
 
 Platform: desktop only
 */
-function initCarouselBehavior(){
-	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
-	$('.carousel').carousel({
-		interval: 5000
-	});
-	if ($('video').length) // mobile view template for carousel uses thumbnails instead of video
-	{
-		// start playing first video
-		$('div.carousel-inner').find('.active').children('video').get(0).play();
+function initCarouselVideos(){
+	// start playing first video
+	$('div.carousel-inner').find('.active').children('video').get(0).play();
+	
+	// start/pause videos based on when carousel finishes sliding
+	$('.carousel').on('slid.bs.carousel', function () {
 		
-		// start/pause videos based on when carousel finishes sliding
-		$('.carousel').on('slid.bs.carousel', function () {
-			
-			/* 	play active video
-				1) Find the descendants of 'div.carousel-inner' that have the class, 'active'. "Find" method is recursive, looking at all levels below
-				2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
-				3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
-				4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
-			*/
-			$('div.carousel-inner').find('.active').children('video').get(0).play(); 
-			
-			/* 	pause all inactive videos
-				1) Find the descendants of 'div.carousel-inner' that have the class, 'item'. "Find" method is recursive, looking at all levels below
-				2) Get the descendants of the elements returned from step #1.
-				3) From the elements returned from step #2, remove those that have the class, 'active'.
-				4) Because there may be multiple elements from step #3, cycle through each of them to perform the following:
-					a) "Children" method looks only one level deep for descendents with the video tag
-					b) Get the DOM element of the jQuery object returned from step #a.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
-					c) Pause is a method that is used on DOM elements (not jQuery objects).  The HTML video element is paused.
-			*/
-			$('div.carousel-inner').find('.item').not('.active').each(function(){ 
-				$(this).children("video").get(0).pause();											
-			});
+		/* 	play active video
+			1) Find the descendants of 'div.carousel-inner' that have the class, 'active'. "Find" method is recursive, looking at all levels below
+			2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
+			3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
+			4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
+		*/
+		$('div.carousel-inner').find('.active').children('video').get(0).play(); 
+		
+		/* 	pause all inactive videos
+			1) Find the descendants of 'div.carousel-inner' that have the class, 'item'. "Find" method is recursive, looking at all levels below
+			2) Get the descendants of the elements returned from step #1.
+			3) From the elements returned from step #2, remove those that have the class, 'active'.
+			4) Because there may be multiple elements from step #3, cycle through each of them to perform the following:
+				a) "Children" method looks only one level deep for descendents with the video tag
+				b) Get the DOM element of the jQuery object returned from step #a.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
+				c) Pause is a method that is used on DOM elements (not jQuery objects).  The HTML video element is paused.
+		*/
+		$('div.carousel-inner').find('.item').not('.active').each(function(){ 
+			$(this).children("video").get(0).pause();											
 		});
-	}	
-}
+	});
+}	
 
 
 
