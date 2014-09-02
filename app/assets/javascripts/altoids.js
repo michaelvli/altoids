@@ -62,6 +62,12 @@ function page_receive_functions(){
 }
 function page_change_functions(){
 //	alert("page_change");
+	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
+	$('.carousel').carousel({
+		interval: 5000
+	});
+
+	initCarouselVideos(); // plays videos in carousel
 	truncateText(function(){
 		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
 		$( ".active.item" ).each(function( index ) {
@@ -117,12 +123,7 @@ function load_DOM_functions(){
 			}
 		});	
 	});
-	
-	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
-	$('.carousel').carousel({
-		interval: 5000
-	});
-	
+		
 	initVideoBehavior(); // binds play button to thumbnail videos
 	fadeOutFlashes(); // fading out flash message alerts	
 	endlessScroll(); // creates delegated event for endless scrolling
@@ -478,33 +479,37 @@ Function initCarouselVideos - defines carousel behavior in terms of:
 Platform: desktop only
 */
 function initCarouselVideos(){
-	// start playing first video
-	$('div.carousel-inner').find('.active').children('video').get(0).play();
+	var video = $('div.carousel-inner').find('.active').children('video');
 	
-	// start/pause videos based on when carousel finishes sliding
-	$('.carousel').on('slid.bs.carousel', function () {
+	if (video.length > 0){
+		// start playing first video
+		video.get(0).play();
 		
-		/* 	play active video
-			1) Find the descendants of 'div.carousel-inner' that have the class, 'active'. "Find" method is recursive, looking at all levels below
-			2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
-			3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
-			4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
-		*/
-		$('div.carousel-inner').find('.active').children('video').get(0).play(); 
-		
-		/* 	pause all inactive videos
-			1) Find the descendants of 'div.carousel-inner' that have the class, 'item'. "Find" method is recursive, looking at all levels below
-			2) Get the descendants of the elements returned from step #1.
-			3) From the elements returned from step #2, remove those that have the class, 'active'.
-			4) Because there may be multiple elements from step #3, cycle through each of them to perform the following:
-				a) "Children" method looks only one level deep for descendents with the video tag
-				b) Get the DOM element of the jQuery object returned from step #a.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
-				c) Pause is a method that is used on DOM elements (not jQuery objects).  The HTML video element is paused.
-		*/
-		$('div.carousel-inner').find('.item').not('.active').each(function(){ 
-			$(this).children("video").get(0).pause();											
+		// start/pause videos based on when carousel finishes sliding
+		$('.carousel').on('slid.bs.carousel', function () {
+			
+			/* 	play active video
+				1) Find the descendants of 'div.carousel-inner' that have the class, 'active'. "Find" method is recursive, looking at all levels below
+				2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
+				3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
+				4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
+			*/
+			video.get(0).play(); 
+			
+			/* 	pause all inactive videos
+				1) Find the descendants of 'div.carousel-inner' that have the class, 'item'. "Find" method is recursive, looking at all levels below
+				2) Get the descendants of the elements returned from step #1.
+				3) From the elements returned from step #2, remove those that have the class, 'active'.
+				4) Because there may be multiple elements from step #3, cycle through each of them to perform the following:
+					a) "Children" method looks only one level deep for descendents with the video tag
+					b) Get the DOM element of the jQuery object returned from step #a.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
+					c) Pause is a method that is used on DOM elements (not jQuery objects).  The HTML video element is paused.
+			*/
+			$('div.carousel-inner').find('.item').not('.active').each(function(){ 
+				$(this).children("video").get(0).pause();											
+			});
 		});
-	});
+	}	
 }	
 
 
