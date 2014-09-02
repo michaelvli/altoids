@@ -645,8 +645,8 @@ body {
 	.glyphicon-play-circle {
 	//	@extend .vee-red;
 		position: absolute;
-		left: 0; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
-		right: 0; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+		left: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
+		right: 45%; // icon is centered via "text-align: center" in parent container, 'thumbnail-container' and setting left/right attribute to zero
 		top: 40%;
 		font-size: 3em;
 		color: #ffffff;
@@ -750,10 +750,9 @@ body {
 #tearsheet
 {
 	.carousel-inner {
-		@extend .vee-red;
 		display: block;
 		position: relative;
-		height: 500px;
+		height: auto;
 		video{
 			display: block;
 			max-width: 100%;

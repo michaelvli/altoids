@@ -65,12 +65,10 @@ function page_change_functions(){
 }
 function page_update_functions(){
 	alert("page_update");
-//	truncateText();
 }
 
 function page_load_functions(){
 	alert("page_load");
-//	truncateText();
 }
 
 function load_DOM_functions(){
@@ -295,26 +293,28 @@ Source: jQuery.dotdotdot - http://dotdotdot.frebsite.nl/
 */
 function truncateText(callback){
 //alert("Captions are screwing up because pictures haven't been fully loaded yet by the time dotdotdot executes - need to call dotdotdot after pictures have been loaded");
-	$('.dotdotdot').dotdotdot({
-		watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
-		callback: function( isTruncated, orgContent ){
-			var dotdotdotParent = $(this).parent(); // gets the parent of the selector
-//			alert("truncation: " + isTruncated);
-//			alert("content" + orgContent.text());
+	$(document).on('page:load', function(){	
+		$('.dotdotdot').dotdotdot({
+			watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
+			callback: function( isTruncated, orgContent ){
+				var dotdotdotParent = $(this).parent(); // gets the parent of the selector
+	//			alert("truncation: " + isTruncated);
+	//			alert("content" + orgContent.text());
 
-			// checks for "venue-description" class, using toLowerCase to make case insensitive
-			// check for truncation
-			if (dotdotdotParent.attr("class").toLowerCase().indexOf("venue-description") >= 0 && isTruncated == false)
-			{
-				$(dotdotdotParent).css('height', 'auto'); // adjust the height to auto not have a bunch of extra blank lines beneath	
+				// checks for "venue-description" class, using toLowerCase to make case insensitive
+				// check for truncation
+				if (dotdotdotParent.attr("class").toLowerCase().indexOf("venue-description") >= 0 && isTruncated == false)
+				{
+					$(dotdotdotParent).css('height', 'auto'); // adjust the height to auto not have a bunch of extra blank lines beneath	
+				}
+				
+				if (callback != null)
+				{
+					callback();
+				}	
 			}
-			
-			if (callback != null)
-			{
-				callback();
-			}	
-		}
-    });
+		});
+	});
 }
 
 

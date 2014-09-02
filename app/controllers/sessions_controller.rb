@@ -84,8 +84,8 @@ class SessionsController < ApplicationController
 		# @venue = Venue.where(id: params[:id]) # returns a Activerecord collection even though there's only 1 item
 		@videos = Video.where(venue_id: params[:id])
 		@videos = @videos.joins(:venue)
-		@videos = @videos.select("videos.*, venues.file_name AS file_name")
-																  
+		@videos = @videos.select("videos.*, venues.file_name AS file_name, venues.name AS venue_name")
+		
 		@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 		@venue_events = VenueEvent.upcoming_events(venue_id: params[:id])
 	end
