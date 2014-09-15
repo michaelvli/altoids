@@ -66,7 +66,9 @@ function page_change_functions(){
 	$('.carousel').carousel({
 		interval: 5000
 	});
-
+	
+	calendar_datepicker(); // plugin
+	
 	initCarouselVideos(); // plays videos in carousel
 	truncateText(function(){
 		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
@@ -123,14 +125,11 @@ function load_DOM_functions(){
 			}
 		});	
 	});
-		
+	initVideoUpload();
 	initVideoBehavior(); // binds play button to thumbnail videos
 	fadeOutFlashes(); // fading out flash message alerts	
 	endlessScroll(); // creates delegated event for endless scrolling
-	if ($('#venue_event_start_date').length)
-	{
-//		calendar_datepicker(); // plugin
-	}	
+	calendar_datepicker(); // plugin
 }
 
 
@@ -848,3 +847,40 @@ function getGeolocation(callback){
 			}
 		);
 }
+
+/* *****
+Jquery Datepicker - From jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
+For API options, see http://api.jqueryui.com/datepicker/
+*/
+function calendar_datepicker(){
+	$('#venue_event_start_date').datepicker({dateFormat: 'M d, yy (D)', minDate: 0});
+}
+
+
+function initVideoUpload() {
+	$('#new_video').fileupload({
+		dataType: "script", // a script ("videos/create.js.erb") from the server will be executed after the file uploads
+		// add function is triggered each time a video is added, providing an object, "data", which can be used to fetch information such as the file object (files.[0])
+		add: function (e, data) { 
+			types = /(\.|\/)(mp4|mov)$/i;
+			file = data.files[0];
+			if (types.test(file.type) || types.test(file.name))
+			{
+				data.context = $(tmpl("template-upload", data.files[0]));
+				$('#new_video').append(data.context);
+				data.submit(); // triggers uploading of the file
+			}
+			else
+			{
+				alert("#{file.name} is not a .mp4 or .mov video file")
+			}
+		},
+		progress: function (e, data) { // progress callback function which updates the progress bar
+			if (data.context)
+			{
+				progress = parseInt(data.loaded / data.total * 100, 10);
+				data.context.find('.bar').css('width', progress + '%'); // find the progress bar and change the width value
+			}	
+		}
+	});
+}	

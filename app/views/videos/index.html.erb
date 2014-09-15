@@ -1,0 +1,77 @@
+<!-- form below uses jquery file upload (vs. carrierwave) to upload videos -->
+<div class="well">
+  <!-- Need to set multipart to true if doing a file upload -->
+  <!-- form has class="new_video", id="new_video", action="/videos", method="post" -->
+  <!-- action: "/videos" + method: "post" = controller: videos + action: create -->
+  <%= form_for Video.new, html: { multipart: true } do |f| %>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+    <%= f.label :attachment %>
+    <%= f.file_field :attachment, multiple: true, name: "video[attachment]" %>
+  <% end %>
+</div>
+
+<div id="videos">
+  <%= render @videos %>
+</div>
+<div class="clear"></div>
+
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>download link</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @videos.each do |video| %>
+      <tr>
+        <td><%= video.name %></td>
+        <td><%= link_to "Watch Video", video.attachment_url %></td>
+        <td><%= button_to "Delete", video, method: :delete, class: "btn btn-danger", confirm: "Are you sure that you wish to delete #{video.name}?" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+
+<!-- Progress bar -->
+<script id="template-upload" type="text/x-tmpl">
+<div class="upload">
+  {%=o.name%}
+  <div class="progress"><div class="bar" style="width: 0%;"></div></div>
+</div>
+</script>
+
+
+
+
+
+
+<% if false %> <!-- code below uses Carrierwave (vs. jquery upload gem) to upload videos -->
+<br />
+<%= link_to "New Video", new_video_path, class: "btn btn-primary" %>
+<br />
+<br />
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Download Link</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @videos.each do |video| %>
+      <tr>
+        <td><%= video.name %></td>
+        <td><%= link_to "Watch Video", video.attachment_url %></td>
+        <td><%= button_to "Delete", video, method: :delete, class: "btn btn-danger", confirm: "Are you sure that you wish to delete #{video.name}?" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% end %> <!-- using Carrierwave -->
+
+</div> <!-- container -->
