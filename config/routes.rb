@@ -16,8 +16,10 @@ Altoids::Application.routes.draw do
 	
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-	
+	post "zencoder" => "zencoder#create", :as => "zencoder" # used to direct the "completed job" notification from zencoder	
+	  
   # Example resource route (maps HTTP verbs to controller actions automatically):
+	resources :videos, only: [:index, :new, :create, :destroy]
 	resources :products
 	resources :sessions, only: [:new, :create, :destroy]
 	resources :users
