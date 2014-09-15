@@ -23,3 +23,6 @@
 //= require altoids
 //= require jquery.ui.datepicker
 //= require modernizr
+//= require modernizr
+//= require jquery-fileupload/basic
+//= require jquery-fileupload/vendor/tmpl

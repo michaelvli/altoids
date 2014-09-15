@@ -1,7 +1,7 @@
 class VideosController < ApplicationController
 	
   def index
-    @videos = Video.all
+    @videos = Video.select("*").where(venue_id = params[:id])
   end
 
   def new

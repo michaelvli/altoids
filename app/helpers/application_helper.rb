@@ -1,5 +1,11 @@
 module ApplicationHelper
 
+	# helper used to present thumbnail image for video uploads
+	def thumb(url)
+		url = url.rpartition(".")[0].to_s + ".png"
+		return url
+	end
+	
 	# helper used to present time in the venue modal window (see venues/_show.html.erb)
 	def retrieve_time (arg, day)
 		if (day == "now")
