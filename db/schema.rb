@@ -145,7 +145,9 @@ ActiveRecord::Schema.define(version: 20140522201354) do
 
   create_table "videos", force: true do |t|
     t.integer  "venue_id"
-    t.string   "video_name"
+    t.string   "name"
+    t.string   "attachment"
+    t.text     "meta_info"
     t.boolean  "live"
     t.boolean  "active"
     t.datetime "created_at"
