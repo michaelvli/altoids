@@ -1,7 +1,7 @@
 	<!-- Indicators -->
 	<ol class="carousel-indicators">
 		<!-- No need to show indicators if there is only one video -->
-		<% if videos.many? %>
+		<% if !videos.nil? && videos.many? %>
 			<% videos.each_with_index do |video, index| %>
 				<% if index == 0 %>
 					<li data-target="#myCarousel" data-slide-to="<%= index %>" class="active"></li>

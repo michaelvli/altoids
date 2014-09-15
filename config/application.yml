@@ -1,0 +1,19 @@
+# http://brandonhilkert.com/blog/flexible-rails-environment-configuration/
+# For dev and test environments - look in config/application.yml
+# For production - need to set up manually - see http://brandonhilkert.com/blog/flexible-rails-environment-configuration/
+# Make sure to add  "application.yml" to gitignore.  Since this file typically holds passwords and other secret keys, it should not end up in source control.
+
+defaults: &defaults
+  AWS_KEY_ID: AKIAJPTVLKZVYPS67PFA
+  AWS_KEY_VALUE: 6sXjfo/jXjWeKLvr+J+5RO+ejNWpvwi/2V7FaiFC
+  AWS_BUCKET: barfly_carrierwave
+  AWS_HOST: https://s3.amazonaws.com/barfly_carrierwave
+  IP_ADDRESS: 73.45.91.117
+  ZENCODER_API_KEY: daee2aee315c05e36905337779b2db48
+  SECRET_TOKEN: e616dc52a6331132f2b5a295c78a590a14a18b5c73490680fa37a6a12e2d600cb5e452e45948d9384bba369aed0a83c5ca47b77d233b866ed340c5cf9127cf22  
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults

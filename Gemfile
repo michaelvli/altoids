@@ -44,6 +44,10 @@ end
 # Use debugger
 gem 'debugger', group: [:development, :test]
 
+gem 'jquery-fileupload-rails' # provides file uploading capabilities
+gem 'carrierwave-aws' # provides file uploading capabilities (to Amazon S3) as well as Amazon aws-sdk gem functionality (allows us to access Amazon API calls - to delete/create S3 file directories)
+gem 'zencoder' # provides video transcoding capabilities
+
 #  	https://github.com/twbs/bootstrap-sass
 gem 'bootstrap-sass', '~> 3.1.1'
 
