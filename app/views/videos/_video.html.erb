@@ -1,7 +1,117 @@
-<div class="video">
-  <%= link_to image_tag(thumb(video.attachment_url)), video if video.attachment? %>
-  <div class="name"><%= video.name %></div>
-  <div class="actions">
-    <%= link_to "remove", video, :confirm => 'Are you sure?', :method => :delete %>
-  </div>
-</div>
+<!-- Need to wrap contents of <td> in <div> tags in order for .slideUp() to function properly: http://stackoverflow.com/questions/467336/jquery-how-to-use-slidedown-or-show-function-on-a-table-row -->
+        <td>
+			<div class="video_<%= video.id %>">
+				<%= image_tag(@bucket.objects[get_path(video.attachment.url, "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
+			</div>	
+		</td>
+		<td>
+			<div class="video_<%= video.id %>">
+				<%= video.name %>
+			</div>	
+		</td>
+		<td>
+			<div class="video_<%= video.id %>">
+				<% if video.active %>
+				Active
+				<% else %>
+				Inactive
+				<% end %>
+			</div>	
+		</td>
+		<td>
+			<div class="video_<%= video.id %>">
+				<!-- :outputs is the key to an hash of an array.  Need to specify which element of the array to retrieve :duration_in_ms. -->
+				<%= video.response[:outputs][0][:duration_in_ms]/1000 %> seconds
+			</div>	
+		</td>
+		<td>
+			<div class="video_<%= video.id %>">
+				<%= video.created_at.strftime("%b %e, %Y %l:%M %p") %>
+			</div>	
+		</td>
+        <td>
+<% if false %>
+	URL: <%= @bucket.objects[get_path(video.attachment.url, "MOV")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s %>
+	URL: <%= @bucket.objects[get_path(video.attachment.url, "mp4")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s %>
+	URL: <%= @bucket.objects[get_path(video.attachment.url, "MOV")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s %>
+<% end %>	
+
+			<div class="video_<%= video.id %>">
+<% if false %>			
+				<%= link_to video.attachment_url, class: "btn btn-primary video_watch_button", data: { video: video.name } do %>
+					<span class="glyphicon glyphicon-eye-open"></span>
+					<span>Watch</span>
+				<% end %>
+<% end %>
+				<%= link_to video_path(video.id), class: "btn btn-primary video_watch_button", data: { video: video.name } do %>
+					<span class="glyphicon glyphicon-eye-open"></span>
+					<span>Watch</span>
+				<% end %>
+				
+				<%= link_to edit_video_path(:id => video.id), class: "btn btn-success video_edit_button" do %>
+					<span class="glyphicon glyphicon-pencil"></span>
+					<span>Edit&nbsp;&nbsp;&nbsp;</span>
+				<% end %>
+				
+	<% if false %>
+				<!-- method: :delete option in link_to helper subverts the jquery delegated event for: $(document).on('click', '.video_delete_button', function(event){ event.preventDefault(); });
+				<%= link_to video_path(:id => video.id), class: "btn btn-danger video_delete_button", data: { video: video.name }, method: :delete do %>
+					<span class="glyphicon glyphicon-trash"></span>
+					<span>Delete</span>
+				<% end %>
+	<% end %>
+		
+				<%= link_to video_path(:id => video.id), class: "btn btn-danger video_delete_button", data: { video: video.name } do %>
+					<span class="glyphicon glyphicon-trash"></span>
+					<span>Delete</span>
+				<% end %>
+			</div>	
+		</td>
+
+
+
+<% if false %>
+
+<% if !video.response.nil? && video.response[:job][:state] == 'finished' %>
+
+	<%= form_for video, url: video_path(video.id), :html => { :method => :put } do |f| %>
+	  <tr>
+        <td>
+			<%= image_tag(thumb(video.attachment_url)) %>
+		</td>
+		<td>
+			<%= hidden_field_tag "id", video.id%>
+			<%= f.text_field :name %>
+		</td>
+		<td>
+			<%= video.response[:outputs][0][:duration_in_ms]/1000 %> seconds
+		</td>
+		<td>
+			<%= video.created_at.strftime("%b %e, %Y %l:%M %p") %>
+		</td>
+		<td>
+			<%= video.active %>
+		</td>
+        <td>
+			<%= link_to video.attachment_url, class: "btn btn-primary" do %>
+				<span class="glyphicon glyphicon-eye-open"></span>
+				<span>Watch</span>
+			<% end %>
+<% if false %>
+			<%= button_to video, method: :delete, class: "btn btn-danger" do %>
+				<span class="glyphicon glyphicon-trash"></span>
+				<span>Delete</span>
+			<% end %>
+<% end %>
+			<%= button_to video, method: :patch, class: "btn btn-success" do %>
+				<span class="glyphicon glyphicon-trash"></span>
+				<span>Update</span>
+			<% end %>
+
+		</td>
+      </tr>
+	<% end %>
+	  
+<% end %>
+
+<% end %>

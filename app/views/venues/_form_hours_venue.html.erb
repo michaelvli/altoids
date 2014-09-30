@@ -1,12 +1,12 @@
 			<!-- Venue hours -->
 				<% @days_of_week.each do |day_of_week| %>
-					<div class="time-select form-group">
-						<%= label_tag day_of_week.to_s.capitalize, nil, class: 'col-sm-2 control-label' %>
-						<div class='col-sm-2'>
+					<div class="form-group">
+						<%= label_tag day_of_week.to_s.capitalize, nil, class: 'col-xs-2 col-md-offset-2 control-label' %>
+						<div class='col-xs-5 col-sm-3 col-md-4 col-lg-3'>
 							<%= f.time_select time_field_helper("open", day_of_week), 
 								{:combined => true,
 								:hide_label => true,
-								:label_col => "col-0",
+								:label_col => "col-xs-12",
 								:ampm => true,
 								:include_blank => false,
 								:prompt => "Open",
@@ -19,11 +19,11 @@
 								{:class => ""}
 							%>
 						</div>
-						<div class='col-sm-2'>
+						<div class='col-xs-5 col-sm-3 col-md-4 col-lg-3'>
 							<%= f.time_select time_field_helper("close", day_of_week),
 								{:combined => true,
 								:hide_label => true,
-								:label_col => "col-0",
+								:label_col => "col-xs-12",
 								:ampm => true,
 								:include_blank => false,
 								:prompt => "Close",

@@ -4,11 +4,11 @@
 	
 		<!-- Default panel contents -->
 		<div class="panel-heading">
-			<h3 class="panel-title">New Venue</h3>
-			<%= link_to "Cancel", "#", class:"back-button btn btn-xs btn-danger pull-right format-right-margin hidden-xs hidden-sm" %>				
+			<%= link_to "Cancel", "#", class:"back-button btn btn-xs btn-danger pull-right format-right-margin hidden-xs hidden-sm" %>
+			<h3 class="panel-title"><%= @venue.name %></h3>
 		</div>
-
-		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-2", control_col: "col-sm-9") do |f| %>
+		
+		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-xs-2", control_col: "col-xs-12 col-sm-9") do |f| %>
 
 			<%= f.alert_message "Please fix the errors below:" %>
 <% if false %>  Debugging only
@@ -17,33 +17,55 @@
 				
 			<!-- Contact info panel -->
 			<div class="panel-body">
-				<h5 class="panel-title">Contact Info</h5>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-9">
+						<h5 class="panel-title">Contact Info</h5>
+					</div>	
+				</div>	
 				<%= render 'venues/form_contact', f: f %>
 			</div> <!-- panel body -->
 
 			<!-- Additional Info panel -->
 			<div class="panel-body">
-				<h5 class="panel-title">Additional Info</h5>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-9">
+						<h5 class="panel-title">Additional Info</h5>
+					</div>
+				</div>	
 				<%= render 'venues/form_additional', f: f %>
 			</div> <!-- panel body -->
 			
 
 			<!-- Features panel -->
 			<div class="panel-body">
-				<h5 class="panel-title">Features</h5>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-9">
+						<h5 class="panel-title">Features</h5>
+					</div>
+				</div>	
 				<%= render 'venues/form_features', f: f %>
 			</div> <!-- panel body -->
 
 			<!-- Venue Hours panel -->
 			<div class="panel-body">
-				<h5 class="panel-title">Venue Hours</h5>
-				<%= render 'venues/form_hours_venue', f: f %>
-			</div> <!-- panel body -->
-			
-			<!-- Kitchen Hours panel -->
-			<div class="panel-body">
-				<h5 class="panel-title">Kitchen Hours</h5>
-				<%= render 'venues/form_hours_kitchen', f: f %>
+				<div class="form-group">
+					<div class="col-md-6">
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-9 col-md-offset-4 col-md-8">
+								<h5 class="panel-title">Venue Hours</h5>
+							</div>
+						</div>	
+						<%= render 'venues/form_hours_venue', f: f %>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<div class="col-sm-offset-2 col-sm-9 col-md-8">
+								<h5 class="panel-title">Kitchen Hours</h5>
+							</div>
+						</div>	
+						<%= render 'venues/form_hours_kitchen', f: f %>
+					</div>
+				</div>
 			</div> <!-- panel body -->
 			
 			<div class="panel-body">

@@ -1,77 +1,91 @@
-<!-- form below uses jquery file upload (vs. carrierwave) to upload videos -->
-<div class="well">
-  <!-- Need to set multipart to true if doing a file upload -->
-  <!-- form has class="new_video", id="new_video", action="/videos", method="post" -->
-  <!-- action: "/videos" + method: "post" = controller: videos + action: create -->
-  <%= form_for Video.new, html: { multipart: true } do |f| %>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-    <%= f.label :attachment %>
-    <%= f.file_field :attachment, multiple: true, name: "video[attachment]" %>
-  <% end %>
-</div>
+<div class="container">
+	<div class="panel panel-default">
+	
+		<!-- Default panel contents -->
+		<div class="panel-heading">
+			<%= link_to "Add Venue", new_venue_path, class:"btn btn-xs btn-primary pull-right" %>
+			<h3 class="panel-title format-inline">Videos</h3>
+		</div>
 
-<div id="videos">
-  <%= render @videos %>
-</div>
-<div class="clear"></div>
+		<div class="table-responsive well">
 
-<table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>download link</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @videos.each do |video| %>
-      <tr>
-        <td><%= video.name %></td>
-        <td><%= link_to "Watch Video", video.attachment_url %></td>
-        <td><%= button_to "Delete", video, method: :delete, class: "btn btn-danger", confirm: "Are you sure that you wish to delete #{video.name}?" %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+			<table id="video_table" class="table table-condensed table-hover">		
+				<thead>
+					<tr>
+						<th>Video</th>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Duration</th>
+						<th>Date</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<% @videos.each do |video| %>
+						<!-- provides an anchor for videos/update.js.erb -->
+						<% if !video.response.nil? && video.response[:job][:state] == 'finished' %>
+							<tr id="video_<%= video.id %>" class="video_<%= video.id %>">
+								<%= render partial: 'video', locals: { video: video } %>
+							</tr>
+						<% end %>
+					<% end %>
+
+				</tbody>
+			</table>
+			
+		</div> <!-- table -->
+
+		<!-- Anchor for progress bar -->
+		<div class="row">
+			<div id="progress-bar-anchor" class="col-sm-offset-2 col-sm-8">
+			</div>
+		</div>
+		<div id="preloader" class="row collapse">
+			<div class="col-sm-12">
+				<%= image_tag("preloader.GIF", class:"image-center margin-10") %>
+			</div>
+			<div class="col-sm-12">
+				<p class="text-center" >Please wait...<p>
+			</div>
+		</div>
+		
+		<!-- Progress bar template -->
+		<script id="template-upload" type="text/x-tmpl">
+			<div class="upload">
+				<% if false %>
+					{%=o.name%} // shows the name of the file
+				<% end %>
+				<div class="progress">
+					<div class="progress-bar" role="progressbar" data-transitiongoal="100" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+					</div>
+				</div>
+			</div>
+		</script>
 
 
-<!-- Progress bar -->
-<script id="template-upload" type="text/x-tmpl">
-<div class="upload">
-  {%=o.name%}
-  <div class="progress"><div class="bar" style="width: 0%;"></div></div>
-</div>
-</script>
-
-
-
-
-
-
-<% if false %> <!-- code below uses Carrierwave (vs. jquery upload gem) to upload videos -->
-<br />
-<%= link_to "New Video", new_video_path, class: "btn btn-primary" %>
-<br />
-<br />
-<table class="table table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Download Link</th>
-      <th>&nbsp;</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @videos.each do |video| %>
-      <tr>
-        <td><%= video.name %></td>
-        <td><%= link_to "Watch Video", video.attachment_url %></td>
-        <td><%= button_to "Delete", video, method: :delete, class: "btn btn-danger", confirm: "Are you sure that you wish to delete #{video.name}?" %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-<% end %> <!-- using Carrierwave -->
-
+		<div class="panel-body">
+			<div class='text-center'> 
+				
+				<!-- form below uses jquery file upload (vs. carrierwave) to upload videos -->
+				<!-- Need to set multipart to true if doing a file upload -->
+				<!-- form has class="new_video", id="new_video", action="/videos", method="post" -->
+				<!-- action: "/videos" + method: "post" = controller: videos + action: create -->
+				<%= form_for Video.new, html: { multipart: true } do |f| %>
+					<span class="btn btn-success fileinput-button">
+						<span class="glyphicon glyphicon-plus"></span>
+						<span>Add files...</span>
+						<% if current_user.account_type == "admin" %>
+							<%= f.hidden_field :venue_id, value: params[:venue_id] %>
+						<% elsif current_user.account_type == "venue" %>%>
+							<%= f.hidden_field :venue_id, value: current_user.venue_id %>
+						<% end %>
+						<%= f.file_field :attachment, multiple: true, name: "video[attachment]" %>
+					</span>
+				<% end %>
+				
+			</div>
+		</div>
+		
+	</div> <!-- panel -->
 </div> <!-- container -->

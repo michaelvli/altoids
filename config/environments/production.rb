@@ -1,6 +1,11 @@
 Altoids::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # In order to receive the callback, Zencoder must be able to connect to your server, 
+  # so it needs to be on the open internet
+  # http://www.nickdesteffen.com/blog/video-encoding-with-uploadify-carrierwave-and-zencoder
+  config.action_mailer.default_url_options = { :host => 'altoids.herokuapp.com' }
+	  
   # Code is not reloaded between requests.
   config.cache_classes = true
 

@@ -1,0 +1,25 @@
+$('#mainModal').showModal({
+	title: "Notification",
+	body: "<%= escape_javascript(render partial: 'edit_template') %>",
+	defaultBtn: "Cancel",
+	primaryBtn: "Save",
+	callback: function(){
+		$("#btn-primary").off('click');
+		$("#btn-primary").on('click', function(){
+			$("#mainModal .preloader").css("display", "block"); // call preloader
+
+			var url = $("#video-update-form").attr('action'); // form action contains parameters specifying video id, etc.
+			var form_data = $("#video-update-form").serialize(); // Create a series of key/value pairs from data elements in the form
+//			var videoID = url.replace("/videos/", "");
+//			var video_selector = "#video_" + videoID;
+				
+			$.post(	url,
+				form_data, // need to pass serialized form data since this is a Post request (vs. in a Get request, data is passed in the url).
+				function(){
+				},
+				"script"
+			);
+
+		});
+	}
+});				
