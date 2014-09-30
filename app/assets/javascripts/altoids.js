@@ -87,7 +87,8 @@ function page_load_functions(){
 	alert("page_load");
 }
 
-function load_DOM_functions(){
+function load_DOM_functions(){	
+
 // DEVELOPMENT ONLY - need to remove desktop (and maybe tablet) from the if statement below 
 	// Mobile functions only:
 //	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
@@ -127,9 +128,19 @@ function load_DOM_functions(){
 	});
 	initVideoUpload();
 	initVideoBehavior(); // binds play button to thumbnail videos
-	fadeOutFlashes(); // fading out flash message alerts	
+	initVideoButtonBehavior(); // binds edit and update buttons for video index
+	fadeOutFlashes(); // fading out flash message alerts
+	initPopover( function(){
+		$(document).on('click', '#showGeolocationInstructions', function(){
+			$('#mainModal').showModal({
+				title: "Geolocation Enablement",
+				body: "<p>To share your location, you will need to: </p>"
+			});
+		});
+	}); // initialize popover	
 	endlessScroll(); // creates delegated event for endless scrolling
 	calendar_datepicker(); // plugin
+	
 }
 
 
@@ -577,6 +588,8 @@ checkSessionStorage - retrieves the value of variables stored in SessionStorage 
 
 SessionStorage Variables:
 1.  previousSort - stores the last sort button (except 'distance') that the user used.
+2.  latitude - 
+3.  longitude -
 	
 	Scenario: user clicks on the 'distance' sort button but has not enabled geolocation permission.  Application will take the user back 
 	to the previous sort results and highlight the appropriate sort button (stored by "previousSort").
@@ -617,6 +630,7 @@ function initApplyFilterButton(){
 		sort_order = getURLParameters(url, 'sort_order');
 		if (sort_order == 'distance')
 		{
+			
 			getGeolocation(function(){				
 				loadContent(url); // retrieve venue list based on sort_order		
 			});
@@ -626,6 +640,29 @@ function initApplyFilterButton(){
 			loadContent(url); // retrieve venue list based on sort_order		
 		}
 	});
+}
+
+
+
+function initPopover(callback){
+	// Initializing popover prior to binding to click handler or else popover will require two clicks - http://stackoverflow.com/questions/12333585/twitter-bootstrappopovers-are-not-showing-up-on-first-click-but-show-up-on-seco
+	// Because the "trigger" option is set to manual, activate popover using:
+	//		$('#distance').popover('toggle');
+	// This popover is triggered in html5_geolocation.js during the error callback when user denies geolocation permission
+	$('#distance').popover({trigger: 'manual',
+							delay: {show: 0, hide: 0}, // doesn't work when trigger is set to "manual"
+							content: "Requires location sharing. <a id='showGeolocationInstructions' href='#'>More</a>",
+							placement: 'top',
+							html: 'true'
+	});
+	
+	$('#distance').on('shown.bs.popover', function(){
+		setTimeout(function(){
+			$('#distance').popover('hide');
+		}, 3000);
+	});
+	
+	callback();
 }
 
 
@@ -644,20 +681,12 @@ Possible values of data-sort:
 
 Platform: desktop	
 */
-function initSortFilterButtons(){
-	// Initializing popover prior to binding to click handler or else popover will require two clicks - http://stackoverflow.com/questions/12333585/twitter-bootstrappopovers-are-not-showing-up-on-first-click-but-show-up-on-seco
-//	$('#distance').popover({trigger: 'manual',
-//							delay: {show: 0, hide: 0},
-//							content: "Requires location sharing. <a id='geolocation_instructions_link' href='#'>More</a>",
-//							placement: 'top',
-//							html: 'true'
-//	});
-	
+function initSortFilterButtons(){	
 //	if (checkSessionStorage('previousSort') == 'undefined')
 //	{
 //		sessionStorage['previousSort'] = 'event'; //default value is "Featured" on screen
 //	}
-	
+							
 	// Search form - instant response (i.e. not using "Apply Filters" button)
 	$(document).on('click', '.filter', function(){
 		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path		
@@ -680,15 +709,56 @@ function initSortFilterButtons(){
 
 		if (sort_order == 'distance')
 		{
-			getGeolocation(function(){				
-				loadContent(url); // retrieve venue list based on sort_order
-			});
+			// check if user has seen geolocation permission modal or if user has enabled or disabled geopermission
+			// only scenarios where geolocation permission modal is shown:
+			// 1.  User has not seen the modal before
+			// 2.  User did not enable or disable geolocation (i.e. user did not answer the geolocation prompt from browser)
+			if (checkSessionStorage("geoPermission") == "undefined") 
+			{
+				$('#mainModal').showModal({
+					title: "Geolocation Permission",
+					body: "<p>Geolocation needed to see how far venues are from you.  To enable geolocation, click the 'Enable Geolocation' button and enable geolocation.</p>",
+					primaryBtn: "Enable Geolocation",
+					callback: showGeoPermissionModal()
+				});
+			}
+			else
+			{
+				getGeolocation(function(){				
+					loadContent(url); // retrieve venue list based on sort_order
+				});
+			}	
 		}
 		else
 		{
 			loadContent(url); // retrieve venue list based on sort_order		
 		}
 	});
+}
+
+
+function showGeoPermissionModal(){
+	
+	$('#btn-primary').on('click', function(){ // bind "Enable Geolocation" button
+		getGeolocation(function(){				
+			loadContent(url); // retrieve venue list based on sort_order
+		});
+		$('#mainModal').modal("hide");
+		$('#btn-primary').off();
+	});
+	
+	// unbind Enable Geolocation button if user clicks the close or "X" button
+	$('#btn-default, #close').on('click', function(){
+		$('#btn-primary').off();
+	});
+	
+	// unbind Enable Geolocation button if user presses escape, backspace, and enter keys
+	$('#mainModal').keyup(function(event){
+		// keyCodes: escape = 27, backspace = 8 , enter = 13
+		if (event.keyCode == 27 || event.keyCode == 8 || event.keyCode == 13){ 
+			$('#btn-primary').off(); 
+		}
+	})
 }
 
 
@@ -858,8 +928,9 @@ function calendar_datepicker(){
 
 
 function initVideoUpload() {
-	$('#new_video').fileupload({
+	$('#new_video span').fileupload({
 		dataType: "script", // a script ("videos/create.js.erb") from the server will be executed after the file uploads
+		progressInterval: 100,
 		// add function is triggered each time a video is added, providing an object, "data", which can be used to fetch information such as the file object (files.[0])
 		add: function (e, data) { 
 			types = /(\.|\/)(mp4|mov)$/i;
@@ -867,7 +938,7 @@ function initVideoUpload() {
 			if (types.test(file.type) || types.test(file.name))
 			{
 				data.context = $(tmpl("template-upload", data.files[0]));
-				$('#new_video').append(data.context);
+				$('#progress-bar-anchor').append(data.context);
 				data.submit(); // triggers uploading of the file
 			}
 			else
@@ -877,10 +948,146 @@ function initVideoUpload() {
 		},
 		progress: function (e, data) { // progress callback function which updates the progress bar
 			if (data.context)
+			{	
+				// Bootstrap-ProgressBar Plugin: http://www.jqueryrain.com/?Y6ZaxIid
+				$('.progress .progress-bar').progressbar({
+					display_text: 'fill',
+					done: function(){
+						$('#preloader').delay(1000).show();
+					}
+				});
+	
+//				Using Bootstrap-ProgressBar (above) instead of code below:
+//				progress = parseInt(data.loaded / data.total* 100, 10);
+//				data.context.find('.progress-bar').css('width', progress + '%').text(progress + "%"); // find the progress bar and change the width value
+			}
+		},
+		done: function(e, data){ // called when file is finished uploading
+			if (data.context)
 			{
-				progress = parseInt(data.loaded / data.total * 100, 10);
-				data.context.find('.bar').css('width', progress + '%'); // find the progress bar and change the width value
+				$('#preloader').slideUp(500);
+				data.context.slideUp(500); // remove progress bar
+				$('#mainModal').showModal({
+					title: "Notification",
+					body: "<p>Your video is now processing.  We will send you a notification when it's ready to view.</p>"
+				});				
 			}	
-		}
+		},
+		fail: function(e, data){
+			$('#preloader').slideUp(500);
+			data.context.remove(); // remove progress bar
+			$('#mainModal').showModal({
+				title: "Alert",
+				body: "<p>Video failed to upload.</p>",
+				callback:	function(){
+					
+				}
+				
+				
+			});
+			console.log("Upload failed:");
+			console.log(data);
+		}	
 	});
-}	
+}
+
+
+function initVideoButtonBehavior(){
+	$('.video_watch_button,.video_edit_button, .video_delete_button').off('click'); // removes delegated events as well
+	
+	// bind "watch" button from videos/index.html.erb
+	$(document).on('click', '.video_watch_button', function(event){
+		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
+		var videoName = $(this).data("video");
+		var preloader = $("#mainModal .preloader");
+		var modalBodyContent = $("#mainModal .modal-body-content");
+		
+		modalBodyContent.hide(); // clear content, if any, from previous modal opened.
+		preloader.show();
+		
+		// Open empty modal
+		$('#mainModal').showModal({
+			title: videoName,
+			body: "",
+			callback: function(){
+			}
+		});
+
+		// Get video (ultimately, from an Amazon S3 object - in show action of video controller)
+		$.get(	url,
+			"",
+			function(){
+				var video = $(modalBodyContent).find('video').get(0);
+				video.oncanplay = function(){
+					$("#btn-default").on('click', function(){
+						video.pause();
+					});
+					preloader.hide();
+					modalBodyContent.fadeIn(500);
+					video.play();
+				}	
+			},
+			"script"
+		);
+				
+		event.preventDefault();
+	});
+	
+	// bind "edit" button from videos/index.html.erb
+	$(document).on('click', '.video_edit_button', function(event){
+		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
+
+		$.get(	url,
+			"",
+			function(){
+//				alert("success callback");
+			},
+			"script"
+		);
+	
+		event.preventDefault();
+	});
+	
+	// bind "delete" button from videos/index.html.erb
+	$(document).on('click', '.video_delete_button', function(event){
+		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
+		var videoName = $(this).data("video");
+		var videoID = url.replace("/videos/", "");
+		var video_selector = ".video_" + videoID;
+
+		$('#mainModal').showModal({
+			title: "Video: " + videoName,
+			body: "<p>Are you sure you want to delete this video?</p>",
+			defaultBtn: "Cancel",
+			primaryBtn: "Delete",
+			callback: function(){
+				$("#btn-primary").off('click');
+				$("#btn-primary").on('click', function(){
+					$("#mainModal").modal("hide"); // hide modal
+					$(video_selector).slideUp(500);	// video thumbnail row is faded out but not deleted until after controller executes destroy action	
+					
+					// List of ajax events: http://api.jquery.com/Ajax_Events/
+					$.ajax({
+						type: "DELETE", // The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
+						url: url,
+						data: "",
+						success: function(){
+//							alert("sweet success!!!");
+						},
+						error: function(){
+								$('#mainModal').showModal({
+									title: "Notification",
+									body: "<p>Your video can not be deleted at this time.</p>"
+								});
+								$(video_selector).slideDown(500);
+						},
+						dataType: "script"
+					}); // $.ajax
+					
+				}); // $("#btn-primary")
+			} // callback
+		}); // $('#mainModal')
+		
+		event.preventDefault();
+	});
+}

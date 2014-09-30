@@ -1,0 +1,2 @@
+var video_selector = "#video_" + "<%= escape_javascript(@videoID.to_s) %>" // create jquery selector for the video row that has been deleted
+$(video_selector).remove();

@@ -3,11 +3,11 @@
 	<div class="panel panel-default">
 	
 		<div class="panel-heading">
-			<h3 class="panel-title">Events for <%= @venue.name %></h3>
 			<%= link_to "Add Event", new_venue_event_path(:venue_id => session[:venue_id]), class:"btn btn-xs btn-primary pull-right" %>
+			<h3 class="panel-title">Events for <%= @venue.name %></h3>
 		</div>
 		
-		<div class="table-responsive">
+		<div class="table-responsive well">
 			<table class="table table-condensed table-hover">
 				<thead>
 					<tr>

@@ -4,7 +4,6 @@ class Video < ActiveRecord::Base
 #	validates :active, inclusion: { in: [true, false], message: "Please select True or False" }
 
 	mount_uploader :attachment, VideoUploader # Tells rails to use this uploader for this model.
-	validates :name, presence: true # Make sure the owner's name is present.
   
 	# Note: The "public" directory (i.e. (name of application)/public) can build up with "failed" uploads.  
 	# To upload a file, Carrierwave saves a copy of the file to the public folder before it performs 
@@ -22,9 +21,9 @@ class Video < ActiveRecord::Base
 	after_save :remove_tmp_directory  # Removes public/tmp directory which contains "failed" carrierwave uploads.
   
 	# The "meta-info" column in the video table can be used to store meta-data attributes by using the store method
-	# This functionality is used in app/video_uploader.rb
 	# http://api.rubyonrails.org/classes/ActiveRecord/Store.html
 	# http://blog.chrisblunt.com/rails-3-storing-model-metadata-attributes-with-activerecordstore/
+	# "store" in this case is the ActiveRecord store method (vs. the Carrierwave callback, ":store" - see video_uploader.rb)
 	store :meta_info, accessors: [ :request, :response ], coder: JSON 
   
 	# To locally test the videos, after Zencoder has done

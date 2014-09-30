@@ -11,7 +11,8 @@ class VideoUploader < CarrierWave::Uploader::Base
   # storage :file
   # storage :fog
 
-  # :store is a CarrierWave callbacks.  For more info, see https://github.com/carrierwaveuploader/carrierwave/wiki/How-to:-use-callbacks
+  # :store is a CarrierWave callbacks (vs. the ActiveRecord method, "store" - see video.rb).  
+  # For more info, see https://github.com/carrierwaveuploader/carrierwave/wiki/How-to:-use-callbacks
   after :store, :zencode # tells Carrierwave to call method zencode() after the video file has finished uploading
 
   # Specifies and overrides the directory where uploaded files will be stored.
@@ -45,6 +46,7 @@ class VideoUploader < CarrierWave::Uploader::Base
   # end
 
   # Add a white list of extensions which are allowed to be uploaded.
+  # Not case sensitive - because of "%w"
 	def extension_white_list
 		%w(mp4 mov)
 	end
@@ -66,7 +68,7 @@ class VideoUploader < CarrierWave::Uploader::Base
 	  :pass_through  => @model.id, # passes back the id of the completed video that is being encoded
       :outputs => [
         { # MP4 
-          :public      => true,
+          :public      => false,
           :base_url    => base_url,
           :filename    => 'mp4_' + filename_without_ext + '.mp4',
           :label       => 'webmp4',
@@ -75,7 +77,7 @@ class VideoUploader < CarrierWave::Uploader::Base
           :video_codec => 'h264'
         },
         { # WebM 
-          :public      => true,
+          :public      => false,
           :base_url    => base_url,
           :filename    => 'webm_' + filename_without_ext + '.webm',
           :label       => 'webwebm',
@@ -84,7 +86,7 @@ class VideoUploader < CarrierWave::Uploader::Base
           :video_codec => 'vp8'
         },
         { # OGV
-          :public      => true,
+          :public      => false,
           :base_url    => base_url,
           :filename    => 'ogv_' + filename_without_ext + '.ogv',
           :label       => 'webogv',
@@ -94,7 +96,7 @@ class VideoUploader < CarrierWave::Uploader::Base
         },
         {
          :thumbnails => {
-           :public      => true,
+           :public      => false,
            :base_url    => base_url,
            :filename    => filename_without_ext,
            :times       => [4],
@@ -110,7 +112,12 @@ class VideoUploader < CarrierWave::Uploader::Base
 # DEBUG: Rails.logger.debug("params: #{params.inspect}")
 # DEBUG: Rails.logger.debug("z_response: #{z_response.body}")
 # DEBUG: Rails.logger.debug("model.meta_info: #{@model.meta_info.inspect}")	
-    @model.meta_info[:request] = z_response.body # meta_info attribute is created by the store method - see models/video.rb
+    @model.meta_info[:request] = z_response.body # meta_info attribute is created by the store method - see models/video.rb		
+
+	# default values for video model attributes: name, live, active.  Note, venue_id attribute is set from hidden input field in videos/index.html.erb
+	@model.name = "Video_" + DateTime.now.strftime("%Y_%m_%d")
+	@model.live = false
+	@model.active = true
     @model.save(:validate => false)
   end
   
@@ -119,9 +126,9 @@ class VideoUploader < CarrierWave::Uploader::Base
   end
   
   def base_url # Provides the destination folder for which to store encoded files
-# DEBUG: rails.logger.debug("@base_url: #{@base_url}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78
-# DEBUG: rails.logger.debug("@model.attachment.url: #{@model.attachment.url}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78/uploadify_test.mov
-# DEBUG: rails.logger.debug("file.dirname(@model.attachment.url): #{file.dirname(@model.attachment.url)}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78
+# DEBUG: Rails.logger.debug("@base_url: #{@base_url}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78
+# DEBUG: Rails.logger.debug("@model.attachment.url: #{@model.attachment.url}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78/uploadify_test.mov
+# DEBUG: Rails.logger.debug("file.dirname(@model.attachment.url): #{file.dirname(@model.attachment.url)}") # https://s3.amazonaws.com/(bucket name)/uploads/video/attachment/78
     @base_url ||= File.dirname(@model.attachment.url)
   end
   

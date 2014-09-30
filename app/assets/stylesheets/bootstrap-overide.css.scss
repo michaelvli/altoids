@@ -28,8 +28,22 @@ body {
 	
 /* General */	
 
+video{
+	max-width: 100%;
+}
+
+.image-center{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 .heading {
 	padding: 15px 0 15px 0; //top right bottom left
+}
+
+.popover {
+	color: $color-darkest;
 }
 
 .section, .subsection{
@@ -104,8 +118,48 @@ body {
 
 @media (max-width: $device-max-width-phone) {
 	label.control-label{
-		display: none;
+//		display: none;
 	}
+}
+
+.form-group .panel-title{
+	font-size: 125%;
+}
+
+
+// Lines up "watch" and "delete" buttons within the video table
+.button_to, .button_to div {
+	display: inline;
+}
+
+// for the video upload button - http://stackoverflow.com/questions/11235206/twitter-bootstrap-form-file-element-upload-button
+.fileinput-button {
+    position: relative;
+    overflow: hidden;
+}
+.fileinput-button input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.inline{
+	display:inline;
+}
+
+// progress bar during video upload
+.progress{
+	background-color: $color-medium;
 }
 
 .jumbotron{
@@ -123,6 +177,19 @@ body {
 	background: initial;
 	background-color: $color-dark;
 }	
+
+.panel{
+	margin-top: 20px;
+	color: $color-darkest;
+	background-color: $color-lighter;
+	.panel-heading{
+		background-color: $color-light;
+	}
+	.btn{
+		margin-top: -3px;
+	}
+}
+
 
 /* Buttons 
 	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
@@ -745,6 +812,8 @@ body {
 		}
 	}
 }
+
+
 
 #tearsheet
 {

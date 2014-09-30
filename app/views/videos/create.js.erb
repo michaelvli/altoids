@@ -1,5 +1,8 @@
+// Need to keep this file since the controller is calling it.  But, don't need to do anything here.
+// One option is to put in code from altoids.js that has to do with creation which would lighten the js file but the benefit is minimal.
+
 <% if @video.new_record? %>
-  alert("Failed to upload video: <%= j @video.errors.full_messages.join(', ').html_safe %>");
+	alert("Failed to upload video: <%= j @video.errors.full_messages.join(', ').html_safe %>");
 <% else %>
-  $("#videos").append("<%= j render(@video) %>");
+// 	alert("Success!");
 <% end %>

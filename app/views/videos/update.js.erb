@@ -1,0 +1,17 @@
+$("#mainModal .preloader").css("display", "none"); // hide preloader
+$("#mainModal").modal("hide"); // hide modal
+
+var video_selector = "#video_" + "<%= escape_javascript(@video.id.to_s) %>" // create jquery selector for the video row that has been updated
+
+// fade out the original row, update the html, fade in the new row, then rebind buttons (watch, edit, delete) to the updated DOM
+$(video_selector).animate({
+	opacity: 0
+	}, 500, function(){
+		$(this).html("<%= escape_javascript(render partial: 'video', object: @video, as: 'video' || "There are no venues at the moment") %>");
+		$(video_selector).animate({		
+			opacity: 1
+		}, 500, function(){
+			initVideoButtonBehavior(); // rebind buttons
+		});
+	}
+);

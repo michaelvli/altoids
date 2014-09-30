@@ -67,8 +67,8 @@ class VenueEventsController < ApplicationController
   private  #See Listing 7.22: Private functions are used internally by the controller (and don't need to be exposed to external users via the Web)
 
     def correct_venue_user
-		unless (current_user.venue_id.to_s == session[:venue_id]) || (current_user.account_type == 'admin')
-			flash[:error] = "Ooops... looks like you aren't authorized to access those events." + " user: " + current_user.venue_id.to_s + " param:" + session[:venue_id]
+		unless (current_user.venue_id.to_s == params[:venue_id]) || (current_user.account_type == 'admin')
+			flash[:error] = "Ooops... looks like you aren't authorized to access those events."
 			redirect_to root_url
 		end	
     end

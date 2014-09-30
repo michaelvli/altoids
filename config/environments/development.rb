@@ -1,6 +1,11 @@
 Altoids::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # In order to receive the callback, Zencoder must be able to connect to your server, 
+  # so it needs to be on the open internet
+  # http://www.nickdesteffen.com/blog/video-encoding-with-uploadify-carrierwave-and-zencoder
+  config.action_mailer.default_url_options = { :host => '73.45.91.117', :port => 3000 }
+	
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
