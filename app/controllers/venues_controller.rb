@@ -41,7 +41,9 @@ class VenuesController < ApplicationController
     
   def edit
 	@venue = Venue.find(params[:id])
-	@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+#	@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+#	@days_of_week = Date::DAYNAMES
+	@days_of_week = Date::ABBR_DAYNAMES
 	session[:section] = params[:section] || session[:section]  # using session variable to track the section of the venues/edit.html form that the user is editing.  This is needed because section is passed as a parameter and in case there is a validation problem with the form, application needs to remember which section that the user was editing.
   end
   

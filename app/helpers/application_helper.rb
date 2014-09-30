@@ -1,8 +1,14 @@
 module ApplicationHelper
 
+
+	def get_path(url, ext)
+		path = add_ext(url.split(ENV['AWS_BUCKET'] + '/')[1], ext) # splits into an array where we keep the 2nd element (e.g. - uploads/video/attachment/89)
+		return path
+	end
+
 	# helper used to present thumbnail image for video uploads
-	def thumb(url)
-		url = url.rpartition(".")[0].to_s + ".png"
+	def add_ext(url, ext)
+		url = url.rpartition(".")[0].to_s + "." + ext
 		return url
 	end
 	
@@ -60,15 +66,15 @@ module ApplicationHelper
 	def time_field_helper(open_close, day_of_week, options ={})
 		if options.empty?
 			if open_close == "open"
-				return "venue_open_" + day_of_week.to_s[0..2]
+				return "venue_open_" + day_of_week.to_s[0..2].downcase
 			else
-				return "venue_close_" + day_of_week.to_s[0..2]
+				return "venue_close_" + day_of_week.to_s[0..2].downcase
 			end
 		elsif options == 'kitchen'
 			if open_close == "open"
-				return "kitchen_open_" + day_of_week.to_s[0..2]
+				return "kitchen_open_" + day_of_week.to_s[0..2].downcase
 			else
-				return "kitchen_close_" + day_of_week.to_s[0..2]
+				return "kitchen_close_" + day_of_week.to_s[0..2].downcase
 			end
 		end
 	end

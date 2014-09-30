@@ -3,11 +3,11 @@
 	<div class="panel panel-default">
 	
 		<div class="panel-heading">
-			<h3 class="panel-title">Users Index</h3>
 			<%= link_to "Add User", new_user_path, class:"btn btn-xs btn-primary pull-right" %>
+			<h3 class="panel-title">Users</h3>
 		</div>
   
-		<div class="table-responsive">
+		<div class="table-responsive well">
 			<table class="table table-condensed table-hover">
 				<thead>
 					<tr>
@@ -29,7 +29,7 @@
 							<td><%= link_to user.first_name+" "+user.last_name, edit_user_path(user.id) %></td>
 							<td class="hidden-xs"><%= user.email %></td>
 							<td class="hidden-xs"><%= user.account_type %></td>
-							<td class="hidden-xs hidden-sm"><%= user.created_at.in_time_zone.strftime("%b %-d, %Y @%k:%M") %></td>
+							<td class="hidden-xs hidden-sm"><%= user.created_at.in_time_zone.strftime("%b %e, %Y @%l:%M %p") %></td>
 							<td class="hidden-xs hidden-sm">TBD</td>
 							<td class="visible-lg"><%= user.zip_code %></td>
 							<% if !user.venue.nil? %>

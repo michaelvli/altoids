@@ -19,7 +19,7 @@ Altoids::Application.routes.draw do
 	post "zencoder" => "zencoder#create", :as => "zencoder" # used to direct the "completed job" notification from zencoder	
 	  
   # Example resource route (maps HTTP verbs to controller actions automatically):
-	resources :videos, only: [:index, :new, :create, :destroy]
+	resources :videos
 	resources :products
 	resources :sessions, only: [:new, :create, :destroy]
 	resources :users

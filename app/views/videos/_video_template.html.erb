@@ -1,0 +1,14 @@
+<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
+<% if false %>
+	url:<%= @bucket.objects[get_path(video.attachment.url, "MOV")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s %>	
+<% end %>
+				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true}, open: true) %>
+					<%= tag("source", src: @bucket.objects[get_path(video.attachment.url, "MOV")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s ) %> <!-- AVC(H.264) format -->
+					<%= tag("source", src: @bucket.objects[get_path(video.attachment.url, "mp4")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s ) %>
+<% if false %>
+					<source src='https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4' type='video/mp4' /> <!-- AVC(H.264) format -->			
+					<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+					<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
+<% end %>					
+					Your browser does not support the video tag.
+				<%= tag("/video", {}, open: true) %>

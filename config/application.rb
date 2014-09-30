@@ -17,11 +17,11 @@ module Altoids
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
+	# For Zencoder callback config, see config/environments/development.rb or config/environments/production.rb
 	# In order to receive the callback, Zencoder must be able to connect to your server, 
 	# so it needs to be on the open internet
 	# http://www.nickdesteffen.com/blog/video-encoding-with-uploadify-carrierwave-and-zencoder
-	 config.action_mailer.default_url_options = { :host => 'bench.herokuapp.com' }
-
+	
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'

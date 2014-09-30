@@ -11,7 +11,7 @@ Solution:
   2.  reset "Requires location sharing" popover message (when user clicks on the 'distance' sort button)
 */
 
-var html5_geolocation = function () {
+var html5_geolocation = function (popupVisible) {
     var lat;
     var lon;
 	var location_timeout;
@@ -32,20 +32,25 @@ var html5_geolocation = function () {
 				// Geolocation success
 				function(position){
 //					clearTimeout(location_timeout);
+					sessionStorage['geoPermission'] = true; // set geoPermission in session variables so use does not see modal prompt again
 					lat = position.coords.latitude;
 					lon = position.coords.longitude;
-					localStorage['geolocationAuth'] = true; // so user doesn't see "Requires sharing location" popover again
 					callback();
 				},
 				// Geolocation error
 				function(error){
 //					clearTimeout(location_timeout); // location_timeout is set in initiate function
-					switch(error.code) 
+					switch(error.code)
 					{
 						case error.PERMISSION_DENIED: // User denied the request for Geolocation
-							alert("User denied the request for Geolocation");
-// 							callback(); // prob don't need since callback_no_geolocation is executed before geolocation can return error.
-							localStorage.removeItem('geolocationAuth') // so user will see "Requires sharing location" popover next time
+							sessionStorage['geoPermission'] = false; // set geoPermission in session variables so use does not see modal prompt again													
+							$('#distance').off('click') // turn off button for sorting by distance
+														
+							// if popover is already showing, don't "show" again (or else $('#distance').popover('hide') will be called multiple times).
+							if ($('.popover').css('display') != 'block') 
+							{
+								$('#distance').popover('show'); // popover is initialized in function initSortFilterButtons() (in altoids.js)
+							}
 							break;
 						case error.POSITION_UNAVAILABLE:
 							alert("Location information is unavailable.");
