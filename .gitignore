@@ -23,6 +23,10 @@ doc/
 .project
 .DS_Store
 .idea
+<<<<<<< HEAD
 .secret
 /config/application.yml
 /config/environments/development.rb
+=======
+.secret
+>>>>>>> f4c6ad6d83a31b3b74c948f8515914621132fc48
