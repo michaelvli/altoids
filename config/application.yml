@@ -2,21 +2,22 @@
 # For dev and test environments - look in config/application.yml
 # For production - need to set up manually - see http://brandonhilkert.com/blog/flexible-rails-environment-configuration/
 # Make sure to add  "application.yml" to gitignore.  Since this file typically holds passwords and other secret keys, it should not end up in source control.
+# ZENCODER KEY IS ONLY AN INTEGRATION KEY - FOR PRODUCTION, USE  FULL ACCESS KEY
 
 defaults: &defaults
-  AWS_HOST: https://s3.amazonaws.com/barfly_carrierwave
-  ZENCODER_API_KEY: 2f3962ce067c710e79e042ce4a380e3e
-  SECRET_TOKEN: 16dc3310d94b75cfb508cd6e20b77e7ca5a3f4512f30459f9096a9a90609915e6df8ce1dc7832f87037a63d698fcecc22ac41aeca1a13987e8b4f8eeb5c403d2
-
+  SECRET_TOKEN: 7aa20b0876e3c553ca0263ee3423c59225e40a2f9a9c44d626f63dbefa382f5fbf21ce25d9af0b6a2d942eca4aa93e7eae3c6eab0dc54a1f5de3ffdc4ef96c47
+  
 development:
   <<: *defaults
-  AWS_KEY_ID_READ: AKIAIJWHZCUB22GKOW4A
-  AWS_KEY_VALUE_READ: Ai6SCzlxZLNfYI28VUM0ODB/40/osplSbG9zJkB1
-  AWS_KEY_ID_WRITE: AKIAIWA34R6BD6KVBDIQ
-  AWS_KEY_VALUE_WRITE: +4RuSPBpjAb6E/PKAJNfw7tXRyuYrFE5DzL0ZDeW
-  AWS_KEY_ID_DELETE: AKIAJ3NUJVAKNV5Z3XMA
-  AWS_KEY_VALUE_DELETE: yu+oYcxggVRB070qQ78K58Zp+gKK+FcJ7bMLeFq9
-  AWS_BUCKET: barfly_carrierwave
+  ZENCODER_API_KEY: cb1ee4de90eb9304a8db82ab8780835f
+  AWS_HOST: https://s3.amazonaws.com/barfly-development
+  AWS_KEY_ID_READ: AKIAICXAPAMRROC63INA
+  AWS_KEY_VALUE_READ: oDCm6uGsaTAtX87L7ONIDcc69Uq0Bv24Z9F5rPvV
+  AWS_KEY_ID_WRITE: AKIAI6B2MUKDLBHNXUSQ
+  AWS_KEY_VALUE_WRITE: LPa2iF5jlGjM2qcNOR8rFiB4g6lQLmmbJp/O2KZ5
+  AWS_KEY_ID_DELETE: AKIAJVOPSJU6QPN2VTAQ
+  AWS_KEY_VALUE_DELETE: F1yO8RytiO8SZXQhRFmnFW+WXu/YevNj4zBatLlj
+  AWS_BUCKET: barfly-development
   
 
 test:

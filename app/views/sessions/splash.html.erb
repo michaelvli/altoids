@@ -2,11 +2,11 @@
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<%= render 'sessions/signup_modal' %>
 </div>
-
+					
 <!-- Carousel --> <!-- "data-ride='carousel'" is the data attribute that starts the carousel's sliding automatically upon page load -->				
 <div id="myCarousel" class="carousel slide">
-	<!-- @venues is an ActiveRecord collection -->
-	<%= render partial: 'carousel', object: @venues, as: 'videos' %>
+	<!-- @videos is an ActiveRecord collection -->
+	<%= render partial: 'carousel', object: @videos, as: 'videos' %>
 </div><!-- .carousel -->
 
 <!-- Marketing messaging - Wrap the rest of the page in another container to center all the content. -->
