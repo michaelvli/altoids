@@ -1,6 +1,8 @@
 class Video < ActiveRecord::Base
 	belongs_to :venue
-	
+	has_many :venue_events, :through => :venue
+	has_one :neighborhood, :through => :venue
+  
 #	validates :active, inclusion: { in: [true, false], message: "Please select True or False" }
 
 	mount_uploader :attachment, VideoUploader # Tells rails to use this uploader for this model.
@@ -48,4 +50,57 @@ class Video < ActiveRecord::Base
 		FileUtils.remove_dir(path_to_be_deleted, :force => true)
 	end
   
+    def self.get_videos
+# NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
+# because .url method in view page uses "id" to construct the url path to the S3 image/video.
+#
+# SELECT DISTINCT ON(videos.venue_id) videos.venue_id AS venue_id, videos.id AS id, videos.name AS video_name, videos.attachment AS attachment,
+# 	neighborhoods.name AS neighborhood_name,
+#	venues.name AS venue_name,
+#	events.name AS event_type_name, 
+# 	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+# FROM "videos"
+# INNER JOIN "venues" ON "venues"."id" = "videos"."venue_id"
+# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
+# JOIN 
+# 	(SELECT venue_events.venue_id, venue_events.event_id AS event_id, venue_events.name, venue_events.description, venue_events.start_time 
+# 	 FROM "venue_events" JOIN 
+# 		(SELECT MIN(start_time) as event_start_time, venue_id
+# 		 FROM "venue_events" 
+# 		 GROUP BY venue_id) subquery1 
+# 	 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2
+# ON subquery2.venue_id = videos.venue_id
+# INNER JOIN "events" ON "events"."id" = subquery2.event_id
+# WHERE "videos"."live" = 't'
+# ORDER by videos.venue_id, random()
+
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
+		subquery1 = subquery1.group("venue_id")
+		subquery1 = subquery1.to_sql
+		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
+		subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id AS event_id, venue_events.name, venue_events.description, venue_events.start_time")
+		subquery2 = subquery2.to_sql
+		@videos = Video.joins("JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = videos.venue_id")
+
+		# Modified Distinct ON statement (works in PostGreSQL but not SQLite3)
+		# NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
+		# because .url method in view page uses "id" to construct the url path to the S3 image/video.
+		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
+			@videos = @videos.select("DISTINCT (videos.venue_id), videos.id AS id, videos.venue_id AS venue_id, videos.name AS video_name, videos.attachment AS attachment, 
+									neighborhoods.name AS neighborhood_name, 
+									venues.name AS venue_name,
+									events.name AS event_type_name,
+									subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		else
+			@videos = @videos.select("DISTINCT ON(videos.venue_id) videos.venue_id AS venue_id, videos.id AS id, videos.name AS video_name, videos.attachment AS attachment, 
+									neighborhoods.name AS neighborhood_name, 
+									venues.name AS venue_name,
+									events.name AS event_type_name, 
+									subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		end				
+		@videos = @videos.joins(:neighborhood)
+		@videos = @videos.joins(:venue)
+		@videos = @videos.joins("INNER JOIN events ON events.id = subquery2.event_id")
+	end
+	
 end

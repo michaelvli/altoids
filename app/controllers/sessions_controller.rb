@@ -5,17 +5,26 @@ class SessionsController < ApplicationController
   # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
   # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
   before_filter :check_for_mobile, :only => [:splash, :new, :home, :events_list, :tearsheet]
-  
+
 	def splash
 		if signed_in?
 			redirect_to home_path
-		else
-			# returns a Activerecord collection vs. a single Activerecord object
-			@venues = Venue.joins(:videos) # only select for venues that have videos
-			@venues = @venues.find_events # retrieves only venues that have upcoming events
-			@venues = @venues.order("RANDOM()")
-			@venues = @venues.limit(5) 		
+		else			
+			# returns a Activerecord relation vs. a model instance - http://stackoverflow.com/questions/6004891/undefined-method-for-activerecordrelation
+#			@venues = Venue.joins(:videos) # only select for venues that have videos
+#			@venues = @venues.find_events # retrieves only venues that have upcoming events
+#			@venues = @venues.order("RANDOM()")
+#			@venues = @venues.limit(5) 		
 			
+		    @videos = Video.get_videos.where(live: false).order("videos.venue_id, RANDOM()")
+			
+			# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
+			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+			@bucket = s3.buckets[ENV['AWS_BUCKET']]
+			# Code concepts below should be used in views/index.html.erb
+		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
+		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
+
 			@user = User.new
 		end	
 	end

@@ -928,67 +928,69 @@ function calendar_datepicker(){
 
 
 function initVideoUpload() {
-	$('#new_video span').fileupload({
-		dataType: "script", // a script ("videos/create.js.erb") from the server will be executed after the file uploads
-		progressInterval: 100,
-		// add function is triggered each time a video is added, providing an object, "data", which can be used to fetch information such as the file object (files.[0])
-		add: function (e, data) { 
-			types = /(\.|\/)(mp4|mov)$/i;
-			file = data.files[0];
-			if (types.test(file.type) || types.test(file.name))
-			{
-				data.context = $(tmpl("template-upload", data.files[0]));
-				$('#progress-bar-anchor').append(data.context);
-				data.submit(); // triggers uploading of the file
-			}
-			else
-			{
-				alert("#{file.name} is not a .mp4 or .mov video file")
-			}
-		},
-		progress: function (e, data) { // progress callback function which updates the progress bar
-			if (data.context)
-			{	
-				// Bootstrap-ProgressBar Plugin: http://www.jqueryrain.com/?Y6ZaxIid
-				$('.progress .progress-bar').progressbar({
-					display_text: 'fill',
-					done: function(){
-						$('#preloader').delay(1000).show();
-					}
-				});
-	
-//				Using Bootstrap-ProgressBar (above) instead of code below:
-//				progress = parseInt(data.loaded / data.total* 100, 10);
-//				data.context.find('.progress-bar').css('width', progress + '%').text(progress + "%"); // find the progress bar and change the width value
-			}
-		},
-		done: function(e, data){ // called when file is finished uploading
-			if (data.context)
-			{
-				$('#preloader').slideUp(500);
-				data.context.slideUp(500); // remove progress bar
-				$('#mainModal').showModal({
-					title: "Notification",
-					body: "<p>Your video is now processing.  We will send you a notification when it's ready to view.</p>"
-				});				
-			}	
-		},
-		fail: function(e, data){
-			$('#preloader').slideUp(500);
-			data.context.remove(); // remove progress bar
-			$('#mainModal').showModal({
-				title: "Alert",
-				body: "<p>Video failed to upload.</p>",
-				callback:	function(){
-					
+	$(document).on('click', '#new_video span', function(){
+		$('#new_video span').fileupload({
+			dataType: "script", // a script ("videos/create.js.erb") from the server will be executed after the file uploads
+			progressInterval: 100,
+			// add function is triggered each time a video is added, providing an object, "data", which can be used to fetch information such as the file object (files.[0])
+			add: function (e, data) { 
+				types = /(\.|\/)(mp4|mov)$/i;
+				file = data.files[0];
+				if (types.test(file.type) || types.test(file.name))
+				{
+					data.context = $(tmpl("template-upload", data.files[0]));
+					$('#progress-bar-anchor').append(data.context);
+					data.submit(); // triggers uploading of the file
 				}
-				
-				
-			});
-			console.log("Upload failed:");
-			console.log(data);
-		}	
-	});
+				else
+				{
+					alert("#{file.name} is not a .mp4 or .mov video file")
+				}
+			},
+			progress: function (e, data) { // progress callback function which updates the progress bar
+				if (data.context)
+				{	
+					// Bootstrap-ProgressBar Plugin: http://www.jqueryrain.com/?Y6ZaxIid
+					$('.progress .progress-bar').progressbar({
+						display_text: 'fill',
+						done: function(){
+							$('#preloader').delay(1000).show();
+						}
+					});
+		
+	//				Using Bootstrap-ProgressBar (above) instead of code below:
+	//				progress = parseInt(data.loaded / data.total* 100, 10);
+	//				data.context.find('.progress-bar').css('width', progress + '%').text(progress + "%"); // find the progress bar and change the width value
+				}
+			},
+			done: function(e, data){ // called when file is finished uploading
+				if (data.context)
+				{
+					$('#preloader').slideUp(500);
+					data.context.slideUp(500); // remove progress bar
+					$('#mainModal').showModal({
+						title: "Notification",
+						body: "<p>Your video is now processing.  We will send you a notification when it's ready to view.</p>"
+					});				
+				}	
+			},
+			fail: function(e, data){
+				$('#preloader').slideUp(500);
+				data.context.remove(); // remove progress bar
+				$('#mainModal').showModal({
+					title: "Alert",
+					body: "<p>Video failed to upload.</p>",
+					callback:	function(){
+						
+					}
+					
+					
+				});
+				console.log("Upload failed:");
+				console.log(data);
+			}	
+		});
+	});	
 }
 
 
