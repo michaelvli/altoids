@@ -24,3 +24,5 @@ doc/
 .DS_Store
 .idea
 .secret
+/config/application.yml
+/config/environments/development.rb
