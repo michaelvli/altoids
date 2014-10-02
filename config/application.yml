@@ -4,21 +4,4 @@
 # Make sure to add  "application.yml" to gitignore.  Since this file typically holds passwords and other secret keys, it should not end up in source control.
 # ZENCODER KEY IS ONLY AN INTEGRATION KEY - FOR PRODUCTION, USE  FULL ACCESS KEY
 
-defaults: &defaults
-  SECRET_TOKEN: 7aa20b0876e3c553ca0263ee3423c59225e40a2f9a9c44d626f63dbefa382f5fbf21ce25d9af0b6a2d942eca4aa93e7eae3c6eab0dc54a1f5de3ffdc4ef96c47
-  
-development:
-  <<: *defaults
-  ZENCODER_API_KEY: cb1ee4de90eb9304a8db82ab8780835f
-  AWS_HOST: https://s3.amazonaws.com/barfly-development
-  AWS_KEY_ID_READ: AKIAICXAPAMRROC63INA
-  AWS_KEY_VALUE_READ: oDCm6uGsaTAtX87L7ONIDcc69Uq0Bv24Z9F5rPvV
-  AWS_KEY_ID_WRITE: AKIAI6B2MUKDLBHNXUSQ
-  AWS_KEY_VALUE_WRITE: LPa2iF5jlGjM2qcNOR8rFiB4g6lQLmmbJp/O2KZ5
-  AWS_KEY_ID_DELETE: AKIAJVOPSJU6QPN2VTAQ
-  AWS_KEY_VALUE_DELETE: F1yO8RytiO8SZXQhRFmnFW+WXu/YevNj4zBatLlj
-  AWS_BUCKET: barfly-development
-  
-
-test:
-  <<: *defaults
+testing gitignore
