@@ -63,7 +63,9 @@ class VideosController < ApplicationController
   
   def update
     @video = Video.find(params[:id])
-    
+    s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+	@bucket = s3.buckets[ENV['AWS_BUCKET']]
+	
 	if @video.update_attributes(video_params)
 		respond_to do |format|
 			if current_user.account_type == "admin" || current_user.account_type == "venue"
@@ -100,7 +102,9 @@ class VideosController < ApplicationController
 #	To delete the entire S3 folder, the aws request but be in the following form:
 #	s3.buckets[ENV['AWS_BUCKET']].objects.with_prefix('uploads/video/attachment/89/').delete_all	
 	directory_to_be_deleted = File.dirname(@video.attachment.url) # get the directory of a file (e.g. - https://s3.amazonaws.com/barfly_carrierwave/uploads/video/attachment/89)
-	directory_to_be_deleted = directory_to_be_deleted.split(ENV['AWS_BUCKET'] + '/')[1] # splits into an array where we keep the 2nd element (e.g. - uploads/video/attachment/89)
+	# use URI module to get the path of a url - http://www.ruby-doc.org/stdlib-2.1.3/libdoc/uri/rdoc/URI.html
+	# then strips the leading slash by using .slice(1..-1) (i.e. strips leading character)
+	directory_to_be_deleted = URI(directory_to_be_deleted).path.to_s.slice(1..-1)
 	directory_to_be_deleted = directory_to_be_deleted + '/' # need to append a forward slash at the end (e.g. - uploads/video/attachment/89/
 #	logger.debug("directory_to_be_deleted: #{directory_to_be_deleted}")
 	s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_DELETE'], :secret_access_key => ENV['AWS_KEY_VALUE_DELETE'])
