@@ -1,0 +1,7 @@
+# http://brandonhilkert.com/blog/flexible-rails-environment-configuration/
+# For dev and test environments - look in config/application.yml
+# For production - need to set up manually - see http://brandonhilkert.com/blog/flexible-rails-environment-configuration/
+# Make sure to add  "application.yml" to gitignore.  Since this file typically holds passwords and other secret keys, it should not end up in source control.
+# ZENCODER KEY IS ONLY AN INTEGRATION KEY - FOR PRODUCTION, USE  FULL ACCESS KEY
+
+testing gitignore
