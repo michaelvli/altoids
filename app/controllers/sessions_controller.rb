@@ -31,10 +31,18 @@ class SessionsController < ApplicationController
 
 	
 	def home
+		# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
+			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+			@bucket = s3.buckets[ENV['AWS_BUCKET']]
+			# Code concepts below should be used in views/index.html.erb
+		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
+		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
+		
 		# Setting up activerecord relation between venues, neighborhoods, and venue_events.
 		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
-		@venues = Venue.get_venues
+		# For ActiveRecord query methods, see: http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-distinct
+		@venues = Venue.get_venues.joins(:videos).distinct # need to eliminate venues that do not have videos
 		
 		if (params.has_key?(:features)) # needs to come before neighborhoods filter bc of LEFT JOIN
 			@venues = @venues.filter_features(params[:features])
