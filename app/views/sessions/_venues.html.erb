@@ -1,19 +1,11 @@
+<% if !venue.get_url(venue.id).nil? %> <!-- Some venues may not have videos.  These venues should not be displayed -->
+
 					<!-- Venue Thumbnail -->
 					<div class="col-md-6 thumbnail-container">
 					
 						<!-- Thumbnail image-->
-<% if false %>
-						<a href="#!" class="thumbnail">
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
-						</a>
-						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail", :data => { :toggle => 'modal', :target => '#tearsheetModal' }) do %>
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
-						<% end %>
-
-<% end %>
-
 						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail" ) do %>
-							<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+venue.file_name+"-"+"00001"+".png")%>
+							<%= image_tag(@bucket.objects[get_path(venue.get_url(venue.id), "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
 						<% end %>
 
 						
@@ -40,3 +32,4 @@
 						</div>
 						
 					</div><!-- Venue Thumbnail -->
+<% end %> <!-- Some venues may not have videos.  These venues should not be displayed -->
