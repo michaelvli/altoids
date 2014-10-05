@@ -15,7 +15,9 @@
 						<th class="visible-lg">ID</th>
 						<th>Venue</th>
 						<th>Events</th>
-						<th>Videos</th>
+						<th>Finished Videos</th>
+						<th>Processing Videos</th>
+						<th>Failed Videos</th>
 						<th>Views</th>
 						<th>&nbsp;</th>
 					</tr>
@@ -26,7 +28,9 @@
 							<td class="visible-lg"><%= venue.id %></td>
 							<td><%= link_to venue.name, edit_venue_path(venue.id) %></td>							
 							<td><%= link_to venue.venue_events.count, venue_events_path(:venue_id => venue.id) %></td>
-							<td><%= link_to venue.videos.count, videos_path(:venue_id => venue.id) %></td>
+							<td><%= link_to venue.count_videos("finished"), videos_path(:venue_id => venue.id) %></td>
+							<td><%= venue.count_videos("processing") %></td>
+							<td><%= venue.count_videos("failed") %></td>
 							<td>TBD</td>
 							<td><%= link_to "Delete", venue, method: :delete, data: { confirm: "You sure?" } %></td>
 						</tr>	

@@ -58,6 +58,25 @@ class Venue < ActiveRecord::Base
 		end
 		
 	end
+
+	def count_videos(status)
+		# valid status states are: processing, failed, and finished
+		counter = 0
+		if (status == "processing")
+			self.videos.each do |video|
+				if video.response.nil?
+					counter = counter + 1
+				end
+			end
+		else
+			self.videos.each do |video|
+				if !video.response.nil? && (video.response[:job][:state] == status)
+					counter = counter + 1
+				end	
+			end
+		end
+		return counter
+	end
 	
   def self.get_venues # Returns all venues including event info and neighborhood info.
 	
@@ -197,9 +216,6 @@ class Venue < ActiveRecord::Base
 		self.zip_code = self.zip_code.strip.gsub(/[^0-9]/, '')
 		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'') unless self.file_name != ""
 		self.phone = self.phone.strip.gsub(/[^0-9]/, '')
-		if self.active.nil?
-			self.active = true
-		end
     end
 	
 	def geocoded_address

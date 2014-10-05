@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140522201354) do
+ActiveRecord::Schema.define(version: 20141005193715) do
 
   create_table "events", force: true do |t|
     t.string   "name"
@@ -152,6 +152,7 @@ ActiveRecord::Schema.define(version: 20140522201354) do
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
   end
 
   add_index "videos", ["venue_id"], name: "index_videos_on_venue_id"
