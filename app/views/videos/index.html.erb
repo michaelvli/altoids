@@ -77,7 +77,7 @@
 						<span>Add files...</span>
 						<% if current_user.account_type == "admin" %>
 							<%= f.hidden_field :venue_id, value: params[:venue_id] %>
-						<% elsif current_user.account_type == "venue" %>%>
+						<% elsif current_user.account_type == "venue" %>
 							<%= f.hidden_field :venue_id, value: current_user.venue_id %>
 						<% end %>
 						<%= f.file_field :attachment, multiple: true, name: "video[attachment]" %>

@@ -42,7 +42,7 @@ class SessionsController < ApplicationController
 		# Rows returned will be iterated via a collection in session/_thumbnails.html.erb partial, referenced in in sessions/home.html.erb
 		# Some columns use alias (referenced in session/_thumbnails.html.erb partial)
 		# For ActiveRecord query methods, see: http://api.rubyonrails.org/classes/ActiveRecord/QueryMethods.html#method-i-distinct
-		@venues = Venue.get_venues.joins(:videos).distinct # need to eliminate venues that do not have videos
+		@venues = Venue.get_venues.joins(:videos).where("videos.status = ?", "finished").distinct # need distinct venues with finished videos
 		
 		if (params.has_key?(:features)) # needs to come before neighborhoods filter bc of LEFT JOIN
 			@venues = @venues.filter_features(params[:features])

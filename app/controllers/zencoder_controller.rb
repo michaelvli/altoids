@@ -14,6 +14,7 @@ class ZencoderController < ApplicationController
 	
     if @video && params[:job][:state] == 'finished' # Check if video exists and encoding state of process was ‘finished’ successfully
       @video.meta_info[:response] = params[:zencoder]
+	  @video.status = 'finished'
       @video.save # Save all the parameters coming in the request to meta_info of the video
     end
 	

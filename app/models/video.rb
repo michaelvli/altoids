@@ -49,7 +49,7 @@ class Video < ActiveRecord::Base
 		#DEBUG: Rails.logger.debug("PATH: #{path_to_be_deleted}")
 		FileUtils.remove_dir(path_to_be_deleted, :force => true)
 	end
-  
+	
     def self.get_videos
 # NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
 # because .url method in view page uses "id" to construct the url path to the S3 image/video.
