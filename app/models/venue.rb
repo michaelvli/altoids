@@ -48,7 +48,7 @@ class Venue < ActiveRecord::Base
   validates(:venue_close_sun, presence: true)
 
 	def get_url(venue_id)
-		video = Video.where(venue_id: venue_id).order("RANDOM()")
+		video = Video.where(venue_id: venue_id).where(status: 'finished').order("RANDOM()")
 		url = video.first
 		if url.nil? # some venues may not have videos
 			return nil # means venue doesn't have any videos
