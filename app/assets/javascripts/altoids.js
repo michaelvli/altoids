@@ -67,6 +67,10 @@ function page_change_functions(){
 		interval: 5000
 	});
 	
+	if ($('#venues').length){
+		loadContent('home'); // default parameters for getting venues, sorted by events
+	}
+	
 	calendar_datepicker(); // plugin
 	
 	initCarouselVideos(); // plays videos in carousel
@@ -111,9 +115,6 @@ function load_DOM_functions(){
 	{
 		initCarouselVideos(); // play/pause videos in carousel
 		enableHover();
-		if ($('#venues').length){
-			loadContent('home'); // default parameters for getting venues, sorted by events
-		}
 		initSortFilterButtons();
 	}
 	
@@ -142,6 +143,7 @@ function load_DOM_functions(){
 	calendar_datepicker(); // plugin
 	
 }
+
 
 
 
