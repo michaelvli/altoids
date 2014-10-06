@@ -32,9 +32,9 @@ class SessionsController < ApplicationController
 	
 	def home
 		# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
-			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
-			@bucket = s3.buckets[ENV['AWS_BUCKET']]
-			# Code concepts below should be used in views/index.html.erb
+		s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+		@bucket = s3.buckets[ENV['AWS_BUCKET']]
+		# Code concepts below should be used in views/index.html.erb
 		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
 		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
 		
@@ -97,9 +97,17 @@ class SessionsController < ApplicationController
 	end
 	
 	def tearsheet
+		# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
+		s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+		@bucket = s3.buckets[ENV['AWS_BUCKET']]
+		# Code concepts below should be used in views/index.html.erb
+		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
+		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
+
+		
 		@venue = Venue.find(params[:id]) # returns a single Activerecord object vs. a collection
 		# @venue = Venue.where(id: params[:id]) # returns a Activerecord collection even though there's only 1 item
-		@videos = Video.where(venue_id: params[:id])
+		@videos = Video.where(venue_id: params[:id]).where(status: "finished")
 		@videos = @videos.joins(:venue)
 		@videos = @videos.select("videos.*, venues.file_name AS file_name, venues.name AS venue_name")
 		

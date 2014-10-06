@@ -491,23 +491,23 @@ Function initCarouselVideos - defines carousel behavior in terms of:
 Platform: desktop only
 */
 function initCarouselVideos(){
-	var video = $('div.carousel-inner').find('.active').children('video');
+	var first_video = $('div.carousel-inner').find('.active').children('video');
 	
-	if (video.length > 0){
+	if (first_video.length > 0){
 		// start playing first video
-		video.get(0).play();
+		first_video.get(0).play();
 		
 		// start/pause videos based on when carousel finishes sliding
 		$('.carousel').on('slid.bs.carousel', function () {
-			
+			var video = $('div.carousel-inner').find('.active').children('video');
 			/* 	play active video
 				1) Find the descendants of 'div.carousel-inner' that have the class, 'active'. "Find" method is recursive, looking at all levels below
 				2) Get the descendants of the elements returned from step #1.  "Children" method looks only one level deep, making if faster than the "find" method.
 				3) Get the DOM element of the jQuery object returned from step #2.  In this case, the element is an HTML video element.  A jQuery object is an array-like structure of DOM elements.
 				4) Play is a method that is used on DOM elements (not jQuery objects).  The HTML video element is played.
 			*/
+
 			video.get(0).play(); 
-			
 			/* 	pause all inactive videos
 				1) Find the descendants of 'div.carousel-inner' that have the class, 'item'. "Find" method is recursive, looking at all levels below
 				2) Get the descendants of the elements returned from step #1.
@@ -518,7 +518,7 @@ function initCarouselVideos(){
 					c) Pause is a method that is used on DOM elements (not jQuery objects).  The HTML video element is paused.
 			*/
 			$('div.carousel-inner').find('.item').not('.active').each(function(){ 
-				$(this).children("video").get(0).pause();											
+				$(this).children("video").get(0).pause();
 			});
 		});
 	}	
