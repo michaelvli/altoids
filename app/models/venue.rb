@@ -1,3 +1,8 @@
+# encoding: utf-8
+# Need the commented code above because for some reason, the constant, VALID_DOMAIN_REGEX, causes the following error:
+# invalid multibyte char (US-ASCII)
+# http://stackoverflow.com/questions/1739836/invalid-multibyte-char-us-ascii-with-rails-and-ruby-1-9
+
 class Venue < ActiveRecord::Base
   has_many :users
   has_many :venue_events, dependent: :destroy
@@ -14,6 +19,7 @@ class Venue < ActiveRecord::Base
   before_validation :process_data
   geocoded_by :geocoded_address  # Geocoding: http://railscasts.com/episodes/273-geocoder
   after_validation :geocode, :if => :address_changed?
+  after_validation :sanitize_domain
   after_find :format_phone_number
     
   # May need to consider regex for UTF-8 characters at some point: http://stackoverflow.com/questions/4717717/invalid-multibyte-char-us-ascii-validating-a-new-user-with-regex-using-ruby
@@ -22,7 +28,8 @@ class Venue < ActiveRecord::Base
   VALID_CITY_REGEX = /\A+[a-z\s\-\.]+\z/i
   VALID_ZIP_CODE_REGEX = /\A+[0-9]+\z/
   VALID_PHONE_REGEX = /\A+[0-9]+\z/
-
+  VALID_DOMAIN_REGEX = 	/\A+([a-z0-9])(([a-z0-9-]{1,61})?[a-z0-9]{1})?(\.[a-z0-9](([a-z0-9-]{1,61})?[a-z0-9‌​]{1})?)?(\.[a-zA-Z]{2,4})+\z/i
+  
   validates(:name, presence: true, length: { maximum: 30 }, format: { with: VALID_NAME_REGEX })
   validates(:address, presence: true, length: { maximum: 50 }, format: { with: VALID_ADDRESS_REGEX })
   validates(:city, presence: true, format: { with: VALID_CITY_REGEX })
@@ -30,6 +37,7 @@ class Venue < ActiveRecord::Base
   validates(:zip_code, presence: true, length: { is: 5 }, format: { with: VALID_ZIP_CODE_REGEX })
   validates(:phone, presence: true, length: { is: 10 }, format: { with: VALID_PHONE_REGEX })
   validates(:neighborhood_id, presence: true)
+  validates(:website, format: {with: VALID_DOMAIN_REGEX, message: "Must be in the format www.venuewebsite.com" })
 # validates :active, inclusion: { in: [true, false], message: "Please select True or False" }
 
   validates(:venue_open_mon, presence: true)
@@ -216,7 +224,14 @@ class Venue < ActiveRecord::Base
 		self.zip_code = self.zip_code.strip.gsub(/[^0-9]/, '')
 		self.file_name = self.name.strip.downcase.gsub(/ /,'_').gsub(/'/,'') unless self.file_name != ""
 		self.phone = self.phone.strip.gsub(/[^0-9]/, '')
+		self.website = self.website.downcase
     end
+	
+	def sanitize_domain		
+		if (!self.website.blank?) && (!self.website.include? "www.")
+			self.website = "www." + self.website
+		end
+	end	
 	
 	def geocoded_address
       return self.address + ", " + self.city + ", " + self.state + " " + self.zip_code

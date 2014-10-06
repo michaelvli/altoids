@@ -35,7 +35,9 @@
 				<%= @venue.address %><br>
 				<%= @venue.city %>, <%= @venue.state %> <%= @venue.zip_code %><br>
 				<%= @venue.phone %> <br>
-				<%= link_to @venue.website,"http://"+@venue.website, :target => "_blank" %>
+				<% if !@venue.website.nil? %>
+					<%= link_to @venue.website,"http://"+@venue.website, :target => "_blank" %>
+				<% end %>	
 			</address>
 				
 			<address>
