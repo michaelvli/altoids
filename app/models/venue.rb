@@ -106,7 +106,7 @@ class Venue < ActiveRecord::Base
 	# 	ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
 	# ON subquery2.venue_id = venues.id WHERE (videos.status = 'finished') LIMIT 2 OFFSET 0
 	
-		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, end_time as event_end_time, venue_id")
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
 		
 		# Modified sort_parameter_list to feed into PostGreSQL db used in Heroku
 		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
