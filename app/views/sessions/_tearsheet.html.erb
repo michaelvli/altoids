@@ -1,3 +1,116 @@
+<div id="tearsheet">
+	<!-- .slide starts the carousel in motion -->
+	<div class="row">
+		<div class="col-md-8">
+			<div class="row">
+				<div id="myCarousel" class="carousel slide" data-ride="carousel">
+					<%= render partial: 'carousel', object: @videos, as: 'videos' %>
+				</div>
+			</div>	
+		</div>	
+		<div class="col-md-4">
+			<div class="row">
+				<!-- GOOGLE MAP -->
+				<%= link_to "https://maps.google.com/?q="+@venue.name+","+@venue.address+","+@venue.zip_code, :target => "_blank", id:"map" do %>
+					<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
+					<!-- http://railscasts.com/episodes/273-geocoder -->
+					<!-- Responsive iFrame: http://niklausgerber.com/blog/responsive-google-or-bing-maps/ -->
+					<%= image_tag "http://maps.google.com/maps/api/staticmap?size=450x300&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %>	
+				<% end %>	<!-- #map container -->	
+			</div>
+			<address>
+				<%= @venue.address %><br>
+				<%= @venue.city %>, <%= @venue.state %> <%= @venue.zip_code %><br>
+				<%= @venue.phone %> <br>
+				<% if !@venue.website.nil? %>
+					<%= link_to @venue.website,"http://"+@venue.website, :target => "_blank" %>
+				<% end %>	
+			</address>
+		</div>
+	</div>
+
+	
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" role="tablist">
+		<li class="active"><a href="#events" role="tab" data-toggle="tab">Events</a></li>
+		<li><a href="#specials" role="tab" data-toggle="tab">Specials</a></li>
+		<li><a href="#features" role="tab" data-toggle="tab">Features</a></li>
+		<li><a href="#hours" role="tab" data-toggle="tab">Hours</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="tab-pane fade in active" id="events">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="content">
+						<% if @venue_events.count > 0 %>	
+							<% @venue_events.each do |venue_event| %>
+								<!-- Need to specify path since partial is located in views_mobile vs. mobile -->
+								<%= render '../views_mobile/sessions/events', event: venue_event %>
+							<% end %>
+						<% else %>
+							No events listed at the moment
+						<% end %>
+					</div>
+				</div>	
+			</div>	
+		</div>
+		
+		<div class="tab-pane fade" id="specials">
+			No specials listed at the moment
+		</div>
+		
+		<div class="tab-pane fade" id="features">
+			<div class="row">
+				<div class="col-md-4 vee-red">
+					
+					<!-- FEATURES -->
+					<div id="features">
+						<% Feature.all.each do |feature| %>
+							<div class="checkbox add-margin left">
+								<label>
+									<%= check_box_tag "venue[feature_ids][]", feature.id, @venue.feature_ids.include?(feature.id), class:"regular-checkbox", onclick:"return false"%>
+									<small><%= feature.name %></small><br>
+								</label>
+							</div>
+						<% end %>
+					</div>	<!-- #features container -->	
+					
+				</div>
+			</div>	
+		</div>
+		
+		<div class="tab-pane fade" id="hours">
+			<div class="row">	
+				<div class="col-md-4 vee-red">
+					<div id="hours">
+						<% @days_of_week.each do |day_of_week| %>
+							<div class="row">
+								<div class="col-xs-3 text-right">
+									<small>
+										<%=	DateTime.parse(day_of_week.to_s).strftime("%a")%>:
+									</small>
+								</div>	
+								<div class="col-xs-9">	
+									<small>
+										<%= retrieve_time("open", day_of_week).strftime("%l:%M %p") %>
+										&nbsp;-&nbsp;
+										<%= retrieve_time("close", day_of_week).strftime("%l:%M %p") %>
+									</small>
+								</div>	
+							</div>		
+						<% end %>
+					</div>	<!-- #hours container -->
+				</div>	
+			</div>
+		</div>
+		
+	</div>
+
+	
+	
+<% if false %>
+
 <div id="tearsheet" class="container">
 	<!-- .slide starts the carousel in motion -->
 	<div id="myCarousel" class="row carousel slide" data-ride="carousel">
@@ -5,7 +118,7 @@
 	</div>	
 
 	<div class="row">
-		<div class="col-md-8 vee-red">
+		<div class="col-md-8 ">
 			
 			<div class="section">
 				EVENTS
@@ -20,7 +133,7 @@
 			
 		</div>
 
-		<div class="col-md-4 vee-red">
+		<div class="col-md-4">
 		
 			<!-- GOOGLE MAP -->
 			<%= link_to "https://maps.google.com/?q="+@venue.name+","+@venue.address+","+@venue.zip_code, :target => "_blank", id:"map" do %>
@@ -92,3 +205,5 @@
 
 	</div>	
 </div>
+
+<% end %>

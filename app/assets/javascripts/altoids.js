@@ -68,21 +68,25 @@ function page_change_functions(){
 	});
 	
 	if ($('#venues').length){
-		loadContent('home'); // default parameters for getting venues, sorted by events
+		loadContent("home"); // default parameters for getting venues, sorted by events
 	}
 	
 	calendar_datepicker(); // plugin
-	
-	initCarouselVideos(); // plays videos in carousel
 	truncateText(function(){
-		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-		$( ".active.item" ).each(function( index ) {
-			if(index != 0){
-				$(this).removeClass('active');
-			}
-		});	
+		initCarousel();
 	});
+	initCarouselVideos(); // plays videos in carousel
 }
+
+function initCarousel(){
+	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+	$( ".active.item" ).each(function( index ) {
+		if(index != 0){
+			$(this).removeClass('active');
+		}
+	});	
+}
+
 function page_update_functions(){
 	alert("page_update");
 }
@@ -116,6 +120,8 @@ function load_DOM_functions(){
 		initCarouselVideos(); // play/pause videos in carousel
 		enableHover();
 		initSortFilterButtons();
+		initTearsheetModal(); // opens a modal window containing the tearsheet for a specific venue
+		getTearsheet(); // opens a tearsheet 
 	}
 	
 	// Ubiquitous functions
@@ -185,14 +191,14 @@ Function name: getTearsheets
 
 Purpose: Binds event "buttons" on the sessions/event_list.html.erb to take user to a venue tearsheet
 
-Platform: mobile
+Platform: mobile and desktop
 */
 function getTearsheet(){
 	$(document).on('click', '#events a.btn-glass', function(event){
 		var url = $(this).attr('href') // get the url of the venue website
 		
 		// change the url without a page refresh and add a history entry.
-		history.pushState(null, null, url);
+//		history.pushState(null, null, url);
 
 		// load the content
 		loadContent(url);
@@ -750,7 +756,7 @@ function showGeoPermissionModal(){
 	});
 	
 	// unbind Enable Geolocation button if user clicks the close or "X" button
-	$('#btn-default, #close').on('click', function(){
+	$('#btn-default, #btn-close').on('click', function(){
 		$('#btn-primary').off();
 	});
 	
@@ -996,6 +1002,50 @@ function initVideoUpload() {
 }
 
 
+
+function initTearsheetModal(){
+	$(document).on('click', '.thumbnail', function(event){
+		var url = $(this).attr('href') // get the url of the venue website
+		var venueName = $(this).data("venue");
+		var preloader = $("#mainModal .preloader");
+		var modalBodyContent = $("#mainModal .modal-body-content");
+
+		modalBodyContent.hide(); // clear content, if any, from previous modal opened.
+		preloader.show();
+		
+		// Open empty modal
+		$('#mainModal').showModal({
+			title: venueName,
+			body: "",
+			callback: function(){
+			}
+		});
+
+		// Get video (ultimately, from an Amazon S3 object - in show action of video controller)
+		$.get(	url,
+			"",
+			function(){
+				var video = $(modalBodyContent).find('video').get(0);
+				initCarousel(); // initializes carousel with one active carousel item
+				video.oncanplay = function(){
+					$('#mainModal').on('hide.bs.modal', function (e) { // stop video and carousel when modal closes
+						$('.carousel').carousel('pause') // need to pause carousel or it will keep playing
+						var activeVideo = $(modalBodyContent).find('.active').children('video').get(0);
+						activeVideo.pause();
+					})
+					preloader.hide();
+					truncateText();
+					modalBodyContent.fadeIn(500);
+					initCarouselVideos(); // plays videos in carousel
+				}
+			},
+			"script"
+		);
+		
+		event.preventDefault();
+	});
+}
+
 function initVideoButtonBehavior(){
 	$('.video_watch_button,.video_edit_button, .video_delete_button').off('click'); // removes delegated events as well
 	
@@ -1023,13 +1073,13 @@ function initVideoButtonBehavior(){
 			function(){
 				var video = $(modalBodyContent).find('video').get(0);
 				video.oncanplay = function(){
-					$("#btn-default").on('click', function(){
+					$('#mainModal').on('hide.bs.modal', function (e) {
 						video.pause();
-					});
+					})
 					preloader.hide();
 					modalBodyContent.fadeIn(500);
 					video.play();
-				}	
+				}
 			},
 			"script"
 		);
