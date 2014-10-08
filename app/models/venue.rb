@@ -63,8 +63,7 @@ class Venue < ActiveRecord::Base
 		else
 			url = url.attachment.url # .url method refers to Carrierwave/Paperclip .url method - http://stackoverflow.com/questions/16348675/not-able-to-get-url-from-uploaded-image-undefined-method-url-error-on-has-man
 			return url
-		end
-		
+		end		
 	end
 
 	def count_videos(status)
@@ -90,22 +89,25 @@ class Venue < ActiveRecord::Base
 	
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
 	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
-			
-	# SELECT venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, 
-	#	neighborhoods.name AS neighborhood_name, neighborhoods.id, 
-	#	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+
+	# SELECT DISTINCT venues.name AS venue_name, venues.id, venues.phone, venues.file_name, 
+	# 	neighborhoods.name AS neighborhood_name, neighborhoods.id AS neighborhood_id
+	# 	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
 	# FROM "venues" 
 	# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
-	# LEFT OUTER JOIN 
-	#	(SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
-	#	 FROM "venue_events" JOIN 
-	#		(SELECT MIN(start_time) as event_start_time, venue_id 
-	#		 FROM "venue_events" 
-	#		 GROUP BY venue_id) subquery1 
-	#	 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
-	# ON subquery2.venue_id = venues.id
-			
-		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
+	# INNER JOIN "videos" ON "videos"."venue_id" = "venues"."id" 
+	# LEFT OUTER JOIN (
+	# 	SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
+	# 	FROM "venue_events" JOIN (
+	# 		SELECT MIN(start_time) as event_start_time, end_time as event_end_time, venue_id 
+	# 		FROM "venue_events" 
+	# 		WHERE (end_time > Datetime('now')) 
+	# 		GROUP BY venue_id) subquery1 
+	# 	ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
+	# ON subquery2.venue_id = venues.id WHERE (videos.status = 'finished') LIMIT 2 OFFSET 0
+	
+		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, end_time as event_end_time, venue_id")
+		subquery1 = subquery1.where("end_time > Datetime('now')")
 		subquery1 = subquery1.group("venue_id")
 		subquery1 = subquery1.to_sql
 		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
@@ -113,7 +115,7 @@ class Venue < ActiveRecord::Base
 		subquery2 = subquery2.to_sql
 		@venues = Venue.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = venues.id")
 				
-		@venues = @venues.select("venues.name AS venue_name, venues.phone, venues.file_name, venues.neighborhood_id, neighborhoods.name AS neighborhood_name, neighborhoods.id, subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
+		@venues = @venues.select("venues.name AS venue_name, venues.id, venues.phone, venues.file_name, neighborhoods.name AS neighborhood_name, neighborhoods.id AS neighborhood_id, subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
 		@venues = @venues.joins(:neighborhood)
   end
   

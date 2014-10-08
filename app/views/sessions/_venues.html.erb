@@ -4,7 +4,7 @@
 					<div class="col-md-6 thumbnail-container">
 					
 						<!-- Thumbnail image-->
-						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail" ) do %>
+						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail", data: { venue: venue.venue_name } ) do %>
 							<%= image_tag(@bucket.objects[get_path(venue.get_url(venue.id), "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
 						<% end %>
 						
