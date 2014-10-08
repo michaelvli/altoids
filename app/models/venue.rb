@@ -112,7 +112,7 @@ class Venue < ActiveRecord::Base
 		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
 			subquery1 = subquery1.where("end_time > Datetime('now')")
 		else
-#			subquery1 = subquery1.where("end_time > Datetime('now')")
+			subquery1 = subquery1.where("end_time > now()")
 		end		
 		
 		subquery1 = subquery1.group("venue_id")
