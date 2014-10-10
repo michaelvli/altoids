@@ -15,19 +15,24 @@
 				<%= tag("/video", {}, open: true) %>
 <% end %>				
 				<% if (params[:action] == 'splash') %>
-					<div class="carousel-caption">
-						<h4><em><%= video.event_type_name %></em></h4>
-						<h2><strong><%= video.venue_event_name %></strong></h2>
+		
+					<% if video.venue_events.any? %>
+						<!-- Event name and description-->		
+						<div class="carousel-caption">
+							<h2><strong><%= video.venue_event_name %></strong></h2>
+							
+							<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+							<div class='dotdotdot'>
+								<p><%= video.description %></p>
+							</div>	
+							
+							<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
+						</div>
+					<% end %>
 						
-						<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
-						<div class='dotdotdot'>
-							<p><%= video.venue_event_description %></p>
-						</div>	
-						
-						<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn More</a></p>
-					</div>
+					<!-- Venue name and neighborhood -->
 					<div class="carousel-caption venue">
-						<h2><strong><%= video.venue_name %></strong></h2>
+						<h2><strong><%= video.venue.name %></strong></h2>
 						<p><em><%= video.neighborhood.name %></em></p>
 					</div>
 				<% end %>

@@ -51,56 +51,82 @@ class Video < ActiveRecord::Base
 	end
 	
     def self.get_videos
-# NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
-# because .url method in view page uses "id" to construct the url path to the S3 image/video.
-#
-# SELECT DISTINCT ON(videos.venue_id) videos.venue_id AS venue_id, videos.id AS id, videos.name AS video_name, videos.attachment AS attachment,
-# 	neighborhoods.name AS neighborhood_name,
-#	venues.name AS venue_name,
-#	events.name AS event_type_name, 
-# 	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
-# FROM "videos"
-# INNER JOIN "venues" ON "venues"."id" = "videos"."venue_id"
-# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
-# JOIN 
-# 	(SELECT venue_events.venue_id, venue_events.event_id AS event_id, venue_events.name, venue_events.description, venue_events.start_time 
-# 	 FROM "venue_events" JOIN 
-# 		(SELECT MIN(start_time) as event_start_time, venue_id
-# 		 FROM "venue_events" 
-# 		 GROUP BY venue_id) subquery1 
-# 	 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2
-# ON subquery2.venue_id = videos.venue_id
-# INNER JOIN "events" ON "events"."id" = subquery2.event_id
-# WHERE "videos"."live" = 't'
-# ORDER by videos.venue_id, random()
-
-		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
-		subquery1 = subquery1.group("venue_id")
-		subquery1 = subquery1.to_sql
-		subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id")
-		subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id AS event_id, venue_events.name, venue_events.description, venue_events.start_time")
-		subquery2 = subquery2.to_sql
-		@videos = Video.joins("JOIN (#{subquery2}) subquery2 ON subquery2.venue_id = videos.venue_id")
-
-		# Modified Distinct ON statement (works in PostGreSQL but not SQLite3)
 		# NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
 		# because .url method in view page uses "id" to construct the url path to the S3 image/video.
+
 		if (ActiveRecord::Base.connection.adapter_name == 'SQLite') # For a sqlite db
-			@videos = @videos.select("DISTINCT (videos.venue_id), videos.id AS id, videos.venue_id AS venue_id, videos.name AS video_name, videos.attachment AS attachment, 
-									neighborhoods.name AS neighborhood_name, 
-									venues.name AS venue_name,
-									events.name AS event_type_name,
-									subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
-		else
-			@videos = @videos.select("DISTINCT ON(videos.venue_id) videos.venue_id AS venue_id, videos.id AS id, videos.name AS video_name, videos.attachment AS attachment, 
-									neighborhoods.name AS neighborhood_name, 
-									venues.name AS venue_name,
-									events.name AS event_type_name, 
-									subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time")
-		end				
-		@videos = @videos.joins(:neighborhood)
-		@videos = @videos.joins(:venue)
-		@videos = @videos.joins("INNER JOIN events ON events.id = subquery2.event_id")
+			#  	For SQLite3:	
+			#
+			#	SELECT * 
+			#	FROM 
+			#		(SELECT videos.*, subquery2.* 
+			#		FROM "videos" 
+			#		LEFT OUTER JOIN 
+			#			(SELECT venue_events.venue_id, venue_events.event_id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time 
+			#			FROM "venue_events" 
+			#			JOIN 
+			#				(SELECT MIN(start_time) as event_start_time, venue_id 
+			#				FROM "venue_events" 
+			#				WHERE (end_time > Datetime('now'))) subquery1 
+			#			ON venue_events.venue_id = subquery1.venue_id AND venue_events.start_time = subquery1.event_start_time) subquery2 
+			#		ON videos.venue_id = subquery2.venue_id 
+			#		ORDER BY RANDOM()) 
+			#	GROUP BY venue_id 
+			#	ORDER BY RANDOM()
+
+			subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
+			subquery1 = subquery1.where("end_time > Datetime('now')") # Datetime('now') is for SQLite3 only
+			subquery1 = subquery1.to_sql
+			subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON venue_events.venue_id = subquery1.venue_id AND venue_events.start_time = subquery1.event_start_time")
+			subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time")
+			subquery2 = subquery2.to_sql
+			@videos = Video.select("videos.*, subquery2.*")
+			@videos = @videos.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON videos.venue_id = subquery2.venue_id")
+			@videos = @videos.order("RANDOM()")
+			@videos = select("*").from("(#{@videos.to_sql})")
+			@videos = @videos.group("venue_id")
+			@videos = @videos.order("RANDOM()")
+			
+		else # using PostgreSQL db
+		
+			#  	For PostgreSQL:
+			#
+			#	SELECT *
+			#	FROM(
+			#		SELECT DISTINCT ON(videos.venue_id) videos.venue_id, videos.*, subquery2.*
+			#		FROM "videos"
+			#		LEFT OUTER JOIN(
+			#			SELECT venue_events.venue_id, venue_events.event_id, venue_events.name, venue_events.description, venue_events.start_time
+			#			FROM(
+			#				SELECT MIN(start_time) as start_time, venue_id
+			#				FROM "venue_events" 
+			#				WHERE (end_time > now()) 
+			#				GROUP BY venue_id
+			#			) AS subquery1
+			#			INNER JOIN "venue_events"
+			#			ON venue_events.venue_id = subquery1.venue_id 
+			#			AND venue_events.start_time = subquery1.start_time
+			#		) AS subquery2
+			#		ON videos.venue_id = subquery2.venue_id
+			#		ORDER BY videos.venue_id, random()
+			#	) AS subquery3
+			#	ORDER BY random()
+			subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
+			subquery1 = subquery1.where("end_time > now()")	# now() is for PostgreSQL only	
+			subquery1 = subquery1.group("venue_id")
+			subquery1 = subquery1.to_sql
+			
+			subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON venue_events.venue_id = subquery1.venue_id AND venue_events.start_time = subquery1.event_start_time")
+			subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time")
+			subquery2 = subquery2.to_sql
+			
+			subquery3 = Video.select("DISTINCT ON(videos.venue_id) videos.venue_id, videos.*, subquery2.*")
+			subquery3 = subquery3.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON videos.venue_id = subquery2.venue_id")
+			subquery3 = subquery3.order("videos.venue_id, random()")
+			
+			@videos = select("*").from("(#{subquery3.to_sql}) AS subquery3")
+			@videos = @videos.order("RANDOM()")
+		end
 	end
 	
 end

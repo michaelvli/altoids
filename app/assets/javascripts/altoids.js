@@ -72,10 +72,10 @@ function page_change_functions(){
 	}
 	
 	calendar_datepicker(); // plugin
-	truncateText(function(){
-		initCarousel();
-	});
-	initCarouselVideos(); // plays videos in carousel
+//	truncateText(function(){
+//		initCarousel();
+//	});
+//	initCarouselVideos(); // plays videos in carousel
 }
 
 function initCarousel(){
@@ -962,7 +962,7 @@ function initVideoUpload() {
 					$('.progress .progress-bar').progressbar({
 						display_text: 'fill',
 						done: function(){
-							$('#preloader').delay(1000).show();
+							$('#preloader').delay(100).show();
 						}
 					});
 		
@@ -988,8 +988,7 @@ function initVideoUpload() {
 				$('#mainModal').showModal({
 					title: "Alert",
 					body: "<p>Video failed to upload.</p>",
-					callback:	function(){
-						
+					callback:	function(){						
 					}
 					
 					
@@ -1000,8 +999,6 @@ function initVideoUpload() {
 		});
 	});	
 }
-
-
 
 function initTearsheetModal(){
 	$(document).on('click', '.thumbnail', function(event){
@@ -1026,6 +1023,7 @@ function initTearsheetModal(){
 			"",
 			function(){
 				var video = $(modalBodyContent).find('video').get(0);
+				truncateText();
 				initCarousel(); // initializes carousel with one active carousel item
 				video.oncanplay = function(){
 					$('#mainModal').on('hide.bs.modal', function (e) { // stop video and carousel when modal closes
@@ -1034,8 +1032,7 @@ function initTearsheetModal(){
 						activeVideo.pause();
 					})
 					preloader.hide();
-					truncateText();
-					modalBodyContent.fadeIn(500);
+					modalBodyContent.delay(200).fadeIn(500);
 					initCarouselVideos(); // plays videos in carousel
 				}
 			},
@@ -1090,15 +1087,7 @@ function initVideoButtonBehavior(){
 	// bind "edit" button from videos/index.html.erb
 	$(document).on('click', '.video_edit_button', function(event){
 		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
-
-		$.get(	url,
-			"",
-			function(){
-//				alert("success callback");
-			},
-			"script"
-		);
-	
+		loadContent(url)	
 		event.preventDefault();
 	});
 	

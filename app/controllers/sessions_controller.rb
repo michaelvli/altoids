@@ -16,7 +16,8 @@ class SessionsController < ApplicationController
 #			@venues = @venues.order("RANDOM()")
 #			@venues = @venues.limit(5) 		
 			
-		    @videos = Video.get_videos.where(live: false).order("videos.venue_id, RANDOM()")
+#		    @videos = Video.get_videos.where(live: false).where(status: "finished").order("videos.venue_id, RANDOM()")
+			@videos = Video.test_videos
 			
 			# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
 			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])

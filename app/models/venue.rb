@@ -90,21 +90,21 @@ class Venue < ActiveRecord::Base
 	# http://stackoverflow.com/questions/9795660/postgresql-distinct-on-without-ordering
 	# http://stackoverflow.com/questions/5483407/subqueries-in-activerecord
 
-	# SELECT DISTINCT venues.name AS venue_name, venues.id, venues.phone, venues.file_name, 
-	# 	neighborhoods.name AS neighborhood_name, neighborhoods.id AS neighborhood_id
-	# 	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
-	# FROM "venues" 
-	# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
-	# INNER JOIN "videos" ON "videos"."venue_id" = "venues"."id" 
-	# LEFT OUTER JOIN (
-	# 	SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
-	# 	FROM "venue_events" JOIN (
-	# 		SELECT MIN(start_time) as event_start_time, end_time as event_end_time, venue_id 
-	# 		FROM "venue_events" 
-	# 		WHERE (end_time > Datetime('now')) 
-	# 		GROUP BY venue_id) subquery1 
-	# 	ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
-	# ON subquery2.venue_id = venues.id WHERE (videos.status = 'finished') LIMIT 2 OFFSET 0
+		# SELECT DISTINCT venues.name AS venue_name, venues.id, venues.phone, venues.file_name, 
+		# 	neighborhoods.name AS neighborhood_name, neighborhoods.id AS neighborhood_id
+		# 	subquery2.name AS venue_event_name, subquery2.description AS venue_event_description, subquery2.start_time AS event_start_time 
+		# FROM "venues" 
+		# INNER JOIN "neighborhoods" ON "neighborhoods"."id" = "venues"."neighborhood_id" 
+		# INNER JOIN "videos" ON "videos"."venue_id" = "venues"."id" 
+		# LEFT OUTER JOIN (
+		# 	SELECT venue_events.venue_id, venue_events.name, venue_events.description, venue_events.start_time 
+		# 	FROM "venue_events" JOIN (
+		# 		SELECT MIN(start_time) as event_start_time, end_time as event_end_time, venue_id 
+		# 		FROM "venue_events" 
+		# 		WHERE (end_time > Datetime('now')) 
+		# 		GROUP BY venue_id) subquery1 
+		# 	ON subquery1.event_start_time = venue_events.start_time AND subquery1.venue_id = venue_events.venue_id) subquery2 
+		# ON subquery2.venue_id = venues.id WHERE (videos.status = 'finished') LIMIT 2 OFFSET 0
 	
 		subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
 		

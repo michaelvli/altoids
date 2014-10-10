@@ -40,30 +40,43 @@
 
 	<div class="tab-content">
 		<div class="tab-pane fade in active" id="events">
+			<% if @venue_events.count > 0 %>	
+				<div class="row">
+					<div class="col-xs-12">
+						<% @venue_events.each do |venue_event| %>
+							<!-- Need to specify path since partial is located in views_mobile vs. mobile -->
+<% if false %>
+							<%= render '../views_mobile/sessions/events', event: venue_event %>
+<% end %>														
+							<%= render partial: 'events', object: venue_event, as: 'event' %>
+						<% end %>
+					</div>
+				</div>
+			<% else %>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="nav-tab-row">
+							No events listed at the moment
+						</div>	
+					</div>
+				</div>	
+			<% end %>
+		</div>
+		
+		<div class="tab-pane fade" id="specials">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="content">
-						<% if @venue_events.count > 0 %>	
-							<% @venue_events.each do |venue_event| %>
-								<!-- Need to specify path since partial is located in views_mobile vs. mobile -->
-								<%= render '../views_mobile/sessions/events', event: venue_event %>
-							<% end %>
-						<% else %>
-							No events listed at the moment
-						<% end %>
+					<div class="nav-tab-row">
+						No specials listed at the moment
 					</div>
 				</div>	
 			</div>	
 		</div>
 		
-		<div class="tab-pane fade" id="specials">
-			No specials listed at the moment
-		</div>
-		
 		<div class="tab-pane fade" id="features">
 			<div class="row">
 				<div class="col-md-4 vee-red">
-					
+				
 					<!-- FEATURES -->
 					<div id="features">
 						<% Feature.all.each do |feature| %>
@@ -77,18 +90,18 @@
 					</div>	<!-- #features container -->	
 					
 				</div>
-			</div>	
+			</div>
 		</div>
 		
 		<div class="tab-pane fade" id="hours">
-			<div class="row">	
-				<div class="col-md-4 vee-red">
-					<div id="hours">
+			<div class="nav-tab-row">
+				<div class="row">	
+					<div class="col-md-offset-3 col-md-6">
 						<% @days_of_week.each do |day_of_week| %>
 							<div class="row">
 								<div class="col-xs-3 text-right">
 									<small>
-										<%=	DateTime.parse(day_of_week.to_s).strftime("%a")%>:
+										<%=	DateTime.parse(day_of_week.to_s).strftime("%A")%>:
 									</small>
 								</div>	
 								<div class="col-xs-9">	
