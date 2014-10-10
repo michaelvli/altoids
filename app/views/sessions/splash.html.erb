@@ -1,3 +1,21 @@
+<!-- DEBUGGING -->
+<% if false %>	
+	SQL: <%= @videos.to_sql %><br><br>
+	<% @videos.each do |video| %>
+		video name: <%= video.name %><br>
+		video attachment: <%= video.attachment %><br>
+		venue: <%= video.venue.name %><br>
+		neighborhood: <%= video.neighborhood.name %><br>
+		venue_event class: <%= video.venue_events.class %><br>
+		venue_event count: <%= video.venue_events.count %><br>
+		<% video.venue_events.each do |venue_event| %>
+			venue event: <%= venue_event.name %><br>
+		<% end %>
+		<br><br>
+	<% end %>
+<% end %>
+
+
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<%= render 'sessions/signup_modal' %>
@@ -8,6 +26,9 @@
 	<!-- @videos is an ActiveRecord collection -->
 	<%= render partial: 'carousel', object: @videos, as: 'videos' %>
 </div><!-- .carousel -->
+
+
+
 
 <!-- Marketing messaging - Wrap the rest of the page in another container to center all the content. -->
 <div class="container marketing">

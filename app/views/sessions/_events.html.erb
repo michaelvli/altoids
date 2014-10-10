@@ -1,0 +1,25 @@
+<div class="nav-tab-row">
+	<div class="row">
+		<div class="col-md-3">
+		
+			<%= event.start_time.strftime("%a") %> @<%= event.start_time.strftime("%l:%M %p") %>
+			<br>
+			<%= event.start_time.strftime("%b %e, %Y") %>
+			
+		</div>
+		<div class="col-md-9 selector_popover" data-content="<%= event.description %>">
+
+			<!-- Event name -->
+			
+			<strong><%= event.name %></strong>
+			
+			<!-- Event description -->
+			<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+			<!-- class: 'event-description' is needed to set the height of the element -->
+			<div class="event-description dotdotdot">
+				<%= event.description %>
+			</div>
+		
+		</div>
+	</div>
+</div>	
