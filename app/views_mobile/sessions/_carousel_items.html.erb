@@ -7,7 +7,7 @@
 				</div>
 
 				<!-- Thumbnail image-->
-				<%= image_tag("https://s3.amazonaws.com/barfly_thumbnails/phone/"+video.file_name+"-"+"00001"+".png")%>
+				<%= image_tag(@bucket.objects[get_path(video.attachment_url, "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
 				
 				<% if (params[:action] == 'tearsheet') %>
 					<!-- Play button -->
@@ -35,7 +35,7 @@
 
 				<% if (params[:action] != 'tearsheet') %>
 					<div class="carousel-caption venue">
-						<h2><strong><%= video.venue_name %></strong></h2>
+						<h2><strong><%= video.venue.name %></strong></h2>
 						<p><em><%= video.neighborhood.name %></em></p>
 					</div>
 				<% end %>

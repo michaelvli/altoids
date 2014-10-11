@@ -38,6 +38,17 @@ video{
 	margin-right: auto;
 }
 
+// checkbox-container and checkbox-label - used to vertically align the checkbox and corresponding label
+.checkbox-container{
+	line-height: 1.5em;
+	padding-top: 3px;
+}
+.checkbox-label{	
+	
+	display: inline-block;
+	margin-top: -1px;
+}
+
 .heading {
 	padding: 15px 0 15px 0; //top right bottom left
 }
