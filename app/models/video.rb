@@ -77,9 +77,11 @@ class Video < ActiveRecord::Base
 			subquery1 = VenueEvent.select("MIN(start_time) as event_start_time, venue_id")
 			subquery1 = subquery1.where("end_time > Datetime('now')") # Datetime('now') is for SQLite3 only
 			subquery1 = subquery1.to_sql
+			
 			subquery2 = VenueEvent.joins("JOIN (#{subquery1}) subquery1 ON venue_events.venue_id = subquery1.venue_id AND venue_events.start_time = subquery1.event_start_time")
 			subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time")
 			subquery2 = subquery2.to_sql
+
 			@videos = Video.select("videos.*, subquery2.*")
 			@videos = @videos.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON videos.venue_id = subquery2.venue_id")
 			@videos = @videos.order("RANDOM()")
