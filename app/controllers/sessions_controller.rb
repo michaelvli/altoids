@@ -11,13 +11,10 @@ class SessionsController < ApplicationController
 			redirect_to home_path
 		else			
 			# returns a Activerecord relation vs. a model instance - http://stackoverflow.com/questions/6004891/undefined-method-for-activerecordrelation
-#			@venues = Venue.joins(:videos) # only select for venues that have videos
-#			@venues = @venues.find_events # retrieves only venues that have upcoming events
+			
+		    @videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
 #			@venues = @venues.order("RANDOM()")
 #			@venues = @venues.limit(5) 		
-			
-#		    @videos = Video.get_videos.where(live: false).where(status: "finished").order("videos.venue_id, RANDOM()")
-			@videos = Video.test_videos
 			
 			# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
 			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
