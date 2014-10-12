@@ -3,8 +3,9 @@ SQL: <%= @videos.to_sql %><br><br>
 
 
 	<% @videos.each do |video| %>
-	venue: <%= video.venue.class %><br>
-
+	video.venue.class: <%= video.venue.class %><br>
+	video.id: <%= video.id %><br>
+	
 <% if false %>		
 		video name: <%= video.name %><br>
 		video attachment: <%= video.attachment %><br>
