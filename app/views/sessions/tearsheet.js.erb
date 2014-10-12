@@ -2,6 +2,21 @@ var preloader = $("#mainModal .preloader");
 var modalBodyContent = $("#mainModal .modal-body-content");
 
 $(modalBodyContent).html("<%= escape_javascript(render partial: 'tearsheet') %>");
+
+var video = $(modalBodyContent).find('video').get(0);
+truncateText();
+initCarousel(); // initializes carousel with one active carousel item
+video.oncanplay = function(){
+	$('#mainModal').on('hide.bs.modal', function (e) { // stop video and carousel when modal closes
+		$('.carousel').carousel('pause') // need to pause carousel or it will keep playing
+		var activeVideo = $(modalBodyContent).find('.active').children('video').get(0);
+		activeVideo.pause();
+	})
+	preloader.hide();
+	modalBodyContent.delay(200).fadeIn(500);
+	initCarouselVideos(); // plays videos in carousel
+}
+
 $('.selector_popover').popover({
 	trigger: "hover",
     placement: "top"
