@@ -1,8 +1,6 @@
 <!-- DEBUGGING -->
-SQL: <%= @videos.to_sql %><br><br>
-
-
 <% if false %>	
+	SQL: <%= @videos.to_sql %><br><br>
 	<% @videos.each do |video| %>
 		video name: <%= video.name %><br>
 		video attachment: <%= video.attachment %><br>
@@ -15,7 +13,7 @@ SQL: <%= @videos.to_sql %><br><br>
 		<% end %>
 		<br><br>
 	<% end %>
-
+<% end %>
 
 
 <!-- Modal -->
@@ -56,4 +54,3 @@ SQL: <%= @videos.to_sql %><br><br>
     </div><!-- .row -->
 
 </div><!-- .container -->
-<% end %>
