@@ -1,6 +1,8 @@
 <!-- DEBUGGING -->
+SQL: <%= @videos.to_sql %><br><br>
+
 <% if false %>	
-	SQL: <%= @videos.to_sql %><br><br>
+
 	<% @videos.each do |video| %>
 		video name: <%= video.name %><br>
 		video attachment: <%= video.attachment %><br>
@@ -15,7 +17,7 @@
 	<% end %>
 <% end %>
 
-
+<% if false %>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<%= render 'sessions/signup_modal' %>
@@ -54,3 +56,4 @@
     </div><!-- .row -->
 
 </div><!-- .container -->
+<% end %>
