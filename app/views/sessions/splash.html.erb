@@ -1,6 +1,7 @@
 <!-- DEBUGGING -->
+SQL: <%= @videos.to_sql %><br><br>
+
 <% if false %>	
-	SQL: <%= @videos.to_sql %><br><br>	
 	<% @videos.each do |video| %>
 		video name: <%= video.name %><br>
 		video attachment: <%= video.attachment %><br>
