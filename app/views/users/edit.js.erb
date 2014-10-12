@@ -1,0 +1,7 @@
+var preloader = $("#mainModal .preloader");
+var modalBodyContent = $("#mainModal .modal-body-content");
+
+$(modalBodyContent).html("<%= escape_javascript(render partial: 'edit' ) %>");
+
+$(preloader).hide();
+$(modalBodyContent).show();

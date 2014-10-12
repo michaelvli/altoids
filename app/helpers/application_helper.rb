@@ -1,6 +1,14 @@
 module ApplicationHelper
 
-
+	def possessive(name)
+		if name.end_with? "s"
+			name = name + "'"
+		else
+			name = name + "'s"		
+		end	
+		return name
+	end
+	
 	def get_path(url, ext)
 	# get_path strips the bucket and domain info from a link to produce a path such as:
 	#	path = 'uploads/video/attachment/204/old_town_pub.png'	

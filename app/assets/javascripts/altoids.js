@@ -120,7 +120,7 @@ function load_DOM_functions(){
 		initCarouselVideos(); // play/pause videos in carousel
 		enableHover();
 		initSortFilterButtons();
-		initTearsheetModal(); // opens a modal window containing the tearsheet for a specific venue
+		initModals();
 		getTearsheet(); // opens a tearsheet 
 	}
 	
@@ -135,7 +135,6 @@ function load_DOM_functions(){
 	});
 	initVideoUpload();
 	initVideoBehavior(); // binds play button to thumbnail videos
-	initVideoButtonBehavior(); // binds edit and update buttons for video index
 	fadeOutFlashes(); // fading out flash message alerts
 	initPopover( function(){
 		$(document).on('click', '#showGeolocationInstructions', function(){
@@ -1000,99 +999,51 @@ function initVideoUpload() {
 	});	
 }
 
-function initTearsheetModal(){
-	$(document).on('click', '.thumbnail', function(event){
-		var url = $(this).attr('href') // get the url of the venue website
-		var venueName = $(this).data("venue");
-		var preloader = $("#mainModal .preloader");
-		var modalBodyContent = $("#mainModal .modal-body-content");
+/*
+Function: initModals()
 
-		modalBodyContent.hide(); // clear content, if any, from previous modal opened.
-		preloader.show();
-		
-		// Open empty modal
-		$('#mainModal').showModal({
-			title: venueName,
-			body: "",
-			callback: function(){
-			}
-		});
+Description: Opens a modal window with the appropriate content for the following:
+	1.  Displaying venue tearsheets
+	2.  Watching, editing, deleting videos
+	3.  Editing user profile
 
-		// Get video (ultimately, from an Amazon S3 object - in show action of video controller)
-		$.get(	url,
-			"",
-			function(){
-				var video = $(modalBodyContent).find('video').get(0);
-				truncateText();
-				initCarousel(); // initializes carousel with one active carousel item
-				video.oncanplay = function(){
-					$('#mainModal').on('hide.bs.modal', function (e) { // stop video and carousel when modal closes
-						$('.carousel').carousel('pause') // need to pause carousel or it will keep playing
-						var activeVideo = $(modalBodyContent).find('.active').children('video').get(0);
-						activeVideo.pause();
-					})
-					preloader.hide();
-					modalBodyContent.delay(200).fadeIn(500);
-					initCarouselVideos(); // plays videos in carousel
-				}
-			},
-			"script"
-		);
-		
-		event.preventDefault();
-	});
-}
+Platform: desktop
+*/
 
-function initVideoButtonBehavior(){
-	$('.video_watch_button,.video_edit_button, .video_delete_button').off('click'); // removes delegated events as well
+function initModals(){
+	$('.button_video_show,.button_video_edit, .button_video_delete, #button_user_edit, .thumbnail_session_tearsheet').off('click'); // removes delegated events as well
 	
-	// bind "watch" button from videos/index.html.erb
-	$(document).on('click', '.video_watch_button', function(event){
-		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
-		var videoName = $(this).data("video");
+	// bind "watch" button from videos/index.html.erb and "edit" button from users/edit.html.erb
+	$(document).on('click', '.button_video_show, #button_user_edit, .thumbnail_session_tearsheet', function(event){
+		var url = $(this).attr('href'); // url may contain parameters specifying video id, etc.
+		var modalTitle = $(this).data("modal-title"); // data attribute in html is "modal_title" but the underscore is turned into a dash, generating "modal-title" for use in jquery
 		var preloader = $("#mainModal .preloader");
 		var modalBodyContent = $("#mainModal .modal-body-content");
-		
+			
 		modalBodyContent.hide(); // clear content, if any, from previous modal opened.
 		preloader.show();
-		
+			
 		// Open empty modal
 		$('#mainModal').showModal({
-			title: videoName,
+			title: modalTitle,
 			body: "",
 			callback: function(){
 			}
 		});
-
-		// Get video (ultimately, from an Amazon S3 object - in show action of video controller)
-		$.get(	url,
-			"",
-			function(){
-				var video = $(modalBodyContent).find('video').get(0);
-				video.oncanplay = function(){
-					$('#mainModal').on('hide.bs.modal', function (e) {
-						video.pause();
-					})
-					preloader.hide();
-					modalBodyContent.fadeIn(500);
-					video.play();
-				}
-			},
-			"script"
-		);
-				
+		
+		loadContent(url);// Get video or user (ultimately, from an Amazon S3 object - in show action of video controller)
 		event.preventDefault();
 	});
 	
 	// bind "edit" button from videos/index.html.erb
-	$(document).on('click', '.video_edit_button', function(event){
+	$(document).on('click', '.button_video_edit', function(event){
 		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
 		loadContent(url)	
 		event.preventDefault();
 	});
 	
 	// bind "delete" button from videos/index.html.erb
-	$(document).on('click', '.video_delete_button', function(event){
+	$(document).on('click', '.button_video_delete', function(event){
 		var url = $(this).attr('href'); // url contains parameters specifying video id, etc.
 		var videoName = $(this).data("video");
 		var videoID = url.replace("/videos/", "");
@@ -1127,7 +1078,7 @@ function initVideoButtonBehavior(){
 						dataType: "script"
 					}); // $.ajax
 					
-				}); // $("#btn-primary")
+				}); // $("#btn-primary").on()
 			} // callback
 		}); // $('#mainModal')
 		
