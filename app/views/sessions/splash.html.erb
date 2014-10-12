@@ -1,10 +1,9 @@
 <!-- DEBUGGING -->
 SQL: <%= @videos.to_sql %><br><br>
 
-<% if false %>	
 
 	<% @videos.each do |video| %>
-		video name: <%= video.name %><br>
+		video name: <%= video.name %><br>		
 		video attachment: <%= video.attachment %><br>
 		venue: <%= video.venue.name %><br>
 		neighborhood: <%= video.neighborhood.name %><br>
@@ -15,7 +14,7 @@ SQL: <%= @videos.to_sql %><br><br>
 		<% end %>
 		<br><br>
 	<% end %>
-<% end %>
+
 
 <% if false %>
 <!-- Modal -->
