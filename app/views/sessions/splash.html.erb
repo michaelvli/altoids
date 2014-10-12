@@ -1,11 +1,7 @@
 <!-- DEBUGGING -->
-SQL: <%= @videos.to_sql %><br><br>
-
-
-	<% @videos.each do |video| %>
-		venue: <%= video.venue.name %><br>
-	
 <% if false %>
+	SQL: <%= @videos.to_sql %><br><br>
+	<% @videos.each do |video| %>
 		video.venue.class: <%= video.venue.class %><br>
 		video.id: <%= video.id %><br>
 		video name: <%= video.name %><br>
@@ -17,12 +13,11 @@ SQL: <%= @videos.to_sql %><br><br>
 		<% video.venue_events.each do |venue_event| %>
 			venue event: <%= venue_event.name %><br>
 		<% end %>
-<% end %>				
 		<br><br>
 	<% end %>
+<% end %>
 
 
-<% if false %>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<%= render 'sessions/signup_modal' %>
@@ -61,4 +56,3 @@ SQL: <%= @videos.to_sql %><br><br>
     </div><!-- .row -->
 
 </div><!-- .container -->
-<% end %>
