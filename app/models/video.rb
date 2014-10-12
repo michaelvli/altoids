@@ -122,8 +122,10 @@ class Video < ActiveRecord::Base
 			subquery2 = subquery2.select("venue_events.venue_id, venue_events.event_id, venue_events.name as venue_event_name, venue_events.description, venue_events.start_time")
 			subquery2 = subquery2.to_sql
 			
-			subquery3 = Video.select("DISTINCT ON(videos.venue_id) videos.venue_id, videos.live, videos.status, videos.attachment, subquery2.event_id, subquery2.venue_event_name, subquery2.description, subquery2.start_time")		
+
+#			Using videos.* and subquery2.* resulted in duplicate columns retrieved such as "venue_id", causing the db to return nil for the venue class (resulting in an error when calling video.venue.name)			
 #			subquery3 = Video.select("DISTINCT ON(videos.venue_id) videos.venue_id, videos.*, subquery2.*")
+			subquery3 = Video.select("DISTINCT ON(videos.venue_id) videos.venue_id, videos.id, videos.live, videos.status, videos.attachment, subquery2.event_id, subquery2.venue_event_name, subquery2.description, subquery2.start_time")
 			subquery3 = subquery3.joins("LEFT OUTER JOIN (#{subquery2}) subquery2 ON videos.venue_id = subquery2.venue_id")
 			subquery3 = subquery3.order("videos.venue_id, random()")
 			
