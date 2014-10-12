@@ -3,7 +3,11 @@ SQL: <%= @videos.to_sql %><br><br>
 
 
 	<% @videos.each do |video| %>
-		video name: <%= video.name %><br>		
+test application<br><br>
+<% if false %>		
+		video name: <%= video.name %><br>
+
+		
 		video attachment: <%= video.attachment %><br>
 		venue: <%= video.venue.name %><br>
 		neighborhood: <%= video.neighborhood.name %><br>
@@ -13,6 +17,7 @@ SQL: <%= @videos.to_sql %><br><br>
 			venue event: <%= venue_event.name %><br>
 		<% end %>
 		<br><br>
+<% end %>		
 	<% end %>
 
 
