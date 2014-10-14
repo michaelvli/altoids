@@ -629,7 +629,7 @@ function initApplyFilterButton(){
 	$(document).on('click', '#apply_filters_button', function(){
 		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path
 
-		serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+		serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
 		// url is from the form and shouldn't contain sort_order (i.e. /home) 
 		// thus, to add serializedData, we need to use a question mark vs. an ampersand
 		url = url + '?' + serializedData; 
@@ -697,7 +697,7 @@ function initSortFilterButtons(){
 	// Search form - instant response (i.e. not using "Apply Filters" button)
 	$(document).on('click', '.filter', function(){
 		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path		
-		var serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+		var serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
 		loadContent(url, serializedData);
 	});
   
@@ -706,7 +706,7 @@ function initSortFilterButtons(){
 		var url = $(this).attr('href'), // url contains parameters specifying sort, search, etc.
 			sort_order = '',
 //			sort_order = $(this).data('sort'), // grabs the value of the custom attribute, data-sort
-			serializedData = getCleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+			serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
 
 		// url is from the link and contains sort_order (i.e. /home?sort_order='neighborhood') 
 		// thus, to add serializedData, we need to use an ampersand vs. a question mark
@@ -819,7 +819,7 @@ function loadContent(url, serializedData){
 
 
 /* *****
-Function: getCleanSerializedData()
+Function: cleanSerializedData()
 
 Description: 
 1.  Returns serialized string of parameters, ready to be added to a url
@@ -830,7 +830,7 @@ Inputs:
 
 Platform: desktop and mobile
 */
-function getCleanSerializedData(url){
+function cleanSerializedData(url){
 	var serializedData = $("#sortFilter_form").serialize(), // serializes all parameters from the form, #sortFilter_form
 	paramNamesArray = getURLParameters(url),
 	excludeSelector = ''; // getURLParameters returns an array of the names of url parameters
@@ -876,9 +876,6 @@ Notes:
 
 Platform: desktop and mobile
 */
-
-
-
 function getURLParameters(url, paramSearch){
 	var urlArray = url.split("?"), // create a url Array where the [0] element is the href while the [1] element contains the paramters
 		paramNamesArray = [], // array that holds the names (without values) of each parameter in the url
@@ -1065,8 +1062,7 @@ function initModals(){
 						type: "DELETE", // The type of request to make ("POST" or "GET"), default is "GET". Note: Other HTTP request methods, such as PUT and DELETE, can also be used here, but they are not supported by all browsers.
 						url: url,
 						data: "",
-						success: function(){
-//							alert("sweet success!!!");
+						success: function(){ // success callback
 						},
 						error: function(){
 								$('#mainModal').showModal({
@@ -1077,7 +1073,6 @@ function initModals(){
 						},
 						dataType: "script"
 					}); // $.ajax
-					
 				}); // $("#btn-primary").on()
 			} // callback
 		}); // $('#mainModal')
