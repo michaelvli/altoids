@@ -3,7 +3,6 @@ class UserMailer < ActionMailer::Base
 
   def password_reset(user)
 	@user = user
-#	Rails.logger.debug("User Email debug: #{user.email}")	
 	mail(:to => @user.email, :subject => "Password Reset")
   end
   

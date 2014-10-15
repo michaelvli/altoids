@@ -4,7 +4,20 @@ Altoids::Application.configure do
   # In order to receive the callback, Zencoder must be able to connect to your server, 
   # so it needs to be on the open internet
   # http://www.nickdesteffen.com/blog/video-encoding-with-uploadify-carrierwave-and-zencoder
-  config.action_mailer.default_url_options = { :host => 'altoids.herokuapp.com' }
+  config.action_mailer.default_url_options = { host: ENV["DOMAIN"] }
+
+	#   SMTP configuration is necessary to send emails via Action Mailer - look in production.rb as well
+	#	http://guides.rubyonrails.org/action_mailer_basics.html#action-mailer-configuration-for-gmail
+	config.action_mailer.delivery_method = :smtp
+	config.action_mailer.smtp_settings = {
+		address:              'smtp.gmail.com',
+		port:                 587,
+		domain:               'google.com',
+		user_name:            ENV["EMAIL_USERNAME"],
+		password:             ENV["EMAIL_PASSWORD"],
+		authentication:       'plain',
+		enable_starttls_auto: true  
+	}  
 	  
   # Code is not reloaded between requests.
   config.cache_classes = true

@@ -38,5 +38,6 @@ module Altoids
 			ENV[key] ||= value.to_s unless value.kind_of? Hash
 		end
 	end
+	
   end
 end
