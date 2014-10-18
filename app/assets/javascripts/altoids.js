@@ -122,6 +122,14 @@ function load_DOM_functions(){
 		initSortFilterButtons();
 		initModals();
 		getTearsheet(); // opens a tearsheet 
+		
+		
+$('#form_sortFilter input').keyup(function () {
+	var url = $("#form_sortFilter").attr('action');
+	loadContent(url, $('#form_sortFilter').serialize());
+	return false;
+});
+
 	}
 	
 	// Ubiquitous functions
@@ -627,7 +635,7 @@ Platform: mobile
 function initApplyFilterButton(){
 	// Search form - using "Apply Filters" button
 	$(document).on('click', '#apply_filters_button', function(){
-		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path
+		var url = $('#form_sortFilter').attr('action'); // gets the action attribute of #form_sortFilter which seems to be the home_path
 
 		serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
 		// url is from the form and shouldn't contain sort_order (i.e. /home) 
@@ -696,7 +704,7 @@ function initSortFilterButtons(){
 							
 	// Search form - instant response (i.e. not using "Apply Filters" button)
 	$(document).on('click', '.filter', function(){
-		var url = $('#sortFilter_form').attr('action'); // gets the action attribute of #sortFilter_form which seems to be the home_path		
+		var url = $('#form_sortFilter').attr('action'); // gets the action attribute of #form_sortFilter which seems to be the home_path		
 		var serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
 		loadContent(url, serializedData);
 	});
@@ -786,9 +794,9 @@ Notes:
 	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
 	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
 	
-		$("#sortFilter_form input[name!='sort_order']").serialize();
+		$("#form_sortFilter input[name!='sort_order']").serialize();
 
-	The statement above says serialize all parameters, hidden and visible, from the form, #sortFilter_form with
+	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
 	the exception of the sort_order parameter.
 
 
@@ -823,7 +831,7 @@ Function: cleanSerializedData()
 
 Description: 
 1.  Returns serialized string of parameters, ready to be added to a url
-2.  Removing redundant variables found in the form, #sortFilter_form, and url input.
+2.  Removing redundant variables found in the form, #form_sortFilter, and url input.
 
 Inputs:
 1.  url
@@ -831,7 +839,7 @@ Inputs:
 Platform: desktop and mobile
 */
 function cleanSerializedData(url){
-	var serializedData = $("#sortFilter_form").serialize(), // serializes all parameters from the form, #sortFilter_form
+	var serializedData = $("#form_sortFilter").serialize(), // serializes all parameters from the form, #form_sortFilter 
 	paramNamesArray = getURLParameters(url),
 	excludeSelector = ''; // getURLParameters returns an array of the names of url parameters
 		
@@ -844,7 +852,7 @@ function cleanSerializedData(url){
 	})
 	excludeSelector = excludeSelector.trim(); // removes whitespace at beginning and end
 	
-	serializedData = $("#sortFilter_form " + excludeSelector).serialize(); // create a serialized list of parameters from the form, #sortFilter_form, excluding those already found in the passed url
+	serializedData = $("#form_sortFilter"+ " " + excludeSelector).serialize(); // create a serialized list of parameters from the form, #form_sortFilter, excluding those already found in the passed url
 	return serializedData;
 }
 
@@ -866,9 +874,9 @@ Notes:
 	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
 	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
 	
-		$("#sortFilter_form input[name!='sort_order']").serialize();
+		$("#form_sortFilter input[name!='sort_order']").serialize();
 
-	The statement above says serialize all parameters, hidden and visible, from the form, #sortFilter_form with
+	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
 	the exception of the sort_order parameter.
 	
 	Thus, because of this function, url parameters have priority of form parameters (hidden and visible).
@@ -984,7 +992,8 @@ function initVideoUpload() {
 				$('#mainModal').showModal({
 					title: "Alert",
 					body: "<p>Video failed to upload.</p>",
-					callback:	function(){						
+					callback:	function(){
+						$("#mainModal .preloader").hide();;
 					}
 					
 					

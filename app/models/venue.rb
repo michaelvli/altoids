@@ -55,15 +55,9 @@ class Venue < ActiveRecord::Base
   validates(:venue_open_sun, presence: true)
   validates(:venue_close_sun, presence: true)
 
-	def get_url(venue_id)
-		video = Video.where(venue_id: venue_id).where(status: 'finished').order("RANDOM()")
-		url = video.first
-		if url.nil? # some venues may not have videos
-			return nil # means venue doesn't have any videos
-		else
-			url = url.attachment.url # .url method refers to Carrierwave/Paperclip .url method - http://stackoverflow.com/questions/16348675/not-able-to-get-url-from-uploaded-image-undefined-method-url-error-on-has-man
-			return url
-		end		
+	def get_video(venue_id)
+		video = Video.where(venue_id: venue_id).where(status: 'finished').order("RANDOM()").first
+		return video
 	end
 
 	def count_videos(status)

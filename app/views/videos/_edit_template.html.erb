@@ -2,7 +2,7 @@
 	<div class="col-xs-6 vee-red">
 		<div class="row">
 			<div class="col-xs-12">
-				<%= image_tag(@bucket.objects[get_path(@video.attachment_url, "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
+				<%= image_tag(@bucket.objects[@video.get_path("png", "small")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
 			</div>	
 		</div>	
 		<div class="row">

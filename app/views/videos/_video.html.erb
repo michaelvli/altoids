@@ -1,7 +1,19 @@
 <!-- Need to wrap contents of <td> in <div> tags in order for .slideUp() to function properly: http://stackoverflow.com/questions/467336/jquery-how-to-use-slidedown-or-show-function-on-a-table-row -->
         <td>
 			<div class="video_<%= video.id %>">
-				<%= image_tag(@bucket.objects[get_path(video.attachment.url, "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
+			<!--
+				When using the S3 object method, url_for, the resulting url will follow the following format (i.e. domain-style):
+				
+					https://barfly-development.s3.amazonaws.com/uploads/video/attachment/204/old_town_pub.mp4
+					
+				Need to set the option, :force_path_style, to true when using url_for:
+				
+					https://s3.amazonaws.com/barfly-development/uploads/video/attachment/204/old_town_pub.mp4
+					
+				For more info on url_for, see http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html#url_for-instance_method	
+				For more info on :force_path_style, see http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html
+			-->
+				<%= image_tag(@bucket.objects[video.get_path("png", "small")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
 			</div>	
 		</td>
 		<td>

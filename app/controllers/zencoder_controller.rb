@@ -12,11 +12,11 @@ class ZencoderController < ApplicationController
 	# The id of the video is given to us in the :pass_through parameter of the request. 
     @video = Video.find_by_id(params[:job][:pass_through])
 	
-    if @video && params[:job][:state] == 'finished' # Check if video exists and encoding state of process was ‘finished’ successfully
+#    if @video && params[:job][:state] == 'finished' # Check if video exists and encoding state of process was ‘finished’ successfully
       @video.meta_info[:response] = params[:zencoder]
-	  @video.status = 'finished'
+	  @video.status = params[:job][:state]
       @video.save # Save all the parameters coming in the request to meta_info of the video
-    end
+#    end
 	
     render :nothing => true # No response to the request is given because the request does not expect any.
   end

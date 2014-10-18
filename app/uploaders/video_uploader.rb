@@ -18,7 +18,8 @@ class VideoUploader < CarrierWave::Uploader::Base
   # Specifies and overrides the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
   def store_dir
-    "uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+	# 	"uploads/#{model.class.to_s.underscore}/#{mounted_as}/#{model.id}"
+		"venues/#{model.venue.id}/videos/#{model.id}"
   end
 
   # include modules that are necessary to use zencoder_url url helper in the uploader code
@@ -60,50 +61,90 @@ class VideoUploader < CarrierWave::Uploader::Base
   
     private
   
-  def zencode(*args)
+  def zencode(*args)  
     params = {
       :input         => @model.attachment.url,
       :test          => true, # https://app.zencoder.com/docs/guides/getting-started/test-jobs-and-integration-mode
 	  :notifications => [zencoder_url], # tells Zencoder where to send a POST request once the encoding job is completed
 	  :pass_through  => @model.id, # passes back the id of the completed video that is being encoded
       :outputs => [
-        { # MP4 
-          :public      => false,
-          :base_url    => base_url,
-          :filename    => 'mp4_' + filename_without_ext + '.mp4',
-          :label       => 'webmp4',
-          :format      => 'mp4',
-          :audio_codec => 'aac',
-          :video_codec => 'h264'
+        { # MP4 - desktop modal window
+			:public      	=> false,
+			:base_url    	=> base_url,
+			:filename    	=> 'mp4_' + filename_without_ext + '_small' + '.mp4',
+			:label       	=> 'webmp4_small',
+			:format      	=> 'mp4',
+			:audio_codec 	=> 'aac',
+			:video_codec 	=> 'h264',
+			:aspect_mode 	=> 'pad',
+			:width       	=> '450',
+			:height      	=> '250',
+			:quality		=> '1'
         },
-        { # WebM 
-          :public      => false,
-          :base_url    => base_url,
-          :filename    => 'webm_' + filename_without_ext + '.webm',
-          :label       => 'webwebm',
-          :format      => 'webm',
-          :audio_codec => 'vorbis',
-          :video_codec => 'vp8'
+		{ # MP4
+			:public      	=> false,
+			:base_url    	=> base_url,
+			:filename    	=> 'mp4_' + filename_without_ext + '_large' + '.mp4',
+			:label       	=> 'webmp4_large',
+			:format      	=> 'mp4',
+			:audio_codec 	=> 'aac',
+			:video_codec 	=> 'h264',
+			:aspect_mode 	=> 'pad',
+			:width       	=> '800',
+			:height      	=> '450',
+			:quality		=> '1'
         },
-        { # OGV
-          :public      => false,
-          :base_url    => base_url,
-          :filename    => 'ogv_' + filename_without_ext + '.ogv',
-          :label       => 'webogv',
-          :format      => 'ogv',
-          :audio_codec => 'vorbis',
-          :video_codec => 'theora'
-        },
-        {
-         :thumbnails => {
-           :public      => false,
-           :base_url    => base_url,
-           :filename    => filename_without_ext,
-           :times       => [4],
-           :aspect_mode => 'preserve',
-           :width       => '100',
-           :height      => '100'
-         }
+#        { # WebM 
+#          :public      => false,
+#          :base_url    => base_url,
+#          :filename    => 'webm_' + filename_without_ext + '.webm',
+#          :label       => 'webwebm',
+#          :format      => 'webm',
+#          :audio_codec => 'vorbis',
+#          :video_codec => 'vp8'
+#        },
+#        { # OGV
+#          :public      => false,
+#          :base_url    => base_url,
+#          :filename    => 'ogv_' + filename_without_ext + '.ogv',
+#          :label       => 'webogv',
+#          :format      => 'ogv',
+#          :audio_codec => 'vorbis',
+#          :video_codec => 'theora'
+#        },
+#        {
+#         :thumbnails => {
+#           :public      => false,
+#           :base_url    => base_url,
+#           :filename    => 'png_' + filename_without_ext,
+#           :times       => [4],
+#           :aspect_mode => 'pad',
+#           :width       => '100',
+#           :height      => '56'
+#         }		 
+		{
+        :thumbnails => [
+			{
+				:label			=> 'thumbnail_small',
+				:public      	=> false,
+				:base_url  	  	=> base_url,
+				:filename   	=> 'png_' + filename_without_ext + '_small',
+				:times       	=> [4],
+				:aspect_mode 	=> 'pad',
+				:width       	=> '100',
+				:height      	=> '56'
+			},
+			{
+				:label			=> 'thumbnail_large',
+				:public      	=> false,
+				:base_url    	=> base_url,
+				:filename    	=> 'png_' + filename_without_ext + '_large',
+				:times       	=> [4],
+				:aspect_mode 	=> 'pad',
+				:width       	=> '400',
+				:height      	=> '225'
+			}
+		]
        }
      ]
     }
@@ -118,6 +159,11 @@ class VideoUploader < CarrierWave::Uploader::Base
 	@model.name = "Video_" + DateTime.now.strftime("%Y_%m_%d")
 	@model.live = false
 	@model.active = true
+	if @model.meta_info[:request].has_key?("id".to_sym) # checks if the :id key in the meta_info[:request] has exists.  If :id key exists, then not an error.
+		@model.status = "processing"
+	else
+		@model.status = "error"
+	end
     @model.save(:validate => false)
   end
   

@@ -12,12 +12,12 @@
 			<!-- data-toggle="buttons" disables links -->
 			<div class="btn-group" data-toggle="buttons">
 				
-				<!-- Default selection: featured -->
+				<!-- Default selection: Events -->
 				<!-- params.merge - adds parameters (i.e. hidden parameters such as :search, url parameters from a previous request, etc.) to the url (besides the url parameters, :sort and :page) -->
 				<%= link_to home_path(params.merge(:sort_order => 'event', :page => nil)), class:'btn btn-glass sort active', id:'event', :data => { :sort => 'event' } do %>
 					<span class="glyphicon glyphicon-ok"></span><br>
 					<%= radio_button_tag 'sort_order', 'event' %>
-					<span class="text-center">Featured</span>
+					<span class="text-center">Events</span>
 				<% end %>
 
 				<%= link_to home_path(params.merge(:sort_order => 'distance', :page => nil)), class:'btn btn-glass sort', id:'distance', :data => { :sort => 'distance' } do %>

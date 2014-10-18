@@ -19,8 +19,6 @@ class VideosController < ApplicationController
 # 	Using jquery upload (vs. Carrierwave) to upload videos.  Thus, .fileupload() (assets/javascript/video.js.coffee)
 #	has dataType set to "script" which means it is expecting to receive a javascript from the server which
 #	in this case comes from the create action in the Videos controller and uses a javascript template (app/views/videos/create.js.erb)
-	params[:video][:active] = true
-	params[:video][:status] = "processing"
 	@video = Video.create(video_params) #creates a new record
 
 #	Web-service support doesn't seem to be necessary: http://api.rubyonrails.org/classes/ActionController/MimeResponds.html#method-i-respond_to	

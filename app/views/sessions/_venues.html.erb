@@ -1,13 +1,13 @@
-<% if !venue.get_url(venue.id).nil? %> <!-- Some venues may not have videos.  These venues should not be displayed -->
+<% if !venue.get_video(venue.id).nil? %> <!-- Some venues may not have videos.  These venues should not be displayed -->
+
 					<!-- Venue Thumbnail -->
 					<div class="col-md-6 thumbnail-container">
 					
 						<!-- Thumbnail image-->
 						<!-- data attribute in html is "modal_title" but the underscore is turned into a dash, generating "modal-title" for use in jquery -->
 						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail thumbnail_session_tearsheet", data: { modal_title: venue.venue_name } ) do %>
-							<%= image_tag(@bucket.objects[get_path(venue.get_url(venue.id), "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
-						<% end %>
-						
+							<%= image_tag(@bucket.objects[venue.get_video(venue.id).get_path("png", "large")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>
+						<% end %>				
 						<!-- Thumbnail content - Event info -->
 								<div class="carousel-caption event">
 									<h2><strong><%= venue.venue_event_name %></strong></h2>

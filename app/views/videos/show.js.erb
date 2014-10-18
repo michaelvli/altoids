@@ -4,7 +4,7 @@ var modalBodyContent = $("#mainModal .modal-body-content");
 $(modalBodyContent).html("<%= escape_javascript(render partial: 'video_template', object: @video, as: 'video' ) %>");
 
 var video = $(modalBodyContent).find('video').get(0);
-
+	
 video.oncanplay = function(){
 	$('#mainModal').on('hide.bs.modal', function (e) {
 		video.pause();

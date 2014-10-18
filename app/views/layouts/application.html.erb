@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BarFly</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  
-  <%# Removes auto-styling for telephone numbers in application:  http://stackoverflow.com/questions/3736807/remove-styling-of-telephone-numbers %> 
-  <meta name="format-detection" content="telephone=no">
-		
-  <%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
-  <%= csrf_meta_tags %>
+	<title>BarFly</title>
+
+	<%# Removes auto-styling for telephone numbers in application:  http://stackoverflow.com/questions/3736807/remove-styling-of-telephone-numbers %> 
+	<meta name="format-detection" content="telephone=no">
+
+	<!-- for more info about stylesheet_link_tag and asset pipeline: https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline -->
+	<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
+	<%= stylesheet_link_tag    "desktop-manifest", media: "all", "data-turbolinks-track" => true %>
+	
+	<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+	<%= csrf_meta_tags %>
 </head>
 <body>
 

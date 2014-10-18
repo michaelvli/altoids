@@ -1,3 +1,4 @@
+
 			<div class="item active"> <!-- need for all items to be active initially in order for jQuery dotdotdot to execute then hide non-active items post dotdotdot. -->	
 				<%= render partial: 'videos/video_template', object: video, as: 'video' %>
 				
@@ -13,7 +14,7 @@
 <% end %>					
 					Your browser does not support the video tag.
 				<%= tag("/video", {}, open: true) %>
-<% end %>				
+<% end %>
 				<% if (params[:action] == 'splash') %>
 		
 					<% if video.venue_events.any? %>

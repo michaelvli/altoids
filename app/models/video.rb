@@ -50,6 +50,24 @@ class Video < ActiveRecord::Base
 		FileUtils.remove_dir(path_to_be_deleted, :force => true)
 	end
 	
+	def get_path(ext, size)
+#		path = attachment.url # returns: https://barfly-development.s3.amazonaws.com/uploads/207/old_town_pub.mp4?AWSAccessKeyId=AKIAIRQCKSB2KSQDOYPA&Expires=1445014638&Signature=guUvhbG3vaLgAcJUJ3Q2a846rSg%3D
+#		path = URI(attachment.url).host # returns: barfly-development.s3.amazonaws.com
+
+		# uses URI module to get the path of a url - http://www.ruby-doc.org/stdlib-2.1.3/libdoc/uri/rdoc/URI.html
+		path = URI(attachment.url).path # returns: /uploads/207/old_town_pub.mp4
+		originalFileName = File.basename(path) # returns: old_town_pub.mp4
+		path.slice! originalFileName # returns: /uploads/207/
+		originalFileName_without_ext = originalFileName.rpartition(".")[0].to_s	# returns: old_town_pub
+		newFileName = ext + "_" + originalFileName_without_ext + "_" + size + "." + ext # returns: mp4_old_town_pub.mp4
+		path = path + newFileName
+		
+		# strips the leading slash by using .slice(1..-1) (i.e. strips leading character)
+		path = path.slice(1..-1) 	# returns: uploads/207/old_town_pub.mp4 old_town_pub
+		return path
+	end	
+	
+	
     def self.get_videos
 		# NOTE: need to retrieve videos.id and allow view page to access via the ALIAS, "id", 
 		# because .url method in view page uses "id" to construct the url path to the S3 image/video.

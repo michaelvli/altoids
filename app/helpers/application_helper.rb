@@ -8,28 +8,7 @@ module ApplicationHelper
 		end	
 		return name
 	end
-	
-	def get_path(url, ext)
-	# get_path strips the bucket and domain info from a link to produce a path such as:
-	#	path = 'uploads/video/attachment/204/old_town_pub.png'	
-	# When using the S3 object method, url_for, the resulting url will follow the following format (i.e. domain-style):
-	# 	https://barfly-development.s3.amazonaws.com/uploads/video/attachment/204/old_town_pub.mp4
-	# Need to set the option, :force_path_style, to true when using url_for:
-	#  	https://s3.amazonaws.com/barfly-development/uploads/video/attachment/204/old_town_pub.mp4
-	# For more info on url_for, see http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html#url_for-instance_method	
-	# For more info on :force_path_style, see http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/S3/S3Object.html
-	 	path = add_ext(URI(url).path.to_s.slice(1..-1), ext)
-		# uses URI module to get the path of a url - http://www.ruby-doc.org/stdlib-2.1.3/libdoc/uri/rdoc/URI.html
-		# then strips the leading slash by using .slice(1..-1) (i.e. strips leading character)
-		return path
-	end
-
-	# helper used to present thumbnail image for video uploads
-	def add_ext(url, ext)
-		url = url.rpartition(".")[0].to_s + "." + ext
-		return url
-	end
-	
+		
 	# helper used to present time in the venue modal window (see venues/_show.html.erb)
 	def retrieve_time (arg, day)
 		if (day == "now")

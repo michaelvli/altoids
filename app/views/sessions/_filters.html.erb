@@ -11,9 +11,12 @@
 				</div>
 		
 				<p>
-					<%= text_field_tag :search, params[:search], {id:'search'} %>
-					<%= submit_tag "Search", :name => nil %>
-
+					<%= text_field_tag :search, params[:search] %>
+					
+<% if false %>
+						<%= text_field_tag :search, params[:search], {id:'search'} %>
+						<%= submit_tag "Search", :name => nil %>
+<% end %>
 				</p>
 					
 				<div class="subsection">
