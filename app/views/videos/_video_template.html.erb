@@ -1,5 +1,5 @@
 <!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true, class: "vee"}, open: true) %>
+				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true}, open: true) %>
 					<!-- Compatible with: Chrome(desktop), Firefox(desktop) -->
 					<% if (params[:action] == 'splash' || params[:action] == 'show') %>
 						<%= tag("source", src: @bucket.objects[video.get_path("mp4", "large")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :secure => true, :force_path_style => true }).to_s ) %>

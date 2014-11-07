@@ -1,13 +1,29 @@
-<%# using styling from carousel-theme.css %>
-
+        <div id="navbar" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div id="navbar-header" class="navbar-header">
+					<!-- Logo -->
+					<a href="#" id="logo" class="navbar-brand">Project name</a>
+					
+					<!-- Menu toggle button -->
+					<%= button_tag class:'navbar-toggle', id:'menu_button', :data => { :button => '#menu' } do %>
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					<% end %>
+				</div>				
+			</div>
+        </div>
+		
+<% if false %>
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container">
-				<div class="navbar-header">
+				<div class="navbar-header vee-red">
 					<% if current_user.nil? %>
-						<%= button_tag class:'btn btn-primary btn-sm slideToggler', id:'log_in', :data => { :button => '#log_in_form' } do %>
+						<%= button_tag class:'btn btn-primary btn-sm slideToggler pull-right', id:'log_in', :data => { :button => '#log_in_form' } do %>
 							Log in
 						<% end %>
-						<%= button_tag class:'navbar-toggle slideToggler collapse', id:'back_arrow', :data => { :button => 'back_arrow' } do %>
+						<%= button_tag class:'navbar-toggle slideToggler pull-right collapse', id:'back_arrow', :data => { :button => 'back_arrow' } do %>
 							<span class="glyphicon glyphicon-arrow-left"></span>
 						<% end %>
 					<% else %>
@@ -30,3 +46,4 @@
 				</div>				
 			</div>
         </div>
+<% end %>		

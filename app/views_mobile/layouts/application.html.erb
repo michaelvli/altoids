@@ -1,7 +1,10 @@
+<!-- Mobile version -->
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>BarFly</title>
+	
 	<!-- Needed for responsive function: http://getbootstrap.com/css/#overview-mobile -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -10,9 +13,11 @@
 	<meta name="format-detection" content="telephone=no">
 	
 	<!-- for more info about stylesheet_link_tag and asset pipeline: https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline -->		
-	<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-	
-	<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+	<%= stylesheet_link_tag "mobile-manifest", media: "all", "data-turbolinks-track" => true %>
+
+	<!-- includes application.js (manifest file) -->
+	<%= javascript_include_tag "application.js", "data-turbolinks-track" => true %>
+
 	<%= csrf_meta_tags %>
 </head>
 
@@ -21,6 +26,7 @@
 <% else %>
 	<body class='collapse'> <!-- use <body ontouchstart=""> to simulate a "click" when hitting a button for touch screen devices - http://stackoverflow.com/questions/3885018/active-pseudo-class-doesnt-work-in-mobile-safari -->
 <% end %>	
+
 	<header>
 		<%= render 'layouts/navigation' %>
 	</header>
@@ -29,28 +35,46 @@
 		<%= render 'layouts/messages', flash: flash %>
 	</div>
 	
-	<div id="slider-container"> <!-- slider needs slider-container -->
-		<div id="main-content">
+	<!-- MAIN CONTENT -->
+	<div id="main-content">
+	
+		<div id="main_preloader" class="preloader">
+			<div class="absolute-center">
+				<%= image_tag("preloader.GIF", class:"image-center") %>
+				<p class="text-center" >Loading...<p>
+			</div>	
+		</div>
+		
+		<div id="dynamic-content">
 			<%= yield %>
 		</div>
-		<div id="hidden-content">
-			<% if current_user %>
-				<!-- MENU -->
-				<%= render 'layouts/menu' %>
-			<% else %>
-				<!-- SIGN UP/LOG IN FORMS -->
-				<%= render 'layouts/log_in_form' %>
-				<%= render 'layouts/sign_up_form' %>
-			<% end %>
+		
+		<!-- Footer contains the translucent filter button -->
+		<div id="navbar_bottom">
+			<%= render 'layouts/filter_button' %>		
 		</div>
-		
 	</div>
-		
+	
+	<!-- MENU -->
+	<div id="menu" class="collapse">
+		<%= render 'layouts/menu' %>
+	</div>
+
+	<!-- Right Pane -->
+	<div id="rightPane" class="collapse">
+		<%= render 'layouts/rightPane' %>
+	</div>
+
+	<!-- Vertical Slider -->
+	<div id="slider" class="collapse">
+		<%= render 'layouts/slider' %>
+	</div>
+	
 	<footer>
 		<%= render 'layouts/footer' %>
 	</footer>
 
 	<%= debug(params) if Rails.env.development? %>
-	
+
 </body>
 </html>

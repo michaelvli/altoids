@@ -1,4 +1,68 @@
 				<!-- MENU -->
+					<div id="menu-bar" class="bar">
+						<h4 class="text-center">MENU</h4>
+					</div>
+					<div id="menu-body" class="body">
+						<% if current_user %>
+						
+						<% else %>
+							<div class="header">
+								<p>Welcome!  Join or log in to get full access to venue information</p>
+								<div class="row">
+									<div class="col-xs-6">
+										<%= link_to "SIGN UP", new_user_path, class:"btn btn-md btn-primary slide-toggler", id: "sign_up_button", :data =>{ :page => "sign_up_form", :title => "Join Barfly" } %>
+									</div>
+									<div class="col-xs-6">
+										<%= link_to "LOG IN", new_session_path, class:"btn btn-md btn-primary slide-toggler", id: "log_in_button", :data =>{ :page => "log_in_form", :title => "Log In" } %>
+									</div>
+								</div>	
+							</div>
+						<% end %>
+
+						<div class="section">
+							HOME
+						</div>				
+						<div class="btn-group-vertical">
+							<%= link_to "Venues", home_path, class:"btn btn-glass", :data =>{ :button => "#venues" } %>
+							<%= link_to "Events", events_list_path, class:"btn btn-glass", :data =>{ :button => "#events" } %>
+							<%= link_to "Specials", "#", class:"btn btn-glass", :data =>{ :button => "#specials" } %>
+						</div>
+												
+						<% if current_user %>
+							<% if current_user.account_type == "admin" %>
+								<div class="section">
+									ADMIN
+								</div>
+								<div class="btn-group-vertical">
+									<%= link_to "Venue Info", "#", class:"btn btn-glass", :data =>{ :button => "#venues_admin" } %>
+									<%= link_to "Events", "#", class:"btn btn-glass", :data =>{ :button => "#events_admin" } %>
+									<%= link_to "Features", "#", class:"btn btn-glass", :data =>{ :button => "#features_admin" } %>
+									<%= link_to "Neighborhoods", "#", class:"btn btn-glass", :data =>{ :button => "#neighborhoods_admin" } %>
+								</div>
+							<% elsif current_user.account_type == "venue" %>
+								<div class="section">
+									VENUE
+								</div>
+								<div class="btn-group-vertical">
+									<%= link_to "Venue Profile", edit_venue_path(current_user.venue_id) %>
+									<%= link_to "Events", venue_events_path(:venue_id => current_user.venue_id) %>
+									<%= link_to "Videos", videos_path(:venue_id => current_user.venue_id) %>
+								</div>	
+							<% end %>
+							
+							<!-- Venue Management dropdown menu -->						
+							<div class="section">
+								ACCOUNT
+							</div>
+							<div class="btn-group-vertical">
+								<%= link_to "Profile", "#", class:"btn btn-glass", :data =>{ :button => "#profile" } %>
+								<%= link_to "Log out", session_path(current_user.id), method: :delete, class:"btn btn-glass" %>
+							</div>
+						<% end %>
+
+					</div>	
+<% if false %>
+				<!-- MENU -->
 				<nav id='menu' class='collapsible collapse'>
 					<div class="section">
 						HOME
@@ -27,3 +91,4 @@
 						<%= link_to "Neighborhoods", "#", class:"btn btn-glass", :data =>{ :button => "#neighborhoods_admin" } %>
 					</div>					
 				</nav>
+<% end %>				

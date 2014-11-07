@@ -1,0 +1,30 @@
+<%# Content for Log In modal %>
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h2 id="signup-heading">Log in! <span class="text-muted"></span></h2>
+		</div>
+			<%= bootstrap_form_for(:session, url: sessions_path, layout: :horizontal, label_col: "col-sm-0", control_col: "col-sm-12") do |f| %>
+			<%= f.alert_message "Please fix the errors below:" %>
+<% if false %>  Debugging only
+			<%= f.error_summary %>
+<% end %>
+				
+			<div class="modal-body padding">
+				<%= render 'sessions/login_form', f: f %>
+				
+					<div class="form-group">
+						<%= f.label :existing_user, "Need to create an account?" %>
+						<%= link_to "Sign Up", '#', id:'signup-link' %>
+					</div>
+			</div>
+			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<%= f.submit 'Sign In', class: 'btn btn-success btn-sm' %>
+			</div>
+		<% end %>
+    </div>
+  </div>

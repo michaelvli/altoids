@@ -1,12 +1,18 @@
-// alert("Used AJAX to get tearsheet");
-$('#dynamic-content').html("<%= escape_javascript(render partial: 'tearsheet', locals: {venue: @venue, venue_events: @venue_events}) %>");
-$('#filter-container').remove();
-$('.footer-fixed-bottom').hide();
-truncateText(function(){
-	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-	$( ".active.item" ).each(function( index ) {
-		if(index != 0){
-			$(this).removeClass('active');
-		}
-	});	
+var preloader = $("#rightPane_preloader");
+var content = $("#rightPane-content");
+
+content.html("<%= escape_javascript(render partial: 'tearsheet') %>");
+
+initCarousel(); // initializes carousel with one active carousel item
+
+bindTouchButtons({
+	scope: "#tearsheet_options",
+	buttonCollection: ".btn-glass",
+	mode: "toggle_one",
+	callback: function(){
+		activateTearsheetOptions(this);
+	}
 });
+
+preloader.hide();
+content.delay(200).fadeIn(500);

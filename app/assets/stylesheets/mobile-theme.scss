@@ -1,0 +1,415 @@
+// https://github.com/twbs/bootstrap-sass
+@import "bootstrap";
+
+// http://www.colorhexa.com/
+$color-darkest: #050505;
+$color-darker: #0d0d0d;
+$color-dark: #2d2d2d;
+$color-medium-dark: #474747;
+$color-medium: #b6b6b6;
+$color-light: #e6e6e6;
+$color-lighter: #f0f0f0;
+$color-lightest: #fafafa;
+
+body {
+	margin-top: 52px; // height of the navbar
+	padding-top: 0px;
+	background-color: red;
+//	color: $color-light;
+//	margin-left:auto;
+//	margin-right:auto;
+}
+ 
+.color-lightest{
+	color: $color-lightest;
+} 
+
+.padding-20{
+	padding: 20px;
+}
+
+input.hidden[type="radio"]{
+	visibility:hidden;
+}
+
+
+/* buttons
+	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
+	1.  initial state - button is initially loaded
+	2.  .active class - button is pushed
+	3.  :hover pseudoclass - final state of released button
+	
+	BUTTON STATES - mouse click
+	1.  initial state
+	2.  :hover pseudoclass - mouse hovering over button
+	3.  :active pseudoclass - button is clicked
+	4.  .active class
+*/
+
+#menu_button, #menu_button:hover{
+	border-color: #333333;
+	background-color: transparent;
+}
+
+#menu_button.active{
+	border-color: $color-light;
+	background-color: $color-dark;
+}
+
+.btn-glass, .btn-glass:hover {
+	color: $color-light;
+	background-color: transparent;
+	border: 1px solid $color-light;
+}
+
+.btn-glass.active {
+	color: $color-darker;
+	background-color: $color-light;
+}
+
+//.btn-glass.active, .btn-glass:hover, .btn-glass:focus, .btn-glass:active{
+//	color: $color-darker;
+//	background-color: $color-light;
+//}
+
+.btn-group, .btn-group-vertical {
+	width: 100%;
+	padding: 0 10px 0 10px;
+}
+
+.btn-group{
+	.btn-glass{
+		padding-left: 0;
+		padding-right: 0;
+		span.title{
+			padding: 0;
+			margin: 0 -10px 0 -10px; 
+		}
+	}
+	.glyphicon{
+		font-size: 1.8em;
+	}
+}
+	
+.btn-group-vertical{
+	.btn{
+		text-align: left;
+	}
+	.btn-glass{
+		border: 0px solid transparent;
+		border-bottom: 1px solid $color-dark;
+		padding: 15px 15px 15px 15px;
+	}
+	.btn-glass:last-child{
+		border: 0px solid transparent;
+		border-bottom: 0px solid transparent;
+	}
+}
+
+.navbar-button{
+//	@extend .vee-red;
+	position: relative;
+	z-index: 1040; // needs to be on top of rightPane bar which has z-index: 1035
+	float: left;
+	width: 50px;
+	padding: 3px 20px 2px 10px;
+	margin-top: 1px;
+	margin-left: 5px;
+	margin-bottom: 1px;
+	background-color: transparent;
+	background-image: none;
+	border: 0px solid transparent;
+	border-radius: 4px;
+	font-size: 150%;	
+}
+
+#btn-close{
+	color: $color-lightest;
+	opacity: 0.5;
+}		
+
+#filter_button{
+	width: 35%;
+	color: white;
+	font-size: 110%;
+	font-weight: bold;
+	background-color:rgba(0,0,0,0.5);
+	border: 1px solid $color-medium;
+	border-radius: 15px;
+	margin-bottom: 50px;
+	outline: none;
+}
+
+#filter_button:active, #filter_button.active {
+	color: $color-darker;
+	background-color:rgba(230,230,230,0.5);
+}
+
+ 
+
+/* navbar */
+
+.navbar-header{
+//	overflow:hidden;
+	background-color: $color-darker;
+}
+
+.navbar-brand {
+  float: right;
+}
+
+.navbar-toggle {
+  float: left;
+  margin-left: 15px;
+}
+
+// translucent "filters" button
+.navbar-fixed-bottom {
+	// inherits display: none from .collapse class in #slider
+	text-align: center;
+	background-color: transparent;
+	padding: 0 4px 4px 4px; // prevents browser scrollbars from interferring with button.
+}
+
+
+/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
+#main-content {
+	position: absolute;
+	top: 51px;
+	left: 0;
+	z-index: 10;
+	width: 100%;
+	height: 100%;
+	background-color: $color-darkest; // needed in order to "cover up" #menu when sliding
+}
+
+// shared attributes navigation bar for #menu and #slider
+.bar{
+	position: relative;
+	top: 0;
+	min-height: 50px;
+	padding: 5px 0;	
+	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
+	background-color: $color-darkest;
+	.title{
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		padding: 3px 0 0 0; // need top padding to vertically align title
+	}
+	.glyphicon{
+		top: 4px;
+		color: $color-lightest;
+		opacity: 0.5;
+	}
+}
+.body{
+	position: relative;
+	top: 0;
+	width: 100%;
+	background-color: $color-darker;
+}
+	
+.section{
+	background-color: $color-dark;
+	padding: 5px 15px 5px 15px;
+	font-size: 0.8em;
+}
+		
+#menu, #rightPane {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	color: $color-light;
+	background-color: $color-darker;
+	z-index: 5;
+	overflow: auto;
+//  overflow-y: scroll; // show a scroll bar for content that overflows vertically - http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_overflow-xy
+	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
+	.bar{
+		width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (border) + 15px (margin-right)
+	}
+	.body{
+		.header{
+			text-align: center;
+			margin: 0px 0px 0px 0px;
+			padding: 30px 15px 30px 15px;
+			background-color: $color-darkest;
+			width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (#menu_button right and left border) + 15px (margin-right)
+			.btn{
+				width: 100%;
+			}
+		}
+	}
+}
+
+#menu{
+	.btn-glass{
+		padding: 15px 15px 15px 15px; // top right bottom left
+		text-align: left;
+		width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (#menu_button right and left border) + 15px (margin-right)
+	}
+}
+
+#rightPane {
+	.bar{
+		width: 100%
+	}
+	.body{
+		.header{
+			width: 100%;
+		}
+	}
+	.btn-group{
+		.btn-glass{
+			width: 20%;
+		}
+	}
+}
+	
+/* Vertical slider */
+#slider{
+	position: absolute;
+	top: 0; // jquery dynamically changes this value to the height of the screen in order to place slider at "bottom" initially - so slider can "slide up" when being opened
+	left: 0;
+	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
+	width: 100%;
+	height: 100%;
+	background-color: $color-darker;
+	color: $color-light;
+	.bar{
+		width: 100%;
+	}
+	.btn-group {
+		.btn-glass{
+			width: 20%;
+		}
+	}
+}
+
+
+/* Filter and sort menu */
+#filter_sort_menu{
+	margin-bottom: 60px; // should be about the same size as the height of the fixed "apply filters" button.
+	.search_field{
+		width: 95%;
+		margin: 0px 10px 0px 10px;
+		padding: 5px;
+		background-color: $color-light;
+		color: $color-darker;
+		border-radius: 4px;
+	}
+	.content{
+		padding: 15px 0px 15px 0px;
+	}
+}
+
+/* Preloader */
+.preloader{
+	background-color: $color-darkest;
+	position: fixed;
+	top: 51px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 1050;
+	overflow: auto;
+	display: none;
+	color: $color-lightest;
+//	overflow-y: scroll;
+	-webkit-overflow-scrolling: touch;
+	outline: 0;
+}
+ 
+.absolute-center{
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+	transform: translate(-50%, -50%);	
+}
+
+.absolute-center img{
+	margin-bottom: 1em;
+}
+
+.image-center{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* Thumbnails */
+.thumbnail-container{
+	padding: 0;
+}
+
+.thumbnail{
+	position: relative;
+	z-index: 10;
+	padding: 0;
+	margin:0;
+	border: 0;
+	border-radius: 0;
+	border-color: transparent;
+	background-color: transparent;
+	border-top: 1px solid $color-dark;	
+	border-bottom: 1px solid $color-dark;
+}
+
+.thumbnail-container:first-child{
+	border-top: 0px solid $color-dark;	
+}
+
+.status{
+	position: absolute;
+	z-index: 5;
+	top: 5%;
+	left: 5%;
+	text-align: left;
+	font-size: .9em;
+	font-weight: bold;
+	color: red;
+}
+
+.carousel-caption{
+	position: absolute;
+	left: 5%;
+	right: 5%;
+	padding: 0;
+	text-align: left;
+	z-index: 5;
+}
+ 
+ 
+ 
+/* debugging 
+*/
+
+.vee-red {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: red !important;
+	}
+	
+.vee-blue {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: blue !important;
+	}
+
+.vee-green {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: green !important;
+	}
+	
+.vee-yellow {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: yellow !important;
+	}

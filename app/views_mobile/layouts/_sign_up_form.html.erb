@@ -1,12 +1,9 @@
-				<div id='sign_up_form' class='collapsible collapse'>
-					<div class="heading">
-						Join BarFly
-					</div>
+				<div id='sign_up_form' class='padding-20 collapse'>
 					<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
 						<%= f.alert_message "Please fix the errors below:" %>
 						<%= render 'users/form', f: f %>
 						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
-							<%= f.submit 'Sign Up', class: 'btn btn-success col-xs-12' %>
+							<%= f.submit 'Sign Up', class: 'btn btn-success col-xs-12 showPreloader', :data =>{ :page => "sign_up_form"}  %>
 						<% end %>	
 						<p>By signing up, you agree to the Terms of Use and Privacy Policy</p>
 					<% end %>

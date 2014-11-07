@@ -1,8 +1,6 @@
 	<!-- Carousel -->
 	<div id="myCarousel" class="carousel slide">
-	<% if false %>
-		SQL: <%= @venues.to_sql %>
-	<% end %>
+		<!-- @videos is an ActiveRecord collection -->
 		<%= render partial: 'carousel', object: @videos, as: 'videos' %>
 	</div><!-- /.carousel -->
 

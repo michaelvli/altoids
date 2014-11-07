@@ -1,0 +1,12 @@
+<% if false %>
+	Used HTML to get event list
+<% end %>
+
+<div id="dynamic-content">
+	<%= render partial: 'events_list', locals: { venue_event_months: @venue_event_months } %>
+</div>
+
+<!-- Sort and Filter -->
+<div id="filter-container" class="collapse">
+	<%= render partial: 'filter_sort' %>
+</div>	

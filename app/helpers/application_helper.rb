@@ -1,5 +1,19 @@
 module ApplicationHelper
 
+	# Used with filters to identify selected features
+	def filter_selection(filter_array, field, checked_or_active, options = {})
+		options[:default] ||= ""
+		
+		if filter_array.nil? && options[:default] == true
+			return checked_or_active
+		elsif !filter_array.nil? && filter_array.include?(field)
+			return checked_or_active
+		else
+			return nil
+		end	
+	end
+
+	# correctly adds an apostrophe (before or after the letter, "s")
 	def possessive(name)
 		if name.end_with? "s"
 			name = name + "'"
@@ -31,15 +45,6 @@ module ApplicationHelper
 		@venue.send(var)
 	end
 	
-	# Used with filters to identify selected features
-	def filter_selection(filter_array, field, checked_or_active)	
-		if !filter_array.nil? && filter_array.include?(field)
-			return checked_or_active
-		else
-			return nil
-		end	
-	end
-
 	def navbar_active_helper(link)
 		if link == params[:controller]
 			return 'active'

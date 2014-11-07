@@ -1,8 +1,8 @@
-<div class="container">
+<div class="container vee-red">
 
 	<div class="row">
 		<!-- Venue thumbnails -->
-		<div id="dynamic-content" class="col-md-9">
+		<div id="dynamic-content" class="col-xs-9">
 		
 			<div id="venues" class="row">
 				<!-- venue thumbnails are loaded by sessions/home.js.erb via .loadContent('home') -->
@@ -16,8 +16,11 @@
 		</div>
 		
 		<!-- Sort and Filter -->
-		<div id="filter-container" class="col-md-3">
-			<%= render partial: 'filter_sort' %>
+		<div id="filter-container" class="col-xs-3">
+
+			<div id="filter-sort">
+				<%= render partial: 'filter_sort_menu' %>
+			</div>	
 		</div>
 	</div>
 	

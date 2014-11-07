@@ -1,0 +1,96 @@
+// https://github.com/twbs/bootstrap-sass
+@import "bootstrap";
+
+// http://www.colorhexa.com/
+$color-darkest: #050505;
+$color-darker: #0d0d0d;
+$color-dark: #2d2d2d;
+$color-medium-dark: #474747;
+$color-medium: #b6b6b6;
+$color-light: #e6e6e6;
+$color-lighter: #f0f0f0;
+$color-lightest: #fafafa;
+
+body {
+	margin-top: 53px; // height of the navbar
+	padding-top: 0px;
+//	background-color: $color-darker;
+//	color: $color-light;
+//	margin-left:auto;
+//	margin-right:auto;
+}
+
+ 
+ /* CUSTOMIZE THE CAROUSEL
+-------------------------------------------------- */
+
+/* Carousel base class */
+.carousel {
+	height: 500px;
+}
+/* Since positioning the image, we need to help out the caption */
+.carousel-caption {
+	z-index: 10;
+}
+
+/* Declare heights because of positioning of img element */
+.carousel .item {
+	height: 500px;
+	background-color: black;
+}
+.carousel-inner > .item > video {
+	min-width: 100%;
+	height: 500px;
+}
+
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+/* Pad the edges of the mobile views a bit */
+.marketing {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Center align the text within the three columns below the carousel */
+.marketing .col-lg-4 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+.marketing h2 {
+  font-weight: normal;
+}
+.marketing .col-lg-4 p {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+ 
+ 
+/* debugging 
+*/
+
+.vee-red {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: red !important;
+	}
+	
+.vee-blue {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: blue !important;
+	}
+
+.vee-green {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: green !important;
+	}
+	
+.vee-yellow {
+	border-style: solid !important;
+	border-width: 1px !important;
+	border-color: yellow !important;
+	}

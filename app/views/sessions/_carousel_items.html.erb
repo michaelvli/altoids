@@ -1,21 +1,8 @@
-
 			<div class="item active"> <!-- need for all items to be active initially in order for jQuery dotdotdot to execute then hide non-active items post dotdotdot. -->	
 				<%= render partial: 'videos/video_template', object: video, as: 'video' %>
 				
-<% if false %>				
-				<!-- For HTML5 Video tag info, see http://www.htmlgoodies.com/html5/client/how-to-embed-video-using-html5.html#fbid=y2nyMm_BHEv -->
-				<%= tag("video", {controls: false, autoplay: false, loop: true, muted: false, autobuffer: true}, open: true) %>
-					<%= tag("source", src: "https://s3.amazonaws.com/barfly_full_videos/"+video.file_name+".mp4") %> <!-- AVC(H.264) format -->
-<% if false %>
-
-					<source src='https://s3.amazonaws.com/barfly_full_videos/benchmark.mp4' type='video/mp4' /> <!-- AVC(H.264) format -->			
-					<source src="https://s3.amazonaws.com/barfly_full_videos/american_junkie.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-					<source src="https://s3.amazonaws.com/barfly_full_videos/old_town_pub.mp4" type="video/mp4" /> <!-- AVC(H.264) format -->
-<% end %>					
-					Your browser does not support the video tag.
-				<%= tag("/video", {}, open: true) %>
-<% end %>
-				<% if (params[:action] == 'splash') %>
+				<!-- venue and event information is not displayed in carousel when user is viewing tearsheet -->
+				<% if (params[:action] != 'tearsheet') %>
 		
 					<% if video.venue_events.any? %>
 					
@@ -36,6 +23,17 @@
 					<div class="carousel-caption venue">
 						<h2><strong><%= video.venue.name %></strong></h2>
 						<p><em><%= video.neighborhood.name %></em></p>
+					</div>
+				<% end %>
+				
+				<!-- Video live/recorded status-->
+				<% if video.live == true %>
+					<div class="status color-lightest">
+						LIVE
+					</div>
+				<% else %>
+					<div class="status">
+						RECORDED
 					</div>
 				<% end %>
 				

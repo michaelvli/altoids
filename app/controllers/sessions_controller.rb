@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   # Using before_filter for rendering mobile vs. desktop versions - http://scottwb.com/blog/2012/02/23/a-better-way-to-add-mobile-pages-to-a-rails-site/
   # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
   # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
-  before_filter :check_for_mobile, :only => [:splash, :new, :home, :events_list, :tearsheet]
+  before_filter :check_for_mobile, :only => [:splash, :create, :home, :events_list, :tearsheet]
 
 	def splash
 		if signed_in?
@@ -111,10 +111,16 @@ class SessionsController < ApplicationController
 		
 		@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 		@venue_events = VenueEvent.upcoming_events(venue_id: params[:id])
+		
+		respond_to do |format|
+			format.html
+			format.js { render :template => 'sessions/tearsheet.js.erb'}
+		end
+
 	end
 	
-	def new
-	end
+#	def new
+#	end
 
 	def create
 		user = User.find_by(email: params[:session][:email].downcase)

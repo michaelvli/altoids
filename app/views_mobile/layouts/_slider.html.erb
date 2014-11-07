@@ -1,0 +1,36 @@
+		<div id="slider-bar" class="bar">
+			<!-- Close (X) button -->
+			<%= button_tag class:'navbar-button', id:'btn-close' do %>
+				<span aria-hidden="true">&times;</span>
+				<span class="sr-only">Close</span>
+			<% end %>
+<% if false %>
+
+			<button type="button" id="btn-close" class="close">
+				<span aria-hidden="true">&times;</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<button type="button" id="btn-next" class="btn btn-xs btn-primary pull-right">
+				<span>NEXT</span>
+			</button>
+<% end %>
+			<div class="title">
+				<h4 id="slider-title" class="text-center"></h4>
+			</div>	
+		</div>
+		<div id="slider-body" class="body">
+			<% if current_user %>
+			
+				<!-- FILTER/SORT MENU -->
+				<%= render partial: 'layouts/filter_sort_menu' %>
+				
+			<% else %>
+			
+				<!-- LOG IN FORM -->
+				<%= render partial: 'layouts/log_in_form' %>
+				
+				<!-- SIGN UP FORM -->
+				<%= render partial: 'layouts/sign_up_form' %>
+				
+			<% end %>
+		</div>

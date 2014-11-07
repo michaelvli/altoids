@@ -7,8 +7,9 @@
 				</div>
 
 				<!-- Thumbnail image-->
-				<%= image_tag(@bucket.objects[get_path(video.attachment_url, "png")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
-				
+				<%= image_tag(@bucket.objects[video.get_path("png", "large")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true }).to_s) %>
+
+<% if false %>				
 				<% if (params[:action] == 'tearsheet') %>
 					<!-- Play button -->
 					<span class="glyphicon glyphicon-play-circle play_button" ></span>
@@ -21,21 +22,22 @@
 						Your browser can't play this video.
 					<%= tag("/video", {}, open: true) %>
 				<% end %>
+<% end %>				
 				
 				<!-- Video live/recorded status-->
-				<% if false %>
-					<div class="live-caption">
+				<% if video.live == true %>
+					<div class="status color-lightest">
 						LIVE
 					</div>
 				<% else %>
-					<div class="recorded-caption">
+					<div class="status">
 						RECORDED
 					</div>
 				<% end %>
-
+				
 				<% if (params[:action] != 'tearsheet') %>
 					<div class="carousel-caption venue">
-						<h2><strong><%= video.venue.name %></strong></h2>
+						<h4><strong><%= video.venue.name %></strong></h4>
 						<p><em><%= video.neighborhood.name %></em></p>
 					</div>
 				<% end %>

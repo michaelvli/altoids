@@ -1,0 +1,42 @@
+				<div class="btn-group-vertical">
+					<%= link_to({controller: "sessions", action: "tearsheet", id: event.venue.id }, class:"btn btn-glass") do %>
+						<div class="container">
+							<div class="event-date">
+								<day-of-week><%= event.start_time.strftime("%a") %></day-of-week>
+								<calendar-day><%= event.start_time.strftime("%e") %></calendar-day>
+								<calendar-month><%= event.start_time.strftime("%B") %></calendar-month>
+							</div>
+							<div class="event-time">
+								<%= event.start_time.strftime("%l:%M %p") %>
+							</div>
+						</div>	<!-- container -->
+						<div class="container">
+							<div class="preheadline">
+								<% if params[:action] == 'tearsheet' %>
+									<!-- Type of event -->
+									<%= event.event.name %>
+								<% else %>
+									<!-- Venue name + distance from user -->
+									<%= event.venue.name %>
+									<% if params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?%>
+										(<%= event.distance.round(1) %> miles)<br>
+									<% end %>
+								<% end %>	
+							</div>							
+							<!-- Event name -->
+							<div class="headline">
+								<%= event.name %>
+							</div>
+
+							<div class="event-time collapse">
+								<%= event.start_time.strftime("%l:%M %p") %> - <%= event.end_time.strftime("%l:%M %p") %>
+							</div>
+							
+							<!-- Event description -->
+							<!-- class: 'dotdotdot' calls jQuery.dotdotdot plugin to truncate description -->
+							<div id="event_<%= event.id %>" class="event-description tearsheet dotdotdot">
+								<%= event.description %>
+							</div>
+						</div> <!-- container -->
+					<% end %>
+				</div>

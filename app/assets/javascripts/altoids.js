@@ -6,7 +6,7 @@ This file contains custom functionality for the application.  Major functionalit
 	appropriate versions (desktop, tablet, or mobile) versions of a page.  Located in the file, detectDevice.js, 
 	this function is executed prior to the code in this file since it needs to be performed before the DOM is
 	loaded.  See 'assets/javascript/detectDevice.js' for more info.
-2.  initSlideToggler - slides screens horizontally and vertically
+2.  initTogglers - slides screens horizontally and vertically
 3.  initVideoBehavior - binds play button to images and toggles visibility between thumbnails and playing video
 
 	
@@ -36,8 +36,7 @@ Plugins:
 	Type: Ruby Gem
 	
 */
-
-
+	
 $(function() {
 //	alert("DOM READY");	
 	load_DOM_functions();			
@@ -63,28 +62,20 @@ function page_receive_functions(){
 function page_change_functions(){
 //	alert("page_change");
 	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
-	$('.carousel').carousel({
-		interval: 5000
-	});
-	
+//	$('.carousel').carousel({
+//		interval: 5000
+//	});
+
+	// loads venue thumbnails	
 	if ($('#venues').length){
 		loadContent("home"); // default parameters for getting venues, sorted by events
 	}
 	
-	calendar_datepicker(); // plugin
+//	calendar_datepicker(); // plugin
 //	truncateText(function(){
 //		initCarousel();
 //	});
 //	initCarouselVideos(); // plays videos in carousel
-}
-
-function initCarousel(){
-	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-	$( ".active.item" ).each(function( index ) {
-		if(index != 0){
-			$(this).removeClass('active');
-		}
-	});	
 }
 
 function page_update_functions(){
@@ -95,44 +86,38 @@ function page_load_functions(){
 	alert("page_load");
 }
 
-function load_DOM_functions(){	
-
+function load_DOM_functions(){
 // DEVELOPMENT ONLY - need to remove desktop (and maybe tablet) from the if statement below 
 	// Mobile functions only:
-//	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	{	
-		initSlideToggler();  // enables mobile screen to toggle left/right to show menu or up/down to show filters
-		hijackMenuButtons();
-		initPopState(); // 1) binds popstate event, 2) loads url contents via ajax
-		getTearsheet();
-		initTouchButtons();
-		initTearsheetIconButtons();
-		initTearsheetEvents();
-		initApplyFilterButton();	
+	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+//	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
+	{
+		initTogglers();  // enables mobile screen to switch between the four main containers: #menu, #main-content, #slider, and #specific-content
+//		hijackMenuButtons();
+//		initPopState(); // 1) binds popstate event, 2) loads url contents via ajax
+//		getTearsheet();
+//		initTouchButtons();
+//		initTearsheetIconButtons();
+//		initTearsheetEvents();
+//		initApplyFilterButton();	
 	}
 
-// DEVELOPMENT ONLY - need to remove pohne (and maybe tablet) from the if statement below 	
+// DEVELOPMENT ONLY - need to remove phone (and maybe tablet) from the if statement below 	
 	// Desktop functions only:
 //	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
 	if ($.cookie( 'deviceType' ) == 'desktop')
 	{
-		initCarouselVideos(); // play/pause videos in carousel
-		enableHover();
-		initSortFilterButtons();
-		initModals();
-		getTearsheet(); // opens a tearsheet 
-		
-		
-$('#form_sortFilter input').keyup(function () {
-	var url = $("#form_sortFilter").attr('action');
-	loadContent(url, $('#form_sortFilter').serialize());
-	return false;
-});
-
+//		initCarouselVideos(); // play/pause videos in carousel
+//		enableHover();
+//		initSortFilterButtons();
+//		initModals();
+//		getTearsheet(); // opens a tearsheet
+//		initFilterSortContainer(); // initializes positioning, scrolling, and keyup events related to filter and sort bar
 	}
 	
 	// Ubiquitous functions
+	
+	// Prepare carousel slider
 	truncateText(function(){
 		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
 		$( ".active.item" ).each(function( index ) {
@@ -141,26 +126,748 @@ $('#form_sortFilter input').keyup(function () {
 			}
 		});	
 	});
-	initVideoUpload();
-	initVideoBehavior(); // binds play button to thumbnail videos
-	fadeOutFlashes(); // fading out flash message alerts
-	initPopover( function(){
-		$(document).on('click', '#showGeolocationInstructions', function(){
-			$('#mainModal').showModal({
-				title: "Geolocation Enablement",
-				body: "<p>To share your location, you will need to: </p>"
-			});
-		});
-	}); // initialize popover	
-	endlessScroll(); // creates delegated event for endless scrolling
-	calendar_datepicker(); // plugin
 	
+//	initVideoUpload();
+//	initVideoBehavior(); // binds play button to thumbnail videos
+//	fadeOutFlashes(); // fading out flash message alerts
+//	initPopover( function(){
+//		$(document).on('click', '#showGeolocationInstructions', function(){
+//			$('#mainModal').showModal({
+//				title: "Geolocation Enablement",
+//				body: "<p>To share your location, you will need to: </p>"
+//			});
+//		});
+//	}); // initialize popover	
+//	endlessScroll(); // creates delegated event for endless scrolling
+//	calendar_datepicker(); // plugin
+	
+}
+
+
+/* ***************************************************************************************** */
+
+
+
+
+/* *****
+Function: initTogglers - binds buttons that cause the page to slide left, revealing:
+	1) the navigation menu 
+	2) new user sign up form
+	3) user log in fields
+
+Source: http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/
+
+Platform: mobile only
+*/
+function initTogglers(){
+	var buttonCollection = ".btn-glass, #filter_button, #menu_button, #rightPane, .rightPane, #btn-close";
+	var scrolling = false; // Stores whether user is scrolling vs. "pressing" a button.  Default is that the user is scrolling.
+	
+	// Checks to see if the user is scrolling (vs. "pressing" a button).  If user is scrolling, scrolling will be set to true.
+	$(document).on("touchmove", buttonCollection , function(event){
+		scrolling = true; // setting scrolling to true will prevent .btn-glass buttons from 1) reaching the .active state and 2) checking the checkbox.
+	});
+
+	// Checks to see if the user is "pressing" a button (vs. scrolling).
+	$(document).on("touchstart", buttonCollection, function(event){
+		scrolling = false; // setting scrolling to false will allow .btn-glass buttons to 1) convert to .active state and 2) checking the checkbox.
+	});
+
+	// Vertical sliding for the following pages: 1) sign up form, 2)log in form, and 3) filter and sort menu
+	$(document).on('touchend, click', '#sign_up_button, #log_in_button, #filter_button', function(event){
+		if (scrolling == false)
+		{
+			// var url = $(this).attr('href'); // get the url of the venue website
+			var page = "#" + $(this).data('page');
+
+			// sets Slider's title
+			var sliderTitle = $(this).data('title') || "Filter Results";
+
+			// adds/removes .active state, causing button to flicker
+			var button = $(this);
+			button.addClass("active"); // adds .active state
+			setTimeout(function () {
+				button.toggleClass("active"); // removes .active state after 50 ms
+			}, 50)
+
+			// only show the appropriate page in the slider
+			$('#slider-body').children().hide(); // hide all forms within #slider-body
+			$(page).show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
+			
+			// close menu
+			togglePane({
+				pane: "menu",
+				state: "close",
+				callback: 	function(){
+								toggleSlider(sliderTitle); // open vertical slider after menu is closed
+							}
+			});
+		}
+		event.preventDefault();
+	});	
+	
+	// toggling slider
+	$('#slider').on('touchend, click', '#btn-close', function(){
+		if (scrolling == false)
+		{
+			toggleSlider();
+		}	
+	});
+	
+	// toggling menu
+	$('#menu_button').on('touchend, click', function(){
+		if (scrolling == false)
+		{
+			togglePane({
+				pane: "menu"
+			});
+		}	
+	});
+
+	// toggling rightPane
+	$('#back_arrow_button').on('touchend, click', function(){
+		if (scrolling == false)
+		{
+			togglePane();
+		}	
+	});
+
+	// bind thumbnails of class=".rightPane" to open rightPane
+	$(document).on('touchend, click', '.rightPane', function(event){
+		if (scrolling == false)
+		{
+			var url = $(this).attr('href'); // get the url of the button
+
+			togglePane({
+				state: "open",
+				title: $(this).data("title"),
+				callback:
+				function(){
+					// show preloader
+					$("#rightPane_preloader").show();
+					loadContent(url); // loadContent(url, [serializedData], [requestMethod]), [] = optional			
+				}
+			});
+		}	
+		event.preventDefault();
+	});
+	
+	preLoadContent();
+}
+
+/*
+Function: bindTouchButtons()
+
+Purpose: 
+	
+Called by: 
+1. views_mobile\sessions\tearsheet.js.erb
+
+Platform: mobile only
+*/
+function bindTouchButtons(options){
+	// Mode has 3 options:
+	// 1) toggle_many = multiple buttons can be active at once, 
+	// 2) toggle_one = only one button is active at a time, 
+	// 3) flash = a single button flashes	
+	var settings = $.extend({
+		// These are the defaults.
+		scope: "document",
+		buttonCollection: "",
+		mode: "flash", 
+		callback: ""
+	}, options );
+	
+	// clear previous bindings
+	$(settings.scope).off("touchstart");
+
+	// Checks to see if the user is "pressing" a button (vs. scrolling)
+	$(settings.scope).on("touchstart", settings.buttonCollection, function(event){
+		var button = $(this);
+		/* Bind buttons to discern between touchmove and touchstart; otherwise, user will have trouble scrolling. */
+		// Checks to see if the user is scrolling (vs. "pressing" a button).  If user is scrolling, scrolling will be set to true.
+		button.on("touchmove", function(){
+			button.off("touchend");
+		});
+
+		// Bind touchstart functions to sort options to show .active state as well as check appropriate radio button.
+		// Using preventDefault and jquery to control hidden radio button to avoid the delay between touching a button
+		// and actually seeing the active state of the button (and the hidden radio button being selected)
+		button.on("touchend", function(event){
+
+			if (settings.mode == "flash")
+			{
+				button.addClass("active"); // puts button in .active state
+				setTimeout(function () { // setTimeout function creates a slight delay, causing button to flash
+					button.toggleClass("active"); // removes .active state
+				}, 50);
+			}
+			else if (settings.mode == "toggle_one")
+			{
+				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
+				// setTimeout provides a small delay before putting the button in .active state.
+				// without the delay, button will not reach .active state, probably because the previous function 
+				// to remove .active state from non-relevant buttons takes too long and javascript is asynchronous.
+				setTimeout(function () { 
+					button.toggleClass("active"); // toggles .active state 
+				}, 0);
+			}
+			else (settings.mode == "toggle_many")
+			{
+				button.toggleClass("active"); // puts button in .active state						
+			}
+
+			button.off("touchend");
+
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{
+				setTimeout(function() {
+					settings.callback.call(button.data("button"));
+				}, 0);
+			}			
+			
+			event.preventDefault();
+		});
+	});	
+}
+
+
+
+/* *****
+Function name: activateTearsheetOptions
+
+Purpose: Binds the following button icons on the tearsheet:
+1.  Map - toggles map while hiding hours and features
+2.  Hours - toggles hours while hiding map and features
+3.  Features - toggles features while hiding hours and map
+4.  Website - opens up another browser window to take user to venue website
+5.  Call - calls the venue
+
+Note: Bootstrap has javascript that uses toggle buttons and collapsed content, using data attributes, a) data-toggle="collapse" and 
+b) data-target="#map".  This functionality is not meet the needs of this application as content needs to be hidden AND shown individually.
+Bootstrap's functionality does not allow for individual control of the hiding and showing of specific content (i.e. maps, features, hours).
+
+Called by: 
+1. views_mobile\sessions\tearsheet.js.erb
+
+Platform: mobile
+*/
+function activateTearsheetOptions(button){
+	alert(button);
+	
+	if (button == 'website' || button == 'get_directions')  // open the link in a new browser window
+	{
+		var website = $(this).attr('href') // get the url of the venue website
+		window.open(website);  // opens a new browser window
+	}
+	else if (button == 'phone')
+	{
+		var phone_number = $(this).attr('href') // get the hyperlink which contains the phone number
+		window.location = phone_number; // dials the phone number listed in the link within the same window
+	}		
+	else
+	{			
+		$('#' + button).slideToggle(100, function(){ // slide toggles the button pressed
+			if($(this).is(':visible') == false) // checks if toggled content (i.e. map, features, or hours) is visible or hidden
+			{
+				$('#tearsheet .btn').removeClass('active'); //  if toggled content is hidden, then corresponding tearsheet button should not be "lit"
+			}
+		});
+		
+		$('#tearsheet .container.collapse').not('#' + button).slideUp(100) // close content that is not selected by the user
+	}
 }
 
 
 
 
-/* ***************************************************************************************** */
+
+
+
+
+
+
+
+
+
+/*
+Function: togglePane({pane, state, callback})
+
+Purpose:
+1.  Supports the sliding menu by moving "fixed" elements (i.e. main content and the navbar).  
+2.  Once the menu is open, this function "locks" the main content by changing the position to "fixed".  This way, the 
+main content is not scrollable on touch screens while user scrolls on the open menu.
+
+Note: There is a conflict with #navbar due to the function, initFilterSortContainer().  initFilterSortContainer() is
+a desktop function but during development/testing, sometimes all functions are called.  This conflict causes the navbar
+to move to the left of the screen when opening the menu from a mobile device (after scrolling on the menu).
+Specifically, one of the scroll event in initFilterSortContainer(), sets the "left" position of #navbar to 0.  Once the
+mobile and desktop functions are separated, this conflict shouldn't come up.
+
+Platform: mobile only
+*/
+function togglePane(options){
+	var slideContent = $('#main-content, #navbar, #navbar-fixed-bottom'), // the elements that need to "slide"
+		mainContent = $('#main-content'),
+		screenWidth = mainContent.width(), // get width of the #main-content
+		navbarHeight = $('#navbar').outerHeight(), // get height of navbar
+		lastSelector = ""; // margins around the menu button,
+		
+
+	var settings = $.extend({
+		// These are the defaults.
+		pane: "rightPane",
+		title: "",
+		state: "",
+		callback: ""
+	}, options );
+
+	slideContent.each(function(){
+		lastSelector = $(this).attr("id"); // sets lastSelector to the last id selector in slideContent
+	}); 
+
+	if (settings.pane == 'menu')
+	{
+		var menuButton = $('#menu_button'),
+			menuButtonWidth = menuButton.outerWidth(),
+			margin = menuButton.offset().left, // get margin between edge of navbar and menu button.
+			animateLeft = screenWidth - menuButtonWidth - (2 * margin), // redefine animateLeft for menu (since it only partially slides) for float left elements (i.e. menu button)
+			animateRight = -screenWidth + menuButtonWidth + (2 * margin); // redefine animateLeft for menu (since it only partially slides) for float right elements (i.e. logo)
+	}
+	else
+	{
+		var animateLeft = -screenWidth, // animateLeft sets the left property of the elements (i.e. menu button) of slideContent.  Defaulted for the rightPane (if menu is selected, animateLeft is redefined below).
+			animateRight = screenWidth; // animateRight sets the right property of the elements (i.e. logo) of slideContent.  Defaulted for the rightPane (if menu is selected, animateRight is redefined below).	
+		$('#rightPane-title').text(settings.title); // insert name of the bar for the title of the rightPane		
+	}
+	
+	// open menu if 1) "state" is not passed in to the function and the menu is closed OR 2) if user manually specified "open"
+	if (settings.state == "open" || settings.state == "" && parseInt(mainContent.css('left'),10) == 0)
+	{  
+		// stores the number of pixels that the user has scrolled from the top in #mainContent prior to opening menu
+		// scrollTopPosition is used in conjunction with initialTopPosition in order to "store" the position
+		var scrollTopPosition = $(window).scrollTop();
+
+		// menu_button should be in .active state.
+		$("#menu_button").addClass("active");
+		
+		$("#"+settings.pane).show(); // menu/rightPane starts off as display: none;
+
+		// slide menu to the right
+		slideContent.animate({
+			left: animateLeft, // for float left elements (i.e. menu button)
+			right: animateRight // for float right elements (i.e. logo)
+			}, 400,
+			function(){
+				if ($(this).attr("id") == lastSelector)
+				{
+					// Change css of mainContent in order to "fix" its position so it doesn't move around when user scrolls on the open menu
+					mainContent.css('position', 'fixed'); // Need to use "fixed" position in order to prevent user from scrolling #main-content when menu is open
+					mainContent.css('top', navbarHeight - scrollTopPosition); // Adjust height of #main-content because it will move under navbar since #main-content's position is changing from "relative" to "fixed"
+
+					// takes user to top of screen
+					$('html, body').animate({
+						scrollTop: 0 
+						}, 0,
+						function(){}
+					);
+
+					// execute callback if one was provided
+					if (settings.callback != "")
+					{
+						settings.callback.call(this);
+					}
+				}
+			}
+		);		
+	}
+	else // Otherwise, close menu
+	{
+		// stores the number of pixels that the user has scrolled from the top in #mainContent prior to opening menu
+		var initialTopPosition = parseInt(mainContent.css('top'),10) - navbarHeight;
+
+		// menu_button should be in .active state.
+		$("#menu_button").removeClass("active");
+		
+		// slide menu to the left
+		slideContent.animate({
+			left: 0, // for float left elements (i.e. menu button)
+			right: 0 // for float right elements (i.e. logo)
+			}, 400,	
+			function(){
+				if ($(this).attr("id") == lastSelector)
+				{
+					// return mainContent to css state prior to opening menu
+					mainContent.css('position', 'absolute'); // Undo fixed position after menu is closed to #main-content is scrollable again.
+					mainContent.css('top', '51px'); // Adjust height of #main-content to place it immediately underneath navbar
+					
+					$("#"+settings.pane).hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
+
+					// return user to scroll position prior to opening menu					
+					$('body').animate({
+						scrollTop: -initialTopPosition + 'px'
+						}, 0,
+						function(){}
+					);
+					
+					// execute callback if one was provided
+					if (settings.callback != "")
+					{
+						settings.callback.call(this);
+					}
+				}
+			}
+		);
+	}
+}
+
+
+/*
+Function: toggleSlider()
+
+Supports the slider pane by
+1.  Placing the closed slider at the bottom of the screen or placing the open slider at the top of the screen
+2.  Opening the slider or closing the slider
+3.  Showing/hiding the appropriate content (slider title, slider body)
+4.  binding buttons to appropriate active states as well as checking radio buttons and checkboxes
+
+Platform: mobile only
+*/
+function toggleSlider(title, callback){
+	var slider = $('#slider');
+	var sliderTitle = title || "";
+	var bar = $('#slider-bar');
+	var body = $('#slider-body');
+	var mainContent = $('#main-content');
+	
+	if (sliderTitle != "")
+	{
+		$('#slider-title').text(sliderTitle);
+	}	
+
+	// 	Need to know the bottom of the browser window for 2 reasons:
+	//	1. Open slider: This is where the vertical slide "first appears" before sliding up to top of browser window
+	// 	2. Close slider: this the destination point to where the vertical slider will disappear as it slides down from top of browser window
+	var screenHeight = $(window).outerHeight(); // get the height of the screen, including padding and borders
+	
+	if (slider.css('display') == 'none') // if slider is closed, then open
+	{
+		var sliderEndPosition = 0;
+		var sliderStartPosition = screenHeight; // get the height of the screen, including padding and borders
+
+		var scrolling = true; // Stores whether user is scrolling vs. "pressing" a button.  Default is that the user is scrolling.
+
+		
+		/* Bind buttons to discern between touchmove and touchstart; otherwise, user will have trouble scrolling. */
+		// Checks to see if the user is scrolling (vs. "pressing" a button).  If user is scrolling, scrolling will be set to true.
+		$("#filter_options, #sort_options").on("touchmove", ".btn-glass", function(event){
+			scrolling = true; // setting scrolling to true will prevent .btn-glass buttons from 1) reaching the .active state and 2) checking the checkbox.
+		});
+
+		// Checks to see if the user is "pressing" a button (vs. scrolling)
+		$("#filter_options, #sort_options").on("touchstart", ".btn-glass", function(event){
+			scrolling = false; // setting scrolling to false will allow .btn-glass buttons to 1) convert to .active state and 2) checking the checkbox.
+		});
+				
+		// Bind touchstart functions to sort options to show .active state as well as check appropriate radio button.
+		// Using preventDefault and jquery to control hidden radio button to avoid the delay between touching a button
+		// and actually seeing the active state of the button (and the hidden radio button being selected)
+		$("#sort_options").on("touchend", ".btn-glass", function(event){
+			if (scrolling == false) // means user is "pressing" the button (vs. scrolling)
+			{
+				$("#sort_options .btn-glass").removeClass("active"); // only one sort button can be active at a time
+				$(this).addClass("active").find("input:radio").prop("checked", true);
+				event.preventDefault();
+			}	
+		});
+		
+		// Bind touchend function to filter options to show .active state as well as toggle appropriate checkbox.
+		// Note: .preventDefault() stops scrolling when sliding along the filter options.  But need to use 
+		// preventDefault and jquery to control checkbox to avoid the delay between touching a button and 
+		// actually seeing the checkbox being checked - more responsive UI.
+		$("#filter_options").on("touchend", ".btn-glass", function(event){
+			if (scrolling == false) // means user is "pressing" the button (vs. scrolling)
+			{
+				var button = $(this);
+				var checkbox = button.addClass("active").find("input:checkbox"); // puts button in .active state
+				
+				setTimeout(function () {
+					button.toggleClass("active"); // removes .active state, causing button to flicker
+				}, 50)
+		
+				// toggle checkbox
+				if (checkbox.prop("checked") == true)
+				{
+					checkbox.prop("checked", false);
+				}	
+				else
+				{
+					checkbox.prop("checked", true);
+				}
+				event.preventDefault();
+			}	
+		});
+	}
+	else // if slider is open, then close
+	{
+		var sliderEndPosition = screenHeight; // get the height of the screen, including padding and borders
+		var sliderStartPosition = 0;
+		
+		$("#apply_filter_navbar").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
+		
+		$("#sort_options").off("touchend");
+		$("#filter_options").off("touchend");
+		
+		mainContent.show(); // hide content underneath slider in case of overflow
+	}
+	
+	slider.css('top', sliderStartPosition); // sets the top of the slider to the top or bottom of the screen
+
+	bar.css('position', 'relative'); // ensure that .bar within #slider starts off as relative positioning; otherwise, the bar will not "slide down" when closing the slider
+	body.css('top', 0); // ensures that .body within #slider is directly under the bar (used when slider is closing); otherwise, body of the slider will be "too far" down from the slider bar
+	
+	slider.animate({
+		'top': sliderEndPosition + 'px', // slides the vertical slider to top or bottom of screen.
+		'display': 'show' // shows the contents of the vertical slide as it slides; after animation is over, #slider will revert back to display: none
+		}, 400, 
+		function(){
+			if ($(this).toggle().css('display') == "block") // if slider is open after toggle, hide mainContent
+			{
+				mainContent.hide();
+				$("#apply_filter_navbar").fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
+			}
+
+			var barHeight = bar.outerHeight();
+			bar.css('position', 'fixed'); // transition from relative to fixed positioning
+			body.css('top', barHeight); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
+		}
+	);	
+}
+
+
+/* *****
+Function: preLoadContent - prepares ajax request by:
+	1) getting form action or url href
+	2) getting/serializing data from form or url
+	3) if necessary, getting geolocation info prior to making ajax request
+
+Pages:
+	1) filter_sort_menu.html.erb
+	2) log_in.html.erb
+	3) sign_up.html.erb
+	
+Platform: mobile only
+*/
+function preLoadContent(){
+	// .showPreloader class is attached to any submit button that loads new content
+	$(document).on("click", ".showPreloader", function(event){
+		var page = "#" + $(this).data('page'); // uses ID to get the div that contains the relevant form
+		var form = $(page).children("form"); // specifies the form tag within the div specified by the custom data attribute, "page".
+		var requestMethod = form.attr("method") || "get"; // Grabs the method attribute specified within the form.  If form does not exist, then the request must be GET since 1) only a form can specify POST method and 2) GET methods can be specified within forms or by urls
+		var serializedData = form.serialize() || "";
+		var url = form.attr('action') || $(this).attr('href') // get the action attribute from the relevant form, if one exists; otherwise, get the url of the button 
+		
+//		$("#main_preloader").show();
+
+		toggleSlider(); // close slider
+
+		url = url + '?' + serializedData; 
+
+		sort_order = getURLParameters(url, 'sort_order');
+		
+		if (sort_order == 'distance')
+		{			
+			getGeolocation(function(){				
+				loadContent(url, serializedData, requestMethod); // loadContent(url, [serializedData], [requestMethod]), [] = optional			
+			});
+		}
+		else
+		{
+			loadContent(url, serializedData, requestMethod); // loadContent(url, [serializedData], [requestMethod]), [] = optional			
+		}
+		
+		event.preventDefault();
+	});
+}
+
+
+/* *****
+Function: loadContent
+
+Description: Uses AJAX to load dynamic content.  loadContent() also manipulates the data (i.e. serializedData)
+that accompanies .get(), adding items such as latitude and longitude while excluding redundant parameters such
+as sort_order.
+
+Notes:
+1.  url - can contain url parameters such as sort_order, search, latitude, longitude
+	
+2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
+	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
+	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
+	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
+	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
+	
+		$("#form_sortFilter input[name!='sort_order']").serialize();
+
+	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
+	the exception of the sort_order parameter.
+
+
+Platform: desktop and mobile
+*/
+function loadContent(url, serializedData, requestMethod){
+	var latitude = checkSessionStorage('latitude'), 
+		longitude = checkSessionStorage('longitude'),
+		serializeData = serializedData || '',
+		requestMethod = requestMethod || "get";
+		
+	// add latitude and longitude information if it exists to the serialized data
+	if (latitude != 'undefined' &&  longitude!= 'undefined')
+	{
+		var userLocation = {latitude: latitude, longitude: longitude};
+		serializedData = serializedData + '&' + $.param( userLocation ); // $.param creates a serialized representation of the userLocation object		
+	}
+	
+	$("#main_preloader").show();
+	
+	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
+	if (requestMethod == "get")
+	{
+		var request = 	$.get(	url,
+								serializedData,
+								function(){
+								},
+								"script"
+							);
+	}
+	else
+	{
+		var request = $.post(	url,
+								serializedData,
+								function(){
+								},
+								"script"
+							);
+	}
+	
+	request.done(function(){
+		fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
+	});
+	
+	request.fail(function(){
+	//	alert("error!");
+	});		
+}
+
+function fadeInContent(){
+	var thumbnailCount = 0,
+		loadedImageCount = 0;
+		
+	thumbnailCount = $(".thumbnail").length;
+	
+	var refreshId = setInterval(function() { // this code is executed every 500 milliseconds:
+						loadedImageCount = 0;
+						$(".thumbnail").each(
+							function(){
+								 if (parseInt($(this).children("img").css("width"), 10) > 200)
+								 {
+									loadedImageCount = loadedImageCount + 1
+								 }
+							}
+						);
+						if (loadedImageCount >= thumbnailCount)
+						{
+							clearInterval(refreshId);
+							$("#main_preloader").fadeOut(400);
+						}
+					}, 200);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function initCarousel(){
+	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+	$( ".active.item" ).each(function( index ) {
+		if(index != 0){
+			$(this).removeClass('active');
+		}
+	});	
+}
+
+
+function initFilterSortContainer(){
+		placeFilterSortContainer(); // enables the filter/sort bar to scroll horizontally even though it's css position is "fixed"
+		
+		$(window).resize(function(){ // need to reposition the filter/sort bar every time browser window sizes changes.
+			placeFilterSortContainer(); // enables the filter/sort bar to scroll horizontally even though it's css position is "fixed"
+		});
+
+		$(window).scroll(function(){
+			$('#navbar').css('left',-$(window).scrollLeft()); // enables navbar to scroll horizontally even though it's css position is "fixed" 
+			placeFilterSortContainer();  // enables the filter/sort bar to scroll horizontally even though it's css position is "fixed"
+		});		
+			
+		$('#form_sortFilter input').keyup(function () {
+			var url = $("#form_sortFilter").attr('action');
+			loadContent(url, $('#form_sortFilter').serialize());
+			return false;
+		});
+}
+
+/* *****
+Function: placeFilterSortContiner
+
+Functionality:
+1.  Positions the Sort/Filter bar on the right side of the page in a fixed position
+2.  "Moves" the Sort/Filter bar as the user scrolls left of right to provide the illusion of a fixed position
+
+Notes: Need "fixed" position when user scrolls horizontally but "relative" position when user scrolls vertically - 
+this is not possible with CSS.  Thus, need to use a "Fixed" position while using jQuery to provide the illusion of 
+"Relative" positioning.  Because a "Fixed" position for the sort/filter bar, application needs to provide a distance from the left 
+of the screen every time the user scrolls horizontally or resizes the browser window.  Without this functionality,
+the sort/filter bar would be locked on the right side of the page, independent of the rest of the content.  Using
+this function, the sort/filter bar will be horizontally positioned relative to the rest of the content while 
+vertically, it is fixed.
+
+Platform: desktop
+*/
+function placeFilterSortContainer(){
+	var browserWidth = $(window).width();
+	var contentContainerWidth = $('#main-content .container').outerWidth(); // .outerWidth includes padding and border of the element
+	var margin = (browserWidth - contentContainerWidth)/2;
+	var filterContainerWidth = $('#filter-container').width(); // no padding, margin, or border
+	$('#filter-sort').css('width', filterContainerWidth); // .outerWidth includes padding and border of the element
+	if (margin > 0)
+	{
+		$('#filter-sort').css('left', margin + (contentContainerWidth - filterContainerWidth) - 15); // 15px for margin from .col-xs-3 class
+	}
+	else
+	{
+		$('#filter-sort').css('left', contentContainerWidth - filterContainerWidth - $(window).scrollLeft() - 15); // 15px for margin from .col-xs-3 class
+	}
+}
+
 
 /* *****
 Function: initTouchButtons
@@ -211,54 +918,6 @@ function getTearsheet(){
 		loadContent(url);
 		
 		event.preventDefault();
-	});
-}
-
-
-
-/* *****
-Function name: initTearsheetIconButtons
-
-Purpose: Binds the following button icons on the tearsheet:
-1.  Map - toggles map while hiding hours and features
-2.  Hours - toggles hours while hiding map and features
-3.  Features - toggles features while hiding hours and map
-4.  Website - opens up another browser window to take user to venue website
-5.  Call - calls the venue
-
-Note: Bootstrap has javascript that uses toggle buttons and collapsed content, using data attributes, a) data-toggle="collapse" and 
-b) data-target="#map".  This functionality is not meet the needs of this application as content needs to be hidden AND shown individually.
-Bootstrap's functionality does not allow for individual control of the hiding and showing of specific content (i.e. maps, features, hours).
-
-Platform: mobile
-*/
-function initTearsheetIconButtons(){
-	// controls sliding action to show hidden content (i.e. map, features, or hours)
-	$(document).on('click', '#tearsheet .btn-group .btn', function(event){
-		var button = $(this).data('button'); // find out which button was pressed
-		
-		if (button == 'website' || button == 'get_directions')  // open the link in a new browser window
-		{
-			var website = $(this).attr('href') // get the url of the venue website
-			window.open(website);  // opens a new browser window
-		}
-		else if (button == 'phone')
-		{
-			var phone_number = $(this).attr('href') // get the hyperlink which contains the phone number
-			window.location = phone_number; // dials the phone number listed in the link within the same window
-		}		
-		else
-		{			
-			$('#' + button).slideToggle(100, function(){ // slide toggles the button pressed
-				if($(this).is(':visible') == false) // checks if toggled content (i.e. map, features, or hours) is visible or hidden
-				{
-					$('#tearsheet .btn').removeClass('active'); //  if toggled content is hidden, then corresponding tearsheet button should not be "lit"
-				}
-			});
-			
-			$('#tearsheet .container.collapse').not('#' + button).slideUp(100) // close content that is not selected by the user
-		}	
-		event.preventDefault(); // stop browser from loading a hyperlink
 	});
 }
 
@@ -355,65 +1014,7 @@ function truncateText(callback){
 	});
 }
 
-
-
-/* *****
-Function: initSlideToggler - binds buttons that cause the page to slide left, revealing:
-	1) the navigation menu 
-	2) new user sign up form
-	3) user log in fields
-
-Source: http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/
-
-Platform: mobile only
-*/				
-function initSlideToggler(){
-	// Vertical sliding
-	$(document).on('click', '#filter_button, #apply_filters_button, #down_arrow', function(){ // select for .slideToggler-vert elements - but using ID in delegated event handling is faster than using Class
-		var button = $(this).data('button');
-		$('.slideToggler').not('.collapse').toggle(1); // toggle only the .slideToggler elements that are visible (i.e. menu icon but not back arrow icon)
-		$('.slideToggler-vert' ).toggle(1); // (i.e. down arrow icon)
-		$('.footer-fixed-bottom').toggle(); // switches between the "filter" and "apply filters" button
-		$('#filter-container, #dynamic-content' ).slideToggle(); // #dynamic_content needs to be toggled so #filter-container can slide over it
-		$('html, body').animate({ scrollTop: 0 }, 0); // take user to top of screen
-	});
-
-	// Horizontal sliding
-	$(document).on('click', '#menu_button, #back_arrow, #log_in, #sign_up', function(){ // select for .slideToggler elements - but using ID in delegated event handling is faster than using Class
-		var slideContent = $('#main-content');
-		var collapsibleContent = $('.collapsible');
-		var button = $(this).data('button');		
-
-		if (parseInt(slideContent.css('left'),10) == 0)
-		{  // open slider to reveal hidden content
-			$(collapsibleContent).not(button).hide();
-			$(button).show();
-			
-			slideContent.animate({
-				left: -(slideContent.outerHeight())
-				},
-				function(){
-					$('.slideToggler-vert').not('.collapse').toggle(); // toggle only the .slideToggler-vert elements that are visible
-					$('.slideToggler').toggle();					
-				}
-			);
-		}
-		else // Otherwise, close slider
-		{
-			$(collapsibleContent).hide();
-			slideContent.animate({
-				left: 0
-				},
-				function(){
-					$('.slideToggler').toggle();
-					$('.slideToggler-vert').not('.collapse').toggle(); // toggle only the .slideToggler-vert elements that are visible
-				}
-			);
-		}
-	});
-}
-
-
+	
 	
 /* *****
 Function: hijackMenuButtons - binds buttons that cause the page to slide left, revealing 1) the navigation menu, 2) new user sign up form, or 3) user log in fields.
@@ -566,6 +1167,7 @@ From Ryan Bates - http://railscasts.com/episodes/114-endless-page-revised
 Notes:
 	1.  Use "activeRequest" variable to control calling function multiple times in the case the user scrolls 
 		down too quickly (which results in duplicate results retrieved).
+	2.  Manually initiates a scroll event	
 */ 
 function endlessScroll(){
 		// Ensures additional videos are loaded incrementally (vs. a large number at once):
@@ -623,40 +1225,6 @@ function checkSessionStorage(variable){
         return sessionStorage[variable];
 	}	
 }
-
-
-
-/* *****
-Function: initApplyFilterButton - binds the "Apply Filters" button which is displayed when user is on the 
-sort and filter from a mobile device.
-
-Platform: mobile
-*/
-function initApplyFilterButton(){
-	// Search form - using "Apply Filters" button
-	$(document).on('click', '#apply_filters_button', function(){
-		var url = $('#form_sortFilter').attr('action'); // gets the action attribute of #form_sortFilter which seems to be the home_path
-
-		serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
-		// url is from the form and shouldn't contain sort_order (i.e. /home) 
-		// thus, to add serializedData, we need to use a question mark vs. an ampersand
-		url = url + '?' + serializedData; 
-	
-		sort_order = getURLParameters(url, 'sort_order');
-		if (sort_order == 'distance')
-		{
-			
-			getGeolocation(function(){				
-				loadContent(url); // retrieve venue list based on sort_order		
-			});
-		}
-		else
-		{
-			loadContent(url); // retrieve venue list based on sort_order		
-		}
-	});
-}
-
 
 
 function initPopover(callback){
@@ -775,55 +1343,6 @@ function showGeoPermissionModal(){
 		}
 	})
 }
-
-
-
-/* *****
-Function: loadContent
-
-Description: Uses AJAX to load dynamic content.  loadContent() also manipulates the data (i.e. serializedData)
-that accompanies .get(), adding items such as latitude and longitude while excluding redundant parameters such
-as sort_order.
-
-Notes:
-1.  url - can contain url parameters such as sort_order, search, latitude, longitude
-	
-2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
-	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
-	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
-	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
-	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
-	
-		$("#form_sortFilter input[name!='sort_order']").serialize();
-
-	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
-	the exception of the sort_order parameter.
-
-
-Platform: desktop and mobile
-*/
-function loadContent(url, serializedData){
-	var latitude = checkSessionStorage('latitude'), 
-		longitude = checkSessionStorage('longitude'),
-		serializeData = serializedData || '';
-		
-	// add latitude and longitude information if it exists to the serialized data
-	if (latitude != 'undefined' &&  longitude!= 'undefined')
-	{
-		var userLocation = {latitude: latitude, longitude: longitude};
-		serializedData = serializedData + '&' + $.param( userLocation ); // $.param creates a serialized representation of the userLocation object		
-	}
-	
-	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
-	$.get(	url,
-		serializedData,
-		function(){
-			$('#back_arrow:visible').trigger('click'); //ensures content is hidden before menu slides back
-		},
-		"script"
-	);
-}
-
 
 
 /* *****
@@ -1087,5 +1606,85 @@ function initModals(){
 		}); // $('#mainModal')
 		
 		event.preventDefault();
+	});
+}
+
+
+
+/* NOT USED */
+/* *****
+Function: initApplyFilterButton - binds the "Apply Filters" button which is displayed when user is on the 
+sort and filter from a mobile device.
+
+Platform: mobile
+*/
+function initApplyFilterButton(){
+	// Search form - using "Apply Filters" button
+	$('#apply_filter_button').on('click', function(){
+		var url = $('#form_sortFilter').attr('action'); // gets the action attribute of #form_sortFilter which seems to be the home_path
+
+		serializedData = cleanSerializedData(url);  // remove redundant parameters from combining form and url variables
+		// url is from the form and shouldn't contain sort_order (i.e. /home) 
+		// thus, to add serializedData, we need to use a question mark vs. an ampersand
+		url = url + '?' + serializedData; 
+	
+		sort_order = getURLParameters(url, 'sort_order');
+		if (sort_order == 'distance')
+		{			
+			getGeolocation(function(){				
+				loadContent(url); // retrieve venue list based on sort_order		
+			});
+		}
+		else
+		{
+			loadContent(url); // retrieve venue list based on sort_order		
+		}
+	});
+}
+
+
+/* *****
+Function name: initTearsheetIconButtons
+
+Purpose: Binds the following button icons on the tearsheet:
+1.  Map - toggles map while hiding hours and features
+2.  Hours - toggles hours while hiding map and features
+3.  Features - toggles features while hiding hours and map
+4.  Website - opens up another browser window to take user to venue website
+5.  Call - calls the venue
+
+Note: Bootstrap has javascript that uses toggle buttons and collapsed content, using data attributes, a) data-toggle="collapse" and 
+b) data-target="#map".  This functionality is not meet the needs of this application as content needs to be hidden AND shown individually.
+Bootstrap's functionality does not allow for individual control of the hiding and showing of specific content (i.e. maps, features, hours).
+
+Platform: mobile
+*/
+function initTearsheetIconButtons(){
+	// controls sliding action to show hidden content (i.e. map, features, or hours)
+	$(document).on('click', '#tearsheet .btn-group .btn', function(event){
+		var button = $(this).data('button'); // find out which button was pressed
+		
+		if (button == 'website' || button == 'get_directions')  // open the link in a new browser window
+		{
+			var website = $(this).attr('href') // get the url of the venue website
+			window.open(website);  // opens a new browser window
+		}
+		else if (button == 'phone')
+		{
+			var phone_number = $(this).attr('href') // get the hyperlink which contains the phone number
+			window.location = phone_number; // dials the phone number listed in the link within the same window
+		}		
+		else
+		{			
+			$('#' + button).slideToggle(100, function(){ // slide toggles the button pressed
+				if($(this).is(':visible') == false) // checks if toggled content (i.e. map, features, or hours) is visible or hidden
+				{
+					$('#tearsheet .btn').removeClass('active'); //  if toggled content is hidden, then corresponding tearsheet button should not be "lit"
+				}
+			});
+			
+			$('#tearsheet .container.collapse').not('#' + button).slideUp(100) // close content that is not selected by the user
+		}	
+		event.preventDefault(); // stop browser from loading a hyperlink
 	});
 }

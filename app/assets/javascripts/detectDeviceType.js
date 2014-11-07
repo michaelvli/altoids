@@ -41,7 +41,8 @@ function detectDeviceType(callback){
 	var deviceType;
 
 //DEBUG	alert("width: " + physicalWidth + " dpr: " + devicePixelRatio);
-	
+		deviceType = 'phone'
+/*	
 	if (deviceIndependentPixels < 768)
 	{
 		deviceType = 'phone'
@@ -54,6 +55,7 @@ function detectDeviceType(callback){
 	{
 		deviceType = 'desktop'
 	}
+*/	
 	$.cookie('deviceType', deviceType, { expires: days_before_expiring }); // jquery plugin: https://github.com/carhartl/jquery-cookie/tree/v1.4.1
 	callback();
 }

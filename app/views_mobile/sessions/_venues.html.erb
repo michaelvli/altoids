@@ -1,6 +1,32 @@
 					<!-- Venue Thumbnail -->
 					<div class="col-md-6 thumbnail-container">
-						
+						<!-- Thumbnail image-->
+						<%= link_to({controller: "sessions", action: "tearsheet", id: venue.id }, class:"thumbnail rightPane", data: { title: venue.venue_name } ) do %>
+							<%= image_tag(@bucket.objects[venue.get_video(venue.id).get_path("png", "large")].url_for(:get, { :expires => 20.minutes.from_now, :secure => true, :force_path_style => true }).to_s) %>							
+
+							<!-- Video live/recorded status-->
+							<% if false %>
+								<div class="status color-lightest">
+									LIVE
+								</div>
+							<% else %>
+								<div class="status">
+									RECORDED
+								</div>
+							<% end %>
+					
+							<!-- Venue info -->
+							<div class="carousel-caption venue">
+								<h4><%= venue.venue_name %></h4>
+								<% if !venue.try(:distance).nil? %>
+									<small>(<%= venue.distance.round(1) %> miles)</small>
+								<% end %>	
+								<p><em><%= venue.neighborhood.name %></em></p>							
+							</div>
+
+						<% end %>
+
+<% if false %>						
 						<!-- Play button -->
 						<span class="glyphicon glyphicon-play-circle play_button" ></span>
 						
@@ -16,25 +42,6 @@
 							<%= tag("source", src: "https://s3.amazonaws.com/barfly_full_videos/"+"benchmark"+".MOV") %>
 							Your browser can't play this video.
 						<%= tag("/video", {}, open: true) %>
-				
-						<!-- Video live/recorded status-->
-						<% if false %>
-							<div class="live-caption">
-								LIVE
-							</div>
-						<% else %>
-							<div class="recorded-caption">
-								RECORDED
-							</div>
-						<% end %>
-				
-						<!-- Thumbnail content - Venue info -->
-						<div class="carousel-caption venue">
-							<h2><%= venue.venue_name %></h2>&nbsp;
-							<% if !venue.try(:distance).nil? %>
-								<small>(<%= venue.distance.round(1) %> miles)</small>
-							<% end %>	
-							<p><em><%= venue.neighborhood.name %></em></p>
-						</div>
-						
+<% end %>				
+
 					</div><!-- Venue Thumbnail -->

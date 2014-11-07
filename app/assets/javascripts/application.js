@@ -21,9 +21,7 @@
 //= require detectDeviceType
 //= require html5Geolocation
 //= require bootstrap-progressbar
-//= require altoids
 //= require jquery.ui.datepicker
 //= require modernizr
 //= require modalWindow
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
+//= require altoids

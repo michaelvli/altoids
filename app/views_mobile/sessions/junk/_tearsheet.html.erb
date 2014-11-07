@@ -17,45 +17,7 @@
 				<em>"<%= @venue.description %>"</em>
 			</div>
 		</div>
-	</div>	
 		
-		
-		<div class="content">
-
-			<div id="tearsheet_options" class="btn-group">
-				
-				<!-- Default selection: Events -->
-
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "map" }) do %>
-					<span class="glyphicon glyphicon-pushpin"></span><br>
-					<span class="text-center">Map</span>
-				<% end %>
-
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "hours" }) do %>
-					<span class="glyphicon glyphicon-time"></span><br>
-					<span class="text-center">Hours</span>
-				<% end %>
-
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "features" }) do %>
-						<span class="glyphicon glyphicon-ok"></span><br>
-						<span class="text-center">Features</span>						
-				<% end %>
-								
-				<%= link_to 'http://' + @venue.website, class:"btn btn-glass", target:"_blank", :data =>{ :button => "website" } do %>
-					<span class="glyphicon glyphicon-cloud"></span><br>
-					<span class="text-center">Website</span>
-				<% end %>
-
-				<%= link_to 'tel:'+@venue.phone, class:"btn btn-glass", :data =>{ :button => "phone" } do %>
-					<span class="glyphicon glyphicon-earphone"></span><br>
-					<span class="text-center">Call</span>
-				<% end %>
-				
-			</div>
-		</div>
-		
-		
-<% if false %>		
 		<!-- TEARSHEET BUTTONS - used for revealing hidden content -->
 		<div id="tearsheet_buttons" class="container">
 			<div class="btn-group" data-toggle="buttons">
@@ -91,7 +53,7 @@
 				<% end %>
 			</div> <!-- btn btn-glass -->
 		</div> <!-- container -->
-<% end %>		
+		
 		<!-- GOOGLE MAP -->		
 		<div id="map" class="container collapse">
 			<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->

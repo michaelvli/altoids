@@ -19,7 +19,6 @@ body {
 	padding-top: 53px;
 	background-color: $color-darker;
 	color: $color-light;
-	max-width: 1450px; // video in carousel doesn't need to be bigger than 1450px
 	margin-left:auto;
 	margin-right:auto;
 }
@@ -348,14 +347,12 @@ video{
 }
 
   
-@media (max-width: $device-max-width-phone) {
-	.navbar-header{
-		.btn{
-			float: right;
-			margin-top: 10px;
-			margin-right: 15px;
-			outline: none;
-		}
+.navbar-header{
+	.btn{
+		float: right;
+		margin-top: 10px;
+		margin-right: 15px;
+		outline: none;
 	}
 }
 
@@ -437,35 +434,6 @@ video{
 
 
 	
-/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
-@media (max-width: $device-max-width-phone) {
-	#slider-container {
-		#main-content {
-			position: relative;
-			top: 0;
-			right: 0;
-			left: 0;
-			bottom: 0;
-			z-index: 10;
-			background-color: $color-darkest; // needed in order to "cover up" .hidden-content when sliding
-		}
-		#hidden-content {
-			position: fixed;
-			top: 55px;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			width: 100%;
-//			z-index: 5;
-			padding: 0 0 0 0; // top right bottom  left
-			margin-right: auto;
-			margin-left: auto;
-			overflow: auto;
-		//  overflow-y: scroll;
-			-webkit-overflow-scrolling: touch; // for touch screens 
-		}
-	}
-}
 
 
 
@@ -937,28 +905,28 @@ video{
 
  
 /* debugging 
-*/
+ */
 
 .vee-red {
 	border-style: solid !important;
 	border-width: 1px !important;
 	border-color: red !important;
-	}
+}
 	
 .vee-blue {
 	border-style: solid !important;
 	border-width: 1px !important;
 	border-color: blue !important;
-	}
+}
 
 .vee-green {
 	border-style: solid !important;
 	border-width: 1px !important;
 	border-color: green !important;
-	}
+}
 	
 .vee-yellow {
 	border-style: solid !important;
 	border-width: 1px !important;
 	border-color: yellow !important;
-	}
+}

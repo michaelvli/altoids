@@ -1,3 +1,5 @@
+<!-- Desktop version -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,10 +9,11 @@
 	<meta name="format-detection" content="telephone=no">
 
 	<!-- for more info about stylesheet_link_tag and asset pipeline: https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline -->
-	<%= stylesheet_link_tag    "application", media: "all", "data-turbolinks-track" => true %>
-	<%= stylesheet_link_tag    "desktop-manifest", media: "all", "data-turbolinks-track" => true %>
+	<!-- includes desktop-manifest.css -->
+	<%= stylesheet_link_tag "desktop-manifest", media: "all", "data-turbolinks-track" => true %>
 	
-	<%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+	<!-- includes application.js (manifest file) -->
+	<%= javascript_include_tag "application.js", "data-turbolinks-track" => true %>
 	<%= csrf_meta_tags %>
 </head>
 <body>
