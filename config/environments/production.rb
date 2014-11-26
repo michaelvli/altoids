@@ -78,6 +78,7 @@ Altoids::Application.configure do
   # Precompile additional assets.
   # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
   # config.assets.precompile += %w( search.js )
+    config.assets.precompile += %w( mobile-manifest.css ) #http://stackoverflow.com/questions/14650846/why-is-this-new-css-manifest-file-not-being-compiled-during-heroku-slug-compilat
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
