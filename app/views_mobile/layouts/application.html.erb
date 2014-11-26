@@ -12,7 +12,12 @@
 	<%# Removes auto-styling for telephone numbers in application:  http://stackoverflow.com/questions/3736807/remove-styling-of-telephone-numbers %> 
 	<meta name="format-detection" content="telephone=no">
 	
-	<!-- for more info about stylesheet_link_tag and asset pipeline: https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline -->		
+	<!--
+		Only application.css and application.js are available to use in stylesheet_link_tag without the need to precompile
+		by default.	 Since app is not using "application.css" (using "mobile-manifest" instead), need to add "mobile-manifest.css"
+		to the precompile list: config.assets.precompile += %w( site.css ) in "config/enviroment/production.rb".
+		For more info about stylesheet_link_tag and asset pipeline: https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline 
+	-->		
 	<%= stylesheet_link_tag "mobile-manifest", media: "all", "data-turbolinks-track" => true %>
 
 	<!-- includes application.js (manifest file) -->
