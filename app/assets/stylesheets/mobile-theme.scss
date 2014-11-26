@@ -56,6 +56,17 @@ input.hidden[type="radio"]{
 	background-color: $color-dark;
 }
 
+#menu{
+	.btn-group-vertical{
+		padding: 0;
+	}
+}
+
+.divider{
+	margin: 0 10px 0 10px;
+	border-bottom: 1px solid $color-dark;
+}
+
 .btn-glass, .btn-glass:hover {
 	color: $color-light;
 	background-color: transparent;
@@ -106,6 +117,101 @@ input.hidden[type="radio"]{
 	}
 }
 
+#events{
+	.btn-group-vertical > .btn-glass{
+		padding: 5px 5px 5px 5px;
+		border-radius: 0px;
+	}
+	.btn-group-vertical > .btn-glass:first-child{
+		margin: 5px 0 5px 0;
+	}
+	.btn-group-vertical > .btn-glass:last-child{
+		margin: 5px 0 0 0;
+	}
+}
+
+.btn-date{
+//	@extend .vee-red;
+	float: left;
+	width: 4em;
+//	height: 7.5em;
+//	padding: 12px 0 0 0; //top right bottom left
+	margin: 0 6px 0 0; //top right bottom left
+	.date{
+		background-color: $color-light;
+		width: 100%;
+		height: 4em;
+		margin: 0 auto 0 auto; // top right bottom left
+		padding: 3px 2px 3px 0; // top right bottom left
+		border-radius: 6px;
+		day-of-week{
+			display: block;
+			text-align: center;
+			font-size: 9px;
+			color: red;
+		}
+		calendar-day{
+			display: block;
+			text-align: center;
+			font-size: 20px;
+			color: $color-darker;
+		}
+		calendar-month{
+			display: block;
+			text-align: center;
+			font-size: 9px;
+			color: $color-darker;
+		}
+	}
+	.time{
+		font-size: 10px;
+		color: white;
+		text-align: center;
+		padding: 6px 0 0 0 // top right bottom left
+	}
+}
+		
+// for container on the right side (contains event type, event name, and event description)
+.btn-description{
+	float: initial;
+	width: 100%;
+	height: 5.5em;
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+	.time{
+		font-size: 12px;
+		font-weight: initial;
+		color: white;
+		text-align: left;
+	}
+	.preheadline{
+		display: inline;
+		font-size: 14px;
+	}
+	.headline{
+		display: block;
+	}
+	.descriptionToggleTrigger{
+		height: 100%;
+		.description{
+			font-size: 12px;
+			color: $color-medium;
+		}
+		.description.active{
+			padding: 6px 0 0 0; //top right bottom left
+		}
+		.dotdotdot{
+			width: 100%;
+			height: 50%;
+		}
+	}
+}
+
+.btn-description.active{
+	height: auto;
+}
+
 .navbar-button{
 //	@extend .vee-red;
 	position: relative;
@@ -149,6 +255,37 @@ input.hidden[type="radio"]{
 
 /* navbar */
 
+.navbar{
+	margin-bottom: 0;
+}
+
+.navbar-pane{
+	position: fixed;
+	top: 0;
+	width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (border) + 15px (margin-right)	
+	min-height: 51px;
+	padding: 5px 0;	
+	z-index: 1025; // needs to be underneath of navbar which has z-index: 1030
+	background-color: $color-darker;
+	color: $color-lightest;
+	.title{
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		padding: 3px 0 0 0; // need top padding to vertically align title
+	}
+	.glyphicon{
+		top: 4px;
+		opacity: 0.5;
+	}
+}
+
+#navbar-rightPane{
+	width: 100%;
+}
+
 .navbar-header{
 //	overflow:hidden;
 	background-color: $color-darker;
@@ -172,150 +309,18 @@ input.hidden[type="radio"]{
 }
 
 
-/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
-#main-content {
-	position: absolute;
-	top: 51px;
-	left: 0;
-	z-index: 10;
-	width: 100%;
-	height: 100%;
-	background-color: $color-darkest; // needed in order to "cover up" #menu when sliding
-}
-
-// shared attributes navigation bar for #menu and #slider
-.bar{
-	position: relative;
-	top: 0;
-	min-height: 50px;
-	padding: 5px 0;	
-	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
-	background-color: $color-darkest;
-	.title{
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		padding: 3px 0 0 0; // need top padding to vertically align title
-	}
-	.glyphicon{
-		top: 4px;
-		color: $color-lightest;
-		opacity: 0.5;
-	}
-}
-.body{
-	position: relative;
-	top: 0;
-	width: 100%;
-	background-color: $color-darker;
-}
-	
-.section{
-	background-color: $color-dark;
-	padding: 5px 15px 5px 15px;
-	font-size: 0.8em;
-}
-		
-#menu, #rightPane {
-	position: absolute;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	color: $color-light;
-	background-color: $color-darker;
-	z-index: 5;
-	overflow: auto;
-//  overflow-y: scroll; // show a scroll bar for content that overflows vertically - http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_overflow-xy
-	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
-	.bar{
-		width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (border) + 15px (margin-right)
-	}
-	.body{
-		.header{
-			text-align: center;
-			margin: 0px 0px 0px 0px;
-			padding: 30px 15px 30px 15px;
-			background-color: $color-darkest;
-			width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (#menu_button right and left border) + 15px (margin-right)
-			.btn{
-				width: 100%;
-			}
-		}
-	}
-}
-
-#menu{
-	.btn-glass{
-		padding: 15px 15px 15px 15px; // top right bottom left
-		text-align: left;
-		width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (#menu_button right and left border) + 15px (margin-right)
-	}
-}
-
-#rightPane {
-	.bar{
-		width: 100%
-	}
-	.body{
-		.header{
-			width: 100%;
-		}
-	}
-	.btn-group{
-		.btn-glass{
-			width: 20%;
-		}
-	}
-}
-	
-/* Vertical slider */
-#slider{
-	position: absolute;
-	top: 0; // jquery dynamically changes this value to the height of the screen in order to place slider at "bottom" initially - so slider can "slide up" when being opened
-	left: 0;
-	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
-	width: 100%;
-	height: 100%;
-	background-color: $color-darker;
-	color: $color-light;
-	.bar{
-		width: 100%;
-	}
-	.btn-group {
-		.btn-glass{
-			width: 20%;
-		}
-	}
-}
-
-
-/* Filter and sort menu */
-#filter_sort_menu{
-	margin-bottom: 60px; // should be about the same size as the height of the fixed "apply filters" button.
-	.search_field{
-		width: 95%;
-		margin: 0px 10px 0px 10px;
-		padding: 5px;
-		background-color: $color-light;
-		color: $color-darker;
-		border-radius: 4px;
-	}
-	.content{
-		padding: 15px 0px 15px 0px;
-	}
-}
-
 /* Preloader */
 .preloader{
 	background-color: $color-darkest;
-	position: fixed;
-	top: 51px;
+//	position: fixed;
+//	top: 51px;
+	position: absolute;
+	top: 0px;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: 1050;
+	z-index: 110;
+//	height: 100%;
 	overflow: auto;
 	display: none;
 	color: $color-lightest;
@@ -324,23 +329,33 @@ input.hidden[type="radio"]{
 	outline: 0;
 }
  
+// center of the screen - http://www.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/
 .absolute-center{
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	-ms-transform: translate(-50%, -50%); /* IE 9 */
     -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
-	transform: translate(-50%, -50%);	
-}
-
-.absolute-center img{
-	margin-bottom: 1em;
+	transform: translate(-50%, -50%);
+	img{
+		margin-bottom: 1em;
+	}
 }
 
 .image-center{
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+// center of the parent container - http://www.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/
+.container-center{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%); /* IE 9 */
+    -webkit-transform: translate(-50%, -50%); /* Chrome, Safari, Opera */
+	transform: translate(-50%, -50%);	
 }
 
 /* Thumbnails */
@@ -376,6 +391,13 @@ input.hidden[type="radio"]{
 	color: red;
 }
 
+.play_button{
+	color: white;
+	font-size: 4em;
+	opacity: 0.5;
+	text-shadow: 0 1px 2px;
+}
+
 .carousel-caption{
 	position: absolute;
 	left: 5%;
@@ -384,6 +406,172 @@ input.hidden[type="radio"]{
 	text-align: left;
 	z-index: 5;
 }
+
+// Problems with making video responsive (i.e. filling out the screen) - http://stackoverflow.com/questions/14250583/safari-on-ipad-ios6-does-not-scale-html5-video-to-fill-100-of-page-width
+//.video-container{
+//	position: relative;
+//	padding-top: 56.25%;
+//	video {
+//		display: block;
+//		position: absolute;
+//		width: 100%;
+//		height: 100%;
+//		top: 0;
+//	}
+//}
+
+video {
+	position: absolute; // absolute position takes video out of normal rendering, allowing us to put it "behind" other elements (i.e. thumbnail image and glyphicon play button)
+	height: 1px; // need to keep the video small in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+	width: 1px; // need to keep the video small in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+}
+
+
+/* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
+#mainPane {
+	position: absolute;
+	top: 51px;
+	left: 0;
+	z-index: 100;
+	width: 100%;
+	height: 1500px;
+	background-color: $color-darkest; // needed in order to "cover up" #menu when sliding
+	color: $color-light;
+}
+
+
+.body{
+	position: relative;
+	top: 0;
+	width: 100%;
+	background-color: $color-darker;
+}
+	
+.section{
+	background-color: $color-dark;
+	padding: 5px 15px 5px 15px;
+	font-size: 0.8em;
+}
+		
+#menu, #rightPane {
+//	position: relative; // fixed/absolute position messes up delegated touch events with specific ID selectors
+//	top: 50px;
+	width: 100%;
+	height: 100%;
+	color: $color-light;
+	background-color: $color-darker;
+	z-index: 5;
+//	overflow: auto;
+//  overflow-y: scroll; // show a scroll bar for content that overflows vertically - http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_overflow-xy
+	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
+	.header{
+		text-align: center;
+		margin: 0px 0px 0px 0px;
+		padding: 30px 15px 30px 15px;
+		background-color: $color-darkest;
+		.btn{
+			width: 100%;
+		}
+	}
+}
+
+#menu{
+	width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (#menu_button right and left border) + 15px (margin-right)
+	.btn-glass{
+		padding: 15px 0 15px 25px; // top right bottom left
+		text-align: left;
+		border-radius: 0;
+		border-bottom: 0 solid transparent;
+	}
+}
+
+#rightPane {
+	.body{
+		.header{
+			width: 100%;
+		}
+	}
+	.preloader{
+		z-index: 50;
+	}
+
+}
+	
+#tearsheet_options.btn-group, #sort_options.btn-group {
+	.btn-glass{
+		width: 20%;
+		border-radius: 0;
+		border-bottom: 1px solid $color-light;
+	}
+	.btn-glass:first-child{
+		border-radius: 4px 0 0 4px;
+	}
+	.btn-glass:last-child{
+		border-radius: 0 4px 4px 0;
+	}
+}
+	
+/* Vertical slider */
+#slider{
+	position: absolute;
+	top: 0; // jquery dynamically changes this value to the height of the screen in order to place slider at "bottom" initially - so slider can "slide up" when being opened
+	left: 0;
+	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
+	width: 100%;
+	height: 100%;
+	background-color: $color-darker;
+	color: $color-light;
+	.navbar-pane{
+		position: relative;
+		z-index: 1035; // needs to be on top of navbar which has z-index: 1030
+		width: 100%
+	}
+}
+
+
+/* Filter and sort menu */
+#filter_sort_menu{
+	margin-bottom: 60px; // should be about the same size as the height of the fixed "apply filters" button.
+	.search_field{
+		width: 95%;
+		margin: 0px 10px 0px 10px;
+		padding: 5px;
+		background-color: $color-light;
+		color: $color-darker;
+		border-radius: 4px;
+	}
+	.content{
+		padding: 15px 0 15px 0;
+	}
+}
+
+#tearsheet{
+	.content{
+		padding: 15px 0 15px 0;
+	}
+}
+
+#events.content{
+	padding-top: 0;
+}
+	
+#tearsheet_options{
+	margin-top: -10px;
+}
+
+/* Google Maps */
+#map{
+	img{
+		width: 100%;
+		height: 100%;
+		margin-bottom: 15px;
+	}
+	.btn{
+		width: 100%;
+	}
+}
+
+
  
  
  

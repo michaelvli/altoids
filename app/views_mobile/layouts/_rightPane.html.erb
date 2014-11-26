@@ -1,28 +1,6 @@
-				<!-- Right Pane -->
-					<div id="rightPane-bar" class="bar">
-						
-						<!-- Back arrow button -->
-						<%= button_tag class:'navbar-button', id:'back_arrow_button' do %>
-							<span class="glyphicon glyphicon-arrow-left"></span>
-						<% end %>
-						
-						<!-- Title -->
-						<div class="title">
-							<h4 id="rightPane-title" class="text-center"></h4>
-						</div>
-						
-					</div>
-					<div id="rightPane-body" class="body">
-						<!-- Preloader -->
-						<div id="rightPane_preloader" class="preloader">
-							<div class="absolute-center">
-								<%= image_tag("preloader.GIF", class:"image-center") %>
-								<p class="text-center" >Loading...<p>
-							</div>	
-						</div>
-						
+						<!-- Preloader -->	
+						<%= render 'layouts/preloader' %>
+
 						<!-- Content -->
-						<div id="rightPane-content">
+						<div id="rightPane-content" class="dynamicContent">
 						</div>
-						
-					</div>

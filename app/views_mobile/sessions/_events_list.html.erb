@@ -2,16 +2,21 @@
 <!-- http://railscasts.com/episodes/29-group-by-month?view=asciicast -->
 <!-- http://stackoverflow.com/questions/1080547/ruby-on-rails-grouping-blog-posts-by-month -->
 
-<div id="events">
+<div id="events" class="content">
 	<% venue_event_months.each do |month, events| %>
 		<!-- Event -->
 		<div class="section">
 			<%= month.upcase %>
 		</div>
-		<div class="content">
+		<div class="btn-group-vertical">
 			<% events.each do |venue_event| %>
-			<%= render 'events', event: venue_event %>
+				<%= render 'events', event: venue_event %>
 			<% end %>
-		</div>
+		</div>	
 	<% end %>
+</div>
+
+<!-- Footer contains the translucent filter button -->
+<div id="navbar_bottom">
+	<%= render 'layouts/filter_button' %>		
 </div>

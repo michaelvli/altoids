@@ -1,5 +1,18 @@
 module ApplicationHelper
 
+	# Used in menu to identify selected item
+	def menu_selection(param_action, field, checked_or_active, options = {})
+		options[:default] ||= ""
+		
+		if param_action.nil? && options[:default] == true
+			return checked_or_active
+		elsif !param_action.nil? && param_action == field
+			return checked_or_active
+		else
+			return nil
+		end	
+	end
+	
 	# Used with filters to identify selected features
 	def filter_selection(filter_array, field, checked_or_active, options = {})
 		options[:default] ||= ""

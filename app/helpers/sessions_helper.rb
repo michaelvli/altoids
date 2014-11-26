@@ -1,6 +1,14 @@
 module SessionsHelper
 #SessionsHelper contains methods used across entire application.  This is because of the "include SessionsHelper" line in the application_controller.rb file.
 
+  def desktop?
+    if (cookies[:deviceType] == 'desktop')
+		return true
+	else
+		return false
+    end
+  end
+
   def sign_in(user)  #See Listing 8.19  # sign_in method is used when an existing user is logging into the system (vs the signed_in_user method which is called every time a page is loaded to make sure a logged in user is in the application)
     remember_token = User.new_remember_token # calls new_remember_token method found in the user.rb file.  new_remember_token returns a random URL-safe base64 string
 	if params[:remember_me]

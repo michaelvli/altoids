@@ -2,11 +2,64 @@
 	$('.pagination').remove(); // Need to remove previous pagination because a new one will get inserted below (line 9).  This is because 'mobile/sessions/_venue_list', which gets called repeatedly, contains a pagination element.
 	$('#venues').append("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
 <% else %>
-//	alert("Used AJAX to get venue list");
-	$('#dynamic-content').html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
+	<!-- insert contents of _venue_list.html.erb within the .body div element -->
+	<!-- partial: venue_list contains filter button -->
+	$('#mainPane').children('.dynamicContent').first().html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
+	
+	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
 	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>")
-	$('#navbar_bottom').html("<%= escape_javascript(render 'layouts/filter_button') %>")
+
+	// mainPane: enables touch behavior and toggling for filter button
+	bindTouchButtons({
+		scope: "#navbar_bottom",
+		buttonCollection: "#filter_button",
+		mode: "flash",
+		callback: function(){
+			var sliderTitle = "Filter Results";
+			toggleSlider(sliderTitle);
+		}
+	});
+	
+	// slider: sort options
+	bindTouchButtons({
+		scope: "#sort_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_radio"
+	});
+
+	// slider: filter options
+	bindTouchButtons({
+		scope: "#filter_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_checkbox"
+	});
+
+//	<!-- mainPane: bind thumbnails of class=".rightPane" to open rightPane -->
+	bindTouchButtons({
+		scope: "#venues",
+		buttonCollection: ".rightPane",
+		mode: "flash",
+		callback: function(){
+			var button_obj = $(this);
+			var url = button_obj.attr("href"); // get the url of the button
+			
+			$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+			
+			// open rightPane
+			togglePane({
+				state: "open",
+				title: button_obj.data("title"),
+				callback: function(){
+					// load content
+					loadContent(url, {
+						pane: "rightPane"
+					});
+				}
+			});
+		}
+	});
+	
 <% end %>
 
 <% if @venues.next_page %>

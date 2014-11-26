@@ -15,6 +15,26 @@
 			</div>
         </div>
 		
+		<div id="navbar-menu" class="navbar-pane collapse">
+			<h4 class="text-center">MENU</h4>
+        </div>
+		
+		<div id="navbar-rightPane" class="navbar-pane collapse">
+			
+			<!-- Back arrow button -->
+			<%= button_tag class:'navbar-button', id:'back_arrow_button' do %>
+				<span class="glyphicon glyphicon-arrow-left"></span>
+			<% end %>
+			
+			<!-- Title -->
+			<div class="title">
+				<h4 id="rightPane-title" class="dynamicTitle text-center"></h4>
+			</div>
+			
+		</div>
+
+		
+		
 <% if false %>
         <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container">

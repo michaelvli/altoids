@@ -1,3 +1,60 @@
 //alert("Used AJAX to get event list");
-$('#dynamic-content').html("<%= escape_javascript(render partial: 'events_list', locals: { venue_event_months: @venue_event_months } || "There are no events at the moment") %>");
-truncateText();
+// dynamically load event list into the mainPane
+$('#mainPane').children('.dynamicContent').first().html("<%= escape_javascript(render partial: 'events_list', locals: { venue_event_months: @venue_event_months } || "There are no events at the moment") %>");
+
+// truncate event descriptions
+$('#events').find('.dotdotdot').dotdotdot({
+	watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
+	callback	: function( isTruncated, orgContent ) {	
+	}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
+});
+
+//  binds a touch handler for the Event buttons (i.e. the buttons that contain a calendar date and show event details) 
+// toggleEventDescriptions() allows user to toggle between full and partial descriptions of the event
+bindTouchButtons({
+	scope: "#events",
+	buttonCollection: ".descriptionToggleTrigger",
+	mode: "flash",
+	callback: function(){
+		var button_obj = $(this).parents(".btn-glass"); // need the .btn-glass object associated with the button - feeds into toggleEventDescriptions()
+		toggleEventDescriptions(button_obj); // "this" passes the $(this) object to initEventButtons(button_obj) function
+//		toggleEventDescriptions(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
+	}
+});
+
+//  binds a touch handler for the Event buttons (i.e. the buttons that contain a calendar date and show event details) 
+//  takes user to tearsheet of the venue for the event when user clicks on an Event button
+bindTouchButtons({
+	scope: "#events",
+	buttonCollection: "a",
+	mode: "flash",
+	callback: function(){
+		var button_obj = $(this);
+		var url = button_obj.attr("href"); // get the url of the button
+		
+		$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+					
+		// open rightPane
+		togglePane({
+			state: "open",
+			title: button_obj.data("title"),
+			callback: function(){
+				// load content
+				loadContent(url, {
+					pane: "rightPane"
+				});
+			}
+		});
+	}
+});
+
+// mainPane: enables touch behavior and toggling for filter button
+bindTouchButtons({
+	scope: "#navbar_bottom",
+	buttonCollection: "#filter_button",
+	mode: "flash",
+	callback: function(){
+		var sliderTitle = "Filter Results";
+		toggleSlider(sliderTitle);
+	}
+});

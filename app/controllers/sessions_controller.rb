@@ -111,6 +111,33 @@ class SessionsController < ApplicationController
 		
 		@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 		@venue_events = VenueEvent.upcoming_events(venue_id: params[:id])
+
+#		if mobile?
+#			render :template => 'sessions/tearsheet.js.erb', :content_type => "application/javascript"
+#		render(:template => "sessions/tearsheet.js.erb", :formats => [:js], :content_type => "application/javascript" )
+
+#respond_to do |format|
+#    format.js {render :content_type => 'text/javascript'}
+#end
+		
+#			render :format => :js, :template => 'sessions/tearsheet.js.erb' , locals: {scroll: params[:scroll]} }
+#			render js: { :template => 'sessions/tearsheet.js.erb', locals: {scroll: params[:scroll]} }
+			
+#			respond_to do |format|
+#				format.html { render template: 'sessions/tearsheet.js.erb', content_type: 'application/javascript' }
+#			end
+
+#			render :template => 'sessions/tearsheet.js.erb'
+
+#			render :template => "sessions/tearsheet.js.erb", :formats => [:js]
+			
+#			respond_to do |format|
+##				format.html { render :template => 'sessions/tearsheet.js.erb' }
+##				format.html { render js: "alert('here');", content_type: "application/javascript" }
+#				format.html { render :template => "sessions/tearsheet.js.erb", :formats => [:js] }
+#				format.js
+#			end
+
 		
 		respond_to do |format|
 			format.html

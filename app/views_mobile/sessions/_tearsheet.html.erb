@@ -1,4 +1,3 @@
-<div id="tearsheet">
 	<!-- Carousel -->
 	<div id="myCarousel" class="carousel slide" data-ride="carousel">
 		<%= render partial: 'carousel', object: @videos, as: 'videos' %>
@@ -17,44 +16,50 @@
 				<em>"<%= @venue.description %>"</em>
 			</div>
 		</div>
-	</div>	
-		
-		
-		<div class="content">
+	</div>
+	
+	
+	<div class="content">
+		<div id="tearsheet_options" class="btn-group">
+			
+			<!-- Default selection: Events -->
+			<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "map" }) do %>
+				<span class="glyphicon glyphicon-pushpin"></span><br>
+				<span class="text-center">Map</span>
+			<% end %>
 
-			<div id="tearsheet_options" class="btn-group">
-				
-				<!-- Default selection: Events -->
+			<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "hours" }) do %>
+				<span class="glyphicon glyphicon-time"></span><br>
+				<span class="text-center">Hours</span>
+			<% end %>
 
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "map" }) do %>
-					<span class="glyphicon glyphicon-pushpin"></span><br>
-					<span class="text-center">Map</span>
-				<% end %>
+			<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "features" }) do %>
+					<span class="glyphicon glyphicon-ok"></span><br>
+					<span class="text-center">Features</span>						
+			<% end %>
 
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "hours" }) do %>
-					<span class="glyphicon glyphicon-time"></span><br>
-					<span class="text-center">Hours</span>
-				<% end %>
-
-				<%= button_tag(type: "button", class:"btn btn-glass", :data =>{ :button => "features" }) do %>
-						<span class="glyphicon glyphicon-ok"></span><br>
-						<span class="text-center">Features</span>						
-				<% end %>
-								
-				<%= link_to 'http://' + @venue.website, class:"btn btn-glass", target:"_blank", :data =>{ :button => "website" } do %>
+			<% if !@venue.website.nil? %>
+				<%= link_to 'http://' + @venue.website, class:"btn btn-glass", :id => "website", target:"_blank", :data =>{ :button => "website" } do %>					
 					<span class="glyphicon glyphicon-cloud"></span><br>
 					<span class="text-center">Website</span>
 				<% end %>
-
-				<%= link_to 'tel:'+@venue.phone, class:"btn btn-glass", :data =>{ :button => "phone" } do %>
-					<span class="glyphicon glyphicon-earphone"></span><br>
-					<span class="text-center">Call</span>
+			<% else %>
+				<%= button_tag(type:"button", class:"btn btn-glass disabled", :data =>{ :button => "website" }) do %>					
+					<span class="glyphicon glyphicon-cloud"></span><br>
+					<span class="text-center">Website</span>
 				<% end %>
+			<% end %>
+
+			<%= link_to 'tel:'+@venue.phone, class:"btn btn-glass", :id => "phone", :data =>{ :button => "phone" } do %>
+				<span class="glyphicon glyphicon-earphone"></span><br>
+				<span class="text-center">Call</span>
+			<% end %>
 				
-			</div>
 		</div>
+	</div>
 		
-		
+	
+	
 <% if false %>		
 		<!-- TEARSHEET BUTTONS - used for revealing hidden content -->
 		<div id="tearsheet_buttons" class="container">
@@ -91,18 +96,19 @@
 				<% end %>
 			</div> <!-- btn btn-glass -->
 		</div> <!-- container -->
-<% end %>		
+<% end %>
+	<div id="map-features-hours">
 		<!-- GOOGLE MAP -->		
-		<div id="map" class="container collapse">
+		<div id="map" class="content collapse">
 			<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
 			<!-- http://railscasts.com/episodes/273-geocoder -->
 			<!-- Responsive iFrame: http://niklausgerber.com/blog/responsive-google-or-bing-maps/ -->
 			<%= image_tag "http://maps.google.com/maps/api/staticmap?size=450x300&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %>
-			<%= link_to "Get Directions", "https://maps.google.com/?q="+@venue.name+","+@venue.address+","+@venue.zip_code, :target => "_blank", class:"btn btn-sm btn-success", :data =>{ :button => "get_directions" } %>
+			<%= link_to "Get Directions", "https://maps.google.com/?q="+@venue.name+","+@venue.address+","+@venue.zip_code, :target => "_blank", class:"btn btn-lg btn-success", :data =>{ :button => "get_directions" } %>
 		</div>	<!-- #map container -->	
-	
+		
 		<!-- HOURS -->
-		<div id="hours" class="container collapse">
+		<div id="hours" class="content collapse">
 			<% @days_of_week.each do |day_of_week| %>
 				<div class="row">
 					<div class="col-xs-5 text-right">
@@ -122,7 +128,7 @@
 		</div>	<!-- #hours container -->	
 		
 		<!-- FEATURES -->
-		<div id="features" class="container collapse">
+		<div id="features" class="content collapse">
 			<% Feature.all.each do |feature| %>
 				<div class="checkbox add-margin left">
 					<label>
@@ -132,16 +138,23 @@
 				</div>
 			<% end %>
 		</div>	<!-- #features container -->	
-				
-	</div> <!-- content -->
+
+	</div> <!-- #map-features-hours -->
 	
+	<!-- EVENTS -->
 	<div class="section">
 		EVENTS
 	</div>
-	<div class="content">
-		<% @venue_events.each do |venue_event| %>
-			<!-- Need to specify path since partial is located in views_mobile vs. mobile -->
-			<%= render '../views_mobile/sessions/events', event: venue_event %>
-		<% end %>
-	</div>	
-</div>
+	<div id="events" class="content">
+		<% if @venue_events.count == 0 %>
+			<div class="container">
+				<p>No upcoming events at the moment</p>
+			</div>	
+		<% else %>
+			<div class="btn-group-vertical">
+				<% @venue_events.each do |venue_event| %>
+					<%= render 'events', event: venue_event %>
+				<% end %>
+			</div>	
+		<% end %>	
+	</div>
