@@ -669,7 +669,7 @@ function togglePane(options){
 			}, 1, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
 			function(){}
 		);
-		
+
 		// open pane
 		slideContent.animate({
 			left: animateLeft, // for float left elements (i.e. menu button)
