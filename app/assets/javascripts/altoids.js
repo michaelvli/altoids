@@ -271,7 +271,7 @@ function initTogglers(){
 
 	
 // DEBUG:
-
+/*
 	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
 		togglePane({
 			callback: function(){
@@ -280,7 +280,7 @@ function initTogglers(){
 			}
 		});
 	});
-/*
+
 	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
 		toggleSlider(); // close slider
 		preLoadContent($(this));
@@ -311,7 +311,7 @@ function initTogglers(){
 	
 		event.preventDefault();
 	});
-*/
+
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
 			pane: "menu"
@@ -328,7 +328,7 @@ function initTogglers(){
 		
 		event.preventDefault();
 	});
-	
+*/	
 }
 
 
