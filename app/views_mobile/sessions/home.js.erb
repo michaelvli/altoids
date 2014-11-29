@@ -60,6 +60,30 @@
 		}
 	});
 	
+	
+	
+// DEBUG:
+	
+	$("#venues").on("click", ".rightPane", function(event){
+		var button_obj = $(this);
+		var url = button_obj.attr("href"); // get the url of the button
+		
+		$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+		
+		// open rightPane
+		togglePane({
+			state: "open",
+			title: button_obj.data("title"),
+			callback: function(){
+				// load content
+				loadContent(url, {
+					pane: "rightPane"
+				});
+			}
+		});
+		event.preventDefault();
+	});
+	
 <% end %>
 
 <% if @venues.next_page %>

@@ -58,3 +58,35 @@ bindTouchButtons({
 		toggleSlider(sliderTitle);
 	}
 });
+
+
+
+// DEBUG:
+
+$("#events").on("click", ".descriptionToggleTrigger", function(event){
+	var button_obj = $(this).parents(".btn-glass"); // need the .btn-glass object associated with the button - feeds into toggleEventDescriptions()
+	toggleEventDescriptions(button_obj); // "this" passes the $(this) object to initEventButtons(button_obj) function
+
+	event.preventDefault();
+});
+
+$("#events").on("click", "a", function(event){
+	var button_obj = $(this);
+	var url = button_obj.attr("href"); // get the url of the button
+	
+	$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+				
+	// open rightPane
+	togglePane({
+		state: "open",
+		title: button_obj.data("title"),
+		callback: function(){
+			// load content
+			loadContent(url, {
+				pane: "rightPane"
+			});
+		}
+	});
+
+	event.preventDefault();
+});

@@ -32,7 +32,6 @@ input.hidden[type="radio"]{
 	visibility:hidden;
 }
 
-
 /* buttons
 	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
 	1.  initial state - button is initially loaded
@@ -117,7 +116,7 @@ input.hidden[type="radio"]{
 	}
 }
 
-#events{
+#events, #tearsheet_events{
 	.btn-group-vertical > .btn-glass{
 		padding: 5px 5px 5px 5px;
 		border-radius: 0px;
@@ -551,9 +550,21 @@ video {
 	}
 }
 
-#events.content{
+// Need #events and #tearsheet_events because of scenario where list of events are displayed in mainPane and rightPane; there will be multiple div elements with id="events"
+#events.content, #tearsheet_events.content{
 	padding-top: 0;
+	p{
+		margin: 15px 0 0 0;
+	}
 }
+
+#events.content{	
+	p{	
+		padding: 0 15px 0 15px;
+		background-color: $color-darkest;
+	}
+}
+
 	
 #tearsheet_options{
 	margin-top: -10px;
