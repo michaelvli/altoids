@@ -57,6 +57,15 @@
 							<div class="btn-group-vertical">
 								<%= link_to "Profile", "#", class:"btn btn-glass", :data =>{ :button => "#profile" } %>
 								<div class="divider"></div>
-								<%= link_to "Log out", session_path(current_user.id), method: :delete, class:"btn btn-glass" %>
+								<!-- 
+									method: delete used in "log out" link probably triggers rails ujs gem which causes the link to be active, 
+									even if bound to an event handler that uses preventDefault().  Thus, need to use:
+									1.  remote => true - activates preventDefault() method in ujs associated to the <a> listener so only 
+									ajax is triggered (see http://sts10.github.io/blog/2014/04/12/data-remote-true/) - calling destroy.js.erb
+									2.  bind an event to trigger all other events that need to happen when a user logs out (close menu and show
+									"please wait" preloader message)
+									NOTE: ujs preventDefault() method does not impact touch events; it applies to click events only.
+								-->
+								<%= link_to "Log out", session_path(current_user.id), method: :delete, :remote => true, class:"btn btn-glass" %>
 							</div>
 						<% end %>

@@ -32,6 +32,11 @@ input.hidden[type="radio"]{
 	visibility:hidden;
 }
 
+.margin-15-sides{
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
 /* buttons
 	BUTTON STATES - touch screen - need to add "ontouchstart" in html <body ontouchstart=""> tag to enable ::active pseudoclass for touch devices - http://yjyao.com/2012/03/some-handy-web-development-tricks.html
 	1.  initial state - button is initially loaded
@@ -191,22 +196,21 @@ input.hidden[type="radio"]{
 	.headline{
 		display: block;
 	}
-	.descriptionToggleTrigger{
-		height: 100%;
-		.description{
-			font-size: 12px;
-			color: $color-medium;
-		}
-		.description.active{
-			padding: 6px 0 0 0; //top right bottom left
-		}
-		.dotdotdot{
-			width: 100%;
-			height: 50%;
-		}
+
+	.description{
+		font-size: 12px;
+		color: $color-medium;
+	}
+	.description.active{
+		padding: 6px 0 0 0; //top right bottom left
+	}
+	.dotdotdot{
+		width: 100%;
+		height: 50%;
 	}
 }
 
+// needed to adjust height of the event buttons, allowing for full description to be enclosed (vs. running into the next event element)
 .btn-description.active{
 	height: auto;
 }
@@ -390,13 +394,6 @@ input.hidden[type="radio"]{
 	color: red;
 }
 
-.play_button{
-	color: white;
-	font-size: 4em;
-	opacity: 0.5;
-	text-shadow: 0 1px 2px;
-}
-
 .carousel-caption{
 	position: absolute;
 	left: 5%;
@@ -404,6 +401,14 @@ input.hidden[type="radio"]{
 	padding: 0;
 	text-align: left;
 	z-index: 5;
+	h5{
+		font-size: 14px;
+		margin: 0;
+	}
+	p{
+		font-size: 12px;
+		margin-bottom: 10px;
+	}
 }
 
 // Problems with making video responsive (i.e. filling out the screen) - http://stackoverflow.com/questions/14250583/safari-on-ipad-ios6-does-not-scale-html5-video-to-fill-100-of-page-width
@@ -419,11 +424,19 @@ input.hidden[type="radio"]{
 //	}
 //}
 
-video {
-	position: absolute; // absolute position takes video out of normal rendering, allowing us to put it "behind" other elements (i.e. thumbnail image and glyphicon play button)
-	height: 1px; // need to keep the video small in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
-	width: 1px; // need to keep the video small in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+.item{
+	video {
+		height: 0; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+		width: 0; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+	}
+	.play_button{
+		color: white;
+		font-size: 3em;
+		opacity: 0.5;
+		text-shadow: 0 1px 2px;
+	}
 }
+
 
 
 /* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */

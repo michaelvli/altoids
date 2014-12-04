@@ -10,15 +10,13 @@ $('#events').find('.dotdotdot').dotdotdot({
 });
 
 //  binds a touch handler for the Event buttons (i.e. the buttons that contain a calendar date and show event details) 
-// toggleEventDescriptions() allows user to toggle between full and partial descriptions of the event
+// toggleEventDescription() allows user to toggle between full and partial descriptions of the event
 bindTouchButtons({
 	scope: "#events",
-	buttonCollection: ".descriptionToggleTrigger",
+	buttonCollection: ".btn-glass",
 	mode: "flash",
 	callback: function(){
-		var button_obj = $(this).parents(".btn-glass"); // need the .btn-glass object associated with the button - feeds into toggleEventDescriptions()
-		toggleEventDescriptions(button_obj); // "this" passes the $(this) object to initEventButtons(button_obj) function
-//		toggleEventDescriptions(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
+		toggleEventDescription(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
 	}
 });
 
@@ -27,17 +25,18 @@ bindTouchButtons({
 bindTouchButtons({
 	scope: "#events",
 	buttonCollection: "a",
+	stopPropagation: true, // need to use jquery .stopPropagation() in order to prevent "a" element from bubbling up to .btn-glass and triggering toggleEventDescription() in code above
 	mode: "flash",
 	callback: function(){
-		var button_obj = $(this);
-		var url = button_obj.attr("href"); // get the url of the button
+		var jqObj = $(this);
+		var url = jqObj.attr("href"); // get the url of the button
 		
 		$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
 					
 		// open rightPane
 		togglePane({
 			state: "open",
-			title: button_obj.data("title"),
+			title: jqObj.data("title"),
 			callback: function(){
 				// load content
 				loadContent(url, {
@@ -62,32 +61,33 @@ bindTouchButtons({
 
 
 // DEBUG:
+
 /*
-$("#events").on("click", ".descriptionToggleTrigger", function(event){
-	var button_obj = $(this).parents(".btn-glass"); // need the .btn-glass object associated with the button - feeds into toggleEventDescriptions()
-	toggleEventDescriptions(button_obj); // "this" passes the $(this) object to initEventButtons(button_obj) function
-
-	event.preventDefault();
-});
-
 $("#events").on("click", "a", function(event){
-	var button_obj = $(this);
-	var url = button_obj.attr("href"); // get the url of the button
+	var jqObj = $(this);
+	var url = jqObj.attr("href"); // get the url of the button
 	
 	$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
 				
 	// open rightPane
 	togglePane({
 		state: "open",
-		title: button_obj.data("title"),
+		title: jqObj.data("title"),
 		callback: function(){
 			// load content
 			loadContent(url, {
 				pane: "rightPane"
 			});
 		}
-	});
+	});	
 
+	// need to use .stopPropagation otherwise, clicking on the link will also trigger toggleEventDescription()
+	return false; // event.stopPropagation(); + event.preventDefault();
+});
+
+$("#events").on("click", ".btn-glass", function(event){	
+	toggleEventDescription($(this));
+	
 	event.preventDefault();
 });
 */

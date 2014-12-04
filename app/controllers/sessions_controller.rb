@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
   # Using before_filter for rendering mobile vs. desktop versions - http://scottwb.com/blog/2012/02/23/a-better-way-to-add-mobile-pages-to-a-rails-site/
   # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
   # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
-  before_filter :check_for_mobile, :only => [:splash, :create, :home, :events_list, :tearsheet]
+  before_filter :check_for_mobile, :only => [:splash, :create, :home, :events_list, :tearsheet, :destroy]
 
 	def splash
 		if signed_in?
@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
 		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
 		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
 
-			@user = User.new
+#			@user = User.new
 		end	
 	end
 
@@ -165,8 +165,25 @@ class SessionsController < ApplicationController
   	
 	def destroy
 		sign_out
-		flash[:success] = 'See you next time!'
-		redirect_to root_url
+#		flash[:success] = 'See you next time!'
+#		redirect_to root_url
+
+	    @videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
+#		@venues = @venues.order("RANDOM()")
+#		@venues = @venues.limit(5) 		
+			
+		# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
+		s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
+		@bucket = s3.buckets[ENV['AWS_BUCKET']]
+		# Code concepts below should be used in views/index.html.erb
+	#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
+	#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
+
+		respond_to do |format|
+			format.html
+			format.js { render :template => 'sessions/destroy.js.erb'}
+		end
+
 	end
 
 	

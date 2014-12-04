@@ -13,7 +13,7 @@
 	<% end %>
 	
 	<!--  Remove if statement to seed admin user into postgreSQL db (also need to modify user_params condition in User controller -->
-	<% if !current_user.nil? && current_user.account_type == "admin" %>
+	<% if params[:action] != "home" && !current_user.nil? && current_user.account_type == "admin" %>
 		<%= f.select :account_type, ["user","venue","admin"], {:selected => @user.account_type} %>
 		<% if @user.venue.nil? %>
 			<%= f.select :venue_id, Venue.all.collect{|p| [p.name, p.id]}, { :prompt => "Select Venue" } %>		
@@ -22,7 +22,7 @@
 		<% end %>	
 	<% end %>
 	
-	<% if !current_user.nil? && current_user.account_type == "admin" %>
+	<% if params[:action] != "home" && !current_user.nil? && current_user.account_type == "admin" %>
 		<%= f.form_group :active, label: { text: "Active" } do %>
 			<%= f.radio_button :active, 1, label: "True", inline: true, checked: (@user.active == true if !@user.nil?) %>
 			<%= f.radio_button :active, 0, label: "False", inline: true, checked: (@user.active == false if !@user.nil?) %>
