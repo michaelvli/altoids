@@ -8,9 +8,8 @@
 	
 	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
-	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>")
 
-	// mainPane: enables touch behavior and toggling for filter button
+	// mainPane: enables touch behavior and toggling for translucent filter button
 	bindTouchButtons({
 		scope: "#navbar_bottom",
 		buttonCollection: "#filter_button",
@@ -61,7 +60,6 @@
 	});
 	
 	
-	
 // DEBUG:
 /*	
 	$("#venues").on("click", ".rightPane", function(event){
@@ -81,6 +79,13 @@
 				});
 			}
 		});
+		event.preventDefault();
+	});
+
+	$("#navbar_bottom").on("click", "#filter_button", function(event){
+		var sliderTitle = "Filter Results";
+		toggleSlider(sliderTitle);
+			
 		event.preventDefault();
 	});
 */	

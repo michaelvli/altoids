@@ -10,79 +10,20 @@ else
 
 pane.find("#tearsheet").html("<%= escape_javascript(render partial: 'tearsheet') %>");
 	
-// initializes carousel with one active carousel item
+// initializes carousel with one active carousel item and sets slide interval speed
 initCarousel();
 
 // initialize left/right swiping on carousel
-initTouchOnCarousel();
-
-// bind the play button in videos
-//bindTouchButtons({
-//	scope: "#myCarousel",
-//	buttonCollection: ".play_button",
-//	mode: "flash",
-//	callback: function(){
-//		alert("called by play button");
-//	}
-//});
-
-// NOT USED:  using the listeners (below) instead to check for the state of the video
-// bind the play button in videos
-//bindTouchButtons({
-//	scope: "#myCarousel",
-//	buttonCollection: ".play_button",
-//	mode: "flash",
-//	callback: function(){
-//		$('#myCarousel').carousel("pause");
-//		var video = $(this).siblings("video").first();
-//		video.get(0).play();
-
-//		video.on("webkitendfullscreen", function(){
-//			$("#myCarousel").carousel("cycle"); // restart carousel cycle
-//			video.get(0).pause(); // pauses the video
-//		});
-
-//	}
-//});
-
-
-// bind listeners to video in order to control:
-// 	1) carousel cycling, and 
-//	2) playing and resuming partially watched videos
-$("#myCarousel").find("video").each(function(){
-	var video = $(this);
-	video.off("webkitbeginfullscreen")
-	video.off("webkitendfullscreen")
-
-	// iOS enters fullscreen when user is watching video
-	video.on("webkitbeginfullscreen", function(){
-		$("#myCarousel").carousel("pause"); // pause carousel cycle
-		video.get(0).play(); // restarts a video from where the user left off		
-	});
-	
-	// iOS exits fullscreen when user is watching video
-	video.on("webkitendfullscreen", function(){
-		$("#myCarousel").carousel("cycle"); // restart carousel cycle
-		video.get(0).pause(); // pauses the video
-	});
-
-////	video.on("play", function(){
-////		$("#myCarousel").carousel("pause"); // pause carousel cycle
-////	});
-	
-////	video.on("ended", function(){
-////		$("#myCarousel").carousel("cycle"); // restart carousel cycle
-////	});
-});
+initTouchOnCarousel()
 
 //  binds a touch handler for the 5 icon buttons on the venue tearsheet that toggle map, hours, features, website, and phone number info about a venue
-//  activateTearsheetOptions() allows user to toggle map, hours, features, website, and phone number info about a venue
+//  initTearsheetOptions() allows user to toggle map, hours, features, website, and phone number info about a venue
 bindTouchButtons({
 	scope: "#tearsheet_options",
 	buttonCollection: ".btn-glass",
-	mode: "flash",
+	mode: "toggle_one",
 	callback: function(){
-		activateTearsheetOptions(this); // "this" passes the $(this) object to activateTearsheetOptions(button_obj) function
+		initTearsheetOptions(this); // "this" passes the $(this) object to initTearsheetOptions(button_obj) function
 	}
 });
 
@@ -94,25 +35,57 @@ $('#tearsheet').find('.dotdotdot').dotdotdot({
 });
 
 //  binds a touch handler for the Event buttons (i.e. the buttons that contain a calendar date and show event details) 
-// toggleEventDescriptions() allows user to toggle between full and partial descriptions of the event
+// toggleEventDescription() allows user to toggle between full and partial descriptions of the event
 bindTouchButtons({
 	scope: "#tearsheet_events",
 	buttonCollection: ".btn-glass",
 	mode: "flash",
 	callback: function(){
-		toggleEventDescriptions(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
+		toggleEventDescription(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
 	}
 });
 
 
-/* debug */
-
-//$("#tearsheet_options").on("click", ".btn-glass", function(){
-//	activateTearsheetOptions($(this)); // "this" passes the $(this) object to activateTearsheetOptions(button_obj) function
-//});
-
-//$("#tearsheet_events").on("click", ".btn-glass", function(event){
-//	toggleEventDescriptions($(this)); // "this" passes the $(this) object to initEventButtons(button_obj) function
+// 	bind the play button in videos to control:
+// 	1) carousel cycling, and 
+//	2) playing and resuming partially watched videos
+//$("#myCarousel").find("video").each(function(){
+//	var video = $(this);
+//	video.off("webkitbeginfullscreen")
+//	video.off("webkitendfullscreen")
 //
-//	event.preventDefault();
+//	// iOS enters fullscreen when user is watching video
+//	video.on("webkitbeginfullscreen", function(){
+//		$("#myCarousel").carousel("pause"); // pause carousel cycle
+//		video.get(0).play(); // restarts a video from where the user left off		
+//	});
+//	
+//	// iOS exits fullscreen when user is watching video
+//	video.on("webkitendfullscreen", function(){
+//		$("#myCarousel").carousel("cycle"); // restart carousel cycle
+//		video.get(0).pause(); // pauses the video
+//	});
+//
+////	video.on("play", function(){
+////		$("#myCarousel").carousel("pause"); // pause carousel cycle
+////	});
+//	
+////	video.on("ended", function(){
+////		$("#myCarousel").carousel("cycle"); // restart carousel cycle
+////	});
 //});
+
+
+
+/* debug */
+/*
+$("#tearsheet_options").on("click", ".btn-glass", function(){
+	initTearsheetOptions($(this)); // "this" passes the $(this) object to activateTearsheetOptions(button_obj) function
+});
+
+$("#tearsheet_events").on("click", ".btn-glass", function(event){
+	toggleEventDescription($(this)); // "this" passes the $(this) object to initEventButtons(button_obj) function
+
+	event.preventDefault();
+});
+*/

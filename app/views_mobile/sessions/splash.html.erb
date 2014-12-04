@@ -1,5 +1,10 @@
 	<!-- Carousel -->
-	<div id="myCarousel" class="carousel slide">
+	<!-- 
+		.collapse in class is removed by .initCarousel() after .active class in have been removed in .item 
+		elements (except for the first) within #myCarousel; otherwise, user may see all .item elements "flicker" 
+		in the carousel for a moment before .initCarousel removes the .active class after the first .item element.
+	-->	
+	<div id="myCarousel" class="carousel slide collapse">
 		<!-- @videos is an ActiveRecord collection -->
 		<%= render partial: 'carousel', object: @videos, as: 'videos' %>
 	</div><!-- /.carousel -->

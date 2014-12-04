@@ -104,7 +104,9 @@ function load_DOM_functions(){
 	// Mobile functions only:
 	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
 //	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	{
+	{	
+		initTouchOnCarousel(); // initialize left/right swiping on carousel
+		initCarousel();  // initializes carousel with one active carousel item and sets slide interval speed
 		initTogglers();  // enables mobile screen to switch between the four main containers: #menu, #mainPane, #slider, and #specific-content
 //		hijackMenuButtons();
 //		initPopState(); // 1) binds popstate event, 2) loads url contents via ajax
@@ -131,14 +133,9 @@ function load_DOM_functions(){
 	// Ubiquitous functions
 	
 	// Prepare carousel slider
-	truncateText(function(){
-		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-		$( ".active.item" ).each(function( index ) {
-			if(index != 0){
-				$(this).removeClass('active');
-			}
-		});	
-	});
+//	truncateText(function(){
+//		initCarousel();
+//	});
 	
 //	initVideoUpload();
 //	initVideoBehavior(); // binds play button to thumbnail videos
@@ -158,8 +155,6 @@ function load_DOM_functions(){
 
 
 /* ***************************************************************************************** */
-
-
 
 
 /* *****
@@ -188,14 +183,19 @@ function initTogglers(){
 		}
 	});	
 	
-	// Menu pane: enables touch behavior for menu selection buttons (except for "sign up" and "log in" buttons which is handled below)	
+	// Menu pane: enables touch behavior for "log out" button
+	// Rails :remote => true attribute (found in the html of the "log out" button in the menu bar) is not necessary for touch events (but necessary for click events)
 	bindTouchButtons({
 		scope: "#menu",
-		buttonCollection: ".btn-glass",
+		buttonCollection: ".btn-glass[data-method=delete]",
 		mode: "toggle_one",
 		callback: function(){
-			preLoadContent(this);
-	
+			
+			var url = this.attr("href");
+			loadContent(url, {
+				requestMethod: "delete"
+			});
+			
 			togglePane({
 				pane: "menu",
 				state: "close"
@@ -203,6 +203,21 @@ function initTogglers(){
 		}
 	});
 	
+	// Menu pane: enables touch behavior for menu selection buttons (except for "sign up" and "log in" buttons which is handled below)	
+	bindTouchButtons({
+		scope: "#menu",
+		buttonCollection: ".btn-glass[data-method!=delete]",
+		mode: "toggle_one",
+		callback: function(){
+			preLoadContent(this);
+		
+			togglePane({
+				pane: "menu",
+				state: "close"
+			});
+		}
+	});
+
 	// Menu pane: enables touch behavior for sign_up and log_in buttons (in the menu bar)
 	bindTouchButtons({
 		scope: "#menu",
@@ -268,7 +283,6 @@ function initTogglers(){
 			});
 		}
 	});
-
 	
 // DEBUG:
 /*
@@ -286,7 +300,7 @@ function initTogglers(){
 		preLoadContent($(this));
 		event.preventDefault();
 	});
-
+	
 	$("#menu").on("click", "#sign_up_button, #log_in_button", function(event){
 
 		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
@@ -312,13 +326,33 @@ function initTogglers(){
 		event.preventDefault();
 	});
 
+	$("#apply_filter_navbar").on("click", "#apply_filter_button", function(event){
+		alert("ok");
+//		var sliderTitle = "Filter Results";
+//		toggleSlider(sliderTitle);
+			
+		event.preventDefault();
+	});
+	
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
 			pane: "menu"
 		});
 	});
 
-	$("#menu").on("click", ".btn-glass", function(event){
+	// used in conjunction with Rails :remote => true attribute (found in the html of the "log out" button in the menu bar)
+	$("#menu").on("click", "a[data-method=delete]", function(event){
+		$("#mainPane").find(".preloader").show();
+		
+		togglePane({
+			pane: "menu",
+			state: "close"
+		});
+		
+		event.preventDefault();
+	});
+	
+	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
 		preLoadContent($(this));
 		
 		togglePane({
@@ -352,13 +386,13 @@ function preLoadContent(jqObj){
 	var url = form.attr("action") || jqObj.attr("href"); // get the action attribute from the relevant form, if one exists; otherwise, get the url of the button 
 
 	sort_order = getURLParameters(url, 'sort_order');
-	
+
 	if (sort_order == 'distance')
 	{			
 		getGeolocation(function(){
 			loadContent(url,{
 				serializedData: serializedData,
-				requestMethod: requestMethod,
+				requestMethod: requestMethod
 			});
 		});
 	}
@@ -366,11 +400,134 @@ function preLoadContent(jqObj){
 	{
 		loadContent(url,{
 			serializedData: serializedData,
-			requestMethod: requestMethod,
+			requestMethod: requestMethod
 		});
 	}
 }
 
+
+/* *****
+Function: loadContent
+
+Description: Uses AJAX to load dynamic content.  loadContent() also manipulates the data (i.e. serializedData)
+that accompanies .get(), adding items such as latitude and longitude while excluding redundant parameters such
+as sort_order.
+
+Notes:
+1.  url - can contain url parameters such as sort_order, search, latitude, longitude
+	
+2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
+	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
+	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
+	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
+	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
+	
+		$("#form_sortFilter input[name!='sort_order']").serialize();
+
+	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
+	the exception of the sort_order parameter.
+
+
+Platform: desktop and mobile
+*/
+function loadContent(url, options){
+	var settings = $.extend({
+		// These are the defaults.
+		pane: "mainPane", // mainPane or rightPane - used to determine which preloader to trigger
+		serializedData: "", // 
+		requestMethod: "get", // get or post or delete
+		callback: ""
+	}, options );
+	
+	var latitude = checkSessionStorage('latitude'), 
+		longitude = checkSessionStorage('longitude')
+		
+	// add latitude and longitude information if it exists to the serialized data
+	if (latitude != 'undefined' &&  longitude!= 'undefined')
+	{
+		var userLocation = {latitude: latitude, longitude: longitude};
+		settings.serializedData = settings.serializedData + '&' + $.param( userLocation ); // $.param creates a serialized representation of the userLocation object		
+	}
+	
+//	var screenHeight = $(window).outerHeight(); // get the height of the screen, including padding and borders
+//	$("#" + settings.pane).find(".preloader").css("height", screenHeight).show();
+
+	$("#" + settings.pane).find(".preloader").show();
+	
+	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
+	var request = 	$.ajax({
+						type: settings.requestMethod,
+						url: url,
+						data: settings.serializedData,
+						dataType: "script"
+					});
+	
+	request.done(function(){
+//		$('.dotdotdot').dotdotdot({
+//			watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
+//			callback	: function( isTruncated, orgContent ) {	
+//				alert($(this).attr("class"));
+//			}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
+//		});
+
+		fadeInContent(settings.callback);  // ensures thumbnails are fully loaded before preloader.gif fades out
+	});
+	
+	request.fail(function(){
+//		alert("error!");
+	});		
+}
+
+/*
+
+Called by: 
+	1) altoids.js
+	2) destroy.js.erb
+*/
+function fadeInContent(callback){
+	var	loadedImageCount = 0;
+	
+	if ($("#myCarousel").length)
+	{
+		var selector = $(".item.active");
+	}
+	else
+	{
+		var selector = $(".thumbnail");
+
+		// return user to scroll position prior to opening menu					
+		$('body').animate({
+				scrollTop: 0
+			}, 0,
+			function(){}
+		);
+	}
+	var imageCount = selector.length;
+	
+	var refreshId = setInterval(function() { // this code is executed every 500 milliseconds:
+						loadedImageCount = 0;	
+			
+						selector.each(
+							function(){
+								 if (parseInt($(this).find("img").css("width"), 10) > 200)
+								 {
+									loadedImageCount = loadedImageCount + 1
+								 }
+							}
+						);
+						if (loadedImageCount >= imageCount)
+						{
+							clearInterval(refreshId);
+							$(".preloader").fadeOut(400, function(){
+								// execute callback if one was provided
+								if (callback != "")
+								{
+									callback();
+								}							
+							});
+						}
+					}, 200);
+}
 
 
 /*
@@ -406,27 +563,29 @@ function bindTouchButtons(options){
 	// 1) toggle_checkbox = multiple buttons can be active at once, 
 	// 2) toggle_radio = only one button as well as relevant radio button is active at a time,
 	// 3) toggle_one = only one button is active at a time (no radio buttons involved),
-	// 4) flash = a single button flashes	
+	// 4) flash = a single button flashes
+	// 5) none = no active state for button
 	var settings = $.extend({
 		// These are the defaults.
 		scope: "body", // the "bound" element for a delegated event
 		buttonCollection: "", // the selector used in a delegated event
-		mode: "flash", // toggle mode for a button
+		stopPropagation: false, // sets jquery .stopPropagation() method - for overlapping html elements - http://stackoverflow.com/questions/11499169/target-element-in-overlapping-element
+		mode: "none", // toggle mode for a button
 		callback: ""
 	}, options );
 	
 	// clear previous bindings
 	$(settings.scope).off("touchstart", settings.buttonCollection);
 	
-	// need to disable click handler for the same touch event because when using links, it's possible to activate 
-	// the link when "touching" just outside of the <a> element within the following:
-	//   	<div class="btn-vertical-group">
-	//   		<a class="btn">
-	//			</a>
-	//  	</div>
-	$(settings.scope).on("click", settings.buttonCollection, function(event){
-		event.preventDefault();
-	});
+// need to disable click handler for the same touch event because when using links, it's possible to activate 
+// the link when "touching" just outside of the <a> element within the following:
+//   	<div class="btn-vertical-group">
+//   		<a class="btn">
+//			</a>
+//  	</div>
+//	$(settings.scope).on("click", settings.buttonCollection, function(event){
+//		event.preventDefault();
+//	});
 	
 	// Use touchstart event to check if the user is "pressing" a button (vs. scrolling):
 	// 1. Touchstart event binds touchmove and touchend events when user touches a screen.
@@ -501,8 +660,12 @@ function bindTouchButtons(options){
 				//setTimeout(function() {
 					settings.callback.call(button);
 				//}, 0);
-			}			
+			}
 			
+			if (settings.stopPropagation == true)
+			{
+				event.stopPropagation();
+			}			
 			event.preventDefault();
 		});
 		// touchstart doesn't trigger preventDefault() by itself as this would prevent the user from scrolling
@@ -511,7 +674,7 @@ function bindTouchButtons(options){
 
 
 /* *****
-Function name: activateTearsheetOptions
+Function name: initTearsheetOptions
 
 Purpose: Binds the following button icons on the tearsheet:
 	1.  Map - toggles map while hiding hours and features
@@ -529,18 +692,20 @@ Called by:
 
 Platform: mobile
 */
-function activateTearsheetOptions(button_obj){
+function initTearsheetOptions(button_obj){
 
 	var buttonName = button_obj.data("button"); // map, hours, features, website, or call - passed in via a custom data attribute associated with the pressed button
 	var selector = $("#" + buttonName);
 
+	$('#map-features-hours .collapse').not('#' + buttonName).slideUp(400) // close content that is not selected by the user
+	
 	if (buttonName == 'website' || buttonName == 'get_directions')  // open the link in a new browser window
 	{
 		var website = selector.attr('href'); // get the url of the venue website
 		// using a setTimeout so user can see the website button flicker
 		setTimeout(function () { 
 			window.open(website);  // opens a new browser window
-		}, 100);
+		}, 400);
 
 	}
 	else if (buttonName == 'phone')
@@ -549,12 +714,11 @@ function activateTearsheetOptions(button_obj){
 		// using a setTimeout so user can see the website button flicker
 		setTimeout(function () { 
 			window.location = phone_number; // dials the phone number listed in the link within the same window
-		}, 100);	
+		}, 400);	
 	}		
 	else // for map, hours, or features toggled content
 	{			
-		$('#map-features-hours .collapse').not('#' + buttonName).slideUp(400) // close content that is not selected by the user
-		selector.slideToggle(400, function(){
+		selector.slideToggle(400, function(){ // toggle selected content
 		
 			// Scrolls screen to appropriate position to view content (i.e. map, hours, features)
 			// Note: browser quirks when using the scrollTop function:
@@ -563,11 +727,11 @@ function activateTearsheetOptions(button_obj){
 			// http://stackoverflow.com/questions/1830080/jquery-scrolltop-doesnt-seem-to-work-in-safari-or-chrome-windows
 
 			var content = $(this),
-				selectorHeight = content.outerHeight(),
-				selectorTopPosition = content.position().top,
-				screenHeight = $(window).outerHeight(),
-				navbarHeight = $("#navbar").outerHeight(),
-				scrollUpPixels = selectorHeight - (screenHeight - navbarHeight - selectorTopPosition);			
+				selectorHeight = content.height(), // height of #map, #features, or #hours html element
+				selectorTopPosition = content.position().top, // top position of #map, #features, or #hours html element
+				screenHeight = $(window).outerHeight(), // height of the device/browser screen
+				navbarHeight = $("#navbar").outerHeight(), // height of the navbar
+				scrollUpPixels = selectorTopPosition + selectorHeight - screenHeight + navbarHeight;
 
 			$("body").animate({
 				scrollTop: scrollUpPixels + 'px'
@@ -812,138 +976,6 @@ function toggleSlider(title, callback){
 }
 
 
-
-
-
-/* *****
-Function: loadContent
-
-Description: Uses AJAX to load dynamic content.  loadContent() also manipulates the data (i.e. serializedData)
-that accompanies .get(), adding items such as latitude and longitude while excluding redundant parameters such
-as sort_order.
-
-Notes:
-1.  url - can contain url parameters such as sort_order, search, latitude, longitude
-	
-2.  When using .get(url, data, callback(), 'script'), parameters can be passed within the "url" or "data" 
-	arguments.  Thus, certain parameters such as sort_order from the user clicking on a url link or submitting 
-	a form (as hidden or visible parameters).  Parameters from a form are serialized (using .serialize() method)
-	before being added to the url.  Thus, we need to remove redundant parameters when using .serialize().  To
-	prevent redundant url variables, make sure the selector for the .serialize() method follows the following form:
-	
-		$("#form_sortFilter input[name!='sort_order']").serialize();
-
-	The statement above says serialize all parameters, hidden and visible, from the form, #form_sortFilter with
-	the exception of the sort_order parameter.
-
-
-Platform: desktop and mobile
-*/
-function loadContent(url, options){
-	var settings = $.extend({
-		// These are the defaults.
-		pane: "mainPane", // mainPane or rightPane - used to determine which preloader to trigger
-		serializedData: "", // 
-		requestMethod: "get", // get or post
-		callback: ""
-	}, options );
-	
-	var latitude = checkSessionStorage('latitude'), 
-		longitude = checkSessionStorage('longitude')
-		
-	// add latitude and longitude information if it exists to the serialized data
-	if (latitude != 'undefined' &&  longitude!= 'undefined')
-	{
-		var userLocation = {latitude: latitude, longitude: longitude};
-		settings.serializedData = settings.serializedData + '&' + $.param( userLocation ); // $.param creates a serialized representation of the userLocation object		
-	}
-	
-//	var screenHeight = $(window).outerHeight(); // get the height of the screen, including padding and borders
-//	$("#" + settings.pane).find(".preloader").css("height", screenHeight).show();
-
-	$("#" + settings.pane).find(".preloader").show();
-	
-	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
-	if (settings.requestMethod == "get")
-	{
-		var request = 	$.get(	url,
-								settings.serializedData,
-								function(){
-								},
-								"script"
-							);
-	}
-	else
-	{
-		var request = 	$.post(	url,
-								settings.serializedData,
-								function(){
-								},
-								"script"
-							);
-	}
-	
-	request.done(function(){
-//		$('.dotdotdot').dotdotdot({
-//			watch: true, //	Whether to update the ellipsis as the window resizes: true/'window'
-//			callback	: function( isTruncated, orgContent ) {	
-//				alert($(this).attr("class"));
-//			}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
-//		});
-		fadeInContent(settings.callback);  // ensures thumbnails are fully loaded before preloader.gif fades out
-	});
-	
-	request.fail(function(){
-//		alert("error!");
-	});		
-}
-
-function fadeInContent(callback){
-	var	loadedImageCount = 0;
-	
-	if ($("#myCarousel").length)
-	{
-		var selector = $(".item.active");
-	}
-	else
-	{
-		var selector = $(".thumbnail");
-
-		// return user to scroll position prior to opening menu					
-		$('body').animate({
-				scrollTop: 0
-			}, 0,
-			function(){}
-		);
-	}
-	var imageCount = selector.length;
-	
-	var refreshId = setInterval(function() { // this code is executed every 500 milliseconds:
-						loadedImageCount = 0;	
-			
-						selector.each(
-							function(){
-								 if (parseInt($(this).find("img").css("width"), 10) > 200)
-								 {
-									loadedImageCount = loadedImageCount + 1
-								 }
-							}
-						);
-						if (loadedImageCount >= imageCount)
-						{
-							clearInterval(refreshId);
-							$(".preloader").fadeOut(400, function(){
-								// execute callback if one was provided
-								if (callback != "")
-								{
-									callback();
-								}							
-							});
-						}
-					}, 200);
-}
-
-
 /* *****
 Function name: toggleEventDescriptions
 
@@ -954,17 +986,18 @@ Using a callback with dotdotdot, this function toggles between original and trun
 a smoother transition between original and truncated context (i.e. to prevent content from "jumping").
 
 Called by: 
-	1) views_mobile/sessions/_tearsheet.js.erb
+	1) views_mobile/sessions/events_list.js.erb
+	2) views_mobile/sessions/tearsheet.js.erb
 	
 Platform: mobile
 */
-function toggleEventDescriptions(button_obj){
+function toggleEventDescription(button_obj){
 	// enables the event buttons (i.e. event date, name, description) to toggle between the partial and full description (as well as start vs start/end times) of an event
 	var calendar_time = button_obj.find(".time");
+	var start_stop_time = button_obj.find('.time.collapse');
+	var description = button_obj.find(".description.dotdotdot");	
 	var description_container = button_obj.find(".btn-description");
-	var start_stop_time = description_container.find('.time.collapse');
-	var description = description_container.find(".description.dotdotdot");
-
+	
 	description.fadeOut(200);
 	
 	if (start_stop_time.css('display') == 'none') // event container is "closed" - (1) only truncated event description is displayed and (2) event start and stop times are hidden
@@ -981,6 +1014,20 @@ function toggleEventDescriptions(button_obj){
 //				alert("content" + orgContent.text());
 				description.empty().append( orgContent ); // append original content after deleting truncated text
 				description.fadeIn(200); // fades in the event description after dotdotdot has resized everything... smoother transition when using fadeIn as a callback.					
+	
+				//  scroll browser up if description is hidden (because too long for screen)
+				var descriptionHeight = description_container.height(), // height of description
+					descriptionTopPosition = description_container.offset().top, // top position of #map, #features, or #hours html element
+					screenHeight = $(window).outerHeight(), // height of the device/browser screen
+					navbarHeight = $("#navbar").outerHeight(), // height of the navbar
+					scrollUpPixels = descriptionTopPosition + descriptionHeight - screenHeight + navbarHeight;
+
+				$("body").animate({
+					scrollTop: scrollUpPixels + 'px'
+					}, 400, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
+					function(){}
+				);
+				
 			}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
 		});
 	}	
@@ -1009,26 +1056,36 @@ Purpose: 	1.	Removes .active class to all .item elements in the carousel except 
 				carousel with all .item elements being in the .active state in order to allow .dotdotdot to complete 
 				execution first.  Once .dotdotdot is complete, then remove .active state from all .item elements in 
 				order for carousel to function properly.
-			2.  Starts cycling through the items in the carousel by defining interval
+			2.  Unhides carousel - Carousel starts off with display: none (class="collapse") to allow for code to 
+				first remove .active class from all .item elements of the carousel after the first.  Otherwise, mobile
+				user will see all .item elements "flicker" before the code above has a chance to complete.
+			3.  Starts cycling through the items in the carousel by defining interval
 
 Called by: 
-	1) views_mobile/sessions/_tearsheet.js.erb
+	1) altoids.js
+	2) views_mobile/sessions/tearsheet.js.erb
+	2) views_mobile/sessions/destroy.js.erb
 	
 Platform: mobile and desktop
 */
 function initCarousel(){
 	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-	$( ".active.item" ).each(function( index ) {
+	$("#myCarousel").find(".active.item").each(function( index ) {
 		if(index != 0){
 			$(this).removeClass('active');
 		}
 	});
-
+	
+	// Unhide carousel after .active class has been removed from all .item elements except for the first; otherwise, 
+	// may see flicker on mobile device from multiple .item elements with the .active class.
+	$("#myCarousel").removeClass('collapse');
+	
 	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
 	$('#myCarousel').carousel({
 		interval: 4000
 	});
 }
+
 
 /* *****
 Function name: initTouchOnCarousel
@@ -1046,7 +1103,38 @@ Called by:
 Platform: mobile
 */
 function initTouchOnCarousel(){	
-	$(document).off('touchstart', "#myCarousel");
+
+	// 	reset event handlers
+	$(document).off("touchstart", "#myCarousel");
+	$("#myCarousel").off("touchstart", ".play_button");
+	
+	// 	bind the play button in videos to control:
+	// 	1) carousel cycling, and 
+	//	2) playing and resuming partially watched videos
+
+	$("#myCarousel").on("touchstart", ".play_button", function(event){
+		$('#myCarousel').carousel("pause");
+		var video = $(this).siblings("video").first();
+
+		video.css("height", "1px"); // video tag needs to have dimensions > 0 to be downloaded
+		video.css("width", "1px"); // video tag needs to have dimensions > 0 to be downloaded
+		
+		video.get(0).play();
+
+		// iOS enters fullscreen when user is watching video
+		video.on("webkitendfullscreen", function(){
+
+			video.css("height", "0"); // reduce video tag dimensions to 0 in order to "disable" playbutton in iOS.
+			video.css("width", "0"); // reduce video tag dimensions to 0 in order to "disable" playbutton in iOS.
+
+			$("#myCarousel").carousel("cycle"); // restart carousel cycle
+			$(this).get(0).pause(); // pauses the video
+		});
+
+		event.stopPropagation();
+	});
+
+	// binds touch events to distinguish between a tap (touchstart) vs. swipe (touchmove)
 	$(document).on('touchstart', "#myCarousel", function(event){
 		var button = $(this);
 		var firstTouchX = event.originalEvent.touches[0].clientX;

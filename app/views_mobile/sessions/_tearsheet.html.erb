@@ -99,7 +99,7 @@
 <% end %>
 	<div id="map-features-hours">
 		<!-- GOOGLE MAP -->		
-		<div id="map" class="content collapse">
+		<div id="map" class="content margin-15-sides collapse">
 			<!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
 			<!-- http://railscasts.com/episodes/273-geocoder -->
 			<!-- Responsive iFrame: http://niklausgerber.com/blog/responsive-google-or-bing-maps/ -->
@@ -110,19 +110,24 @@
 		<!-- HOURS -->
 		<div id="hours" class="content collapse">
 			<% @days_of_week.each do |day_of_week| %>
-				<div class="row">
+				<!-- 
+					Need to remove negative margins (using margin-15-sides) created by row; otherwise, 
+					margins will extend out, allowing mobile user to move the browser left and right 
+					when "hours" are open. 
+				-->
+				<div class="row margin-15-sides">
 					<div class="col-xs-5 text-right">
 						<small>
 							<%= day_of_week.to_s.capitalize %>
 						</small>
-					</div>	
+					</div>
 					<div class="col-xs-7">	
 						<small>
 							<%= retrieve_time("open", day_of_week).strftime("%l:%M %p") %>
 							&nbsp;-&nbsp;
 							<%= retrieve_time("close", day_of_week).strftime("%l:%M %p") %>
 						</small>
-					</div>	
+					</div>
 				</div>		
 			<% end %>
 		</div>	<!-- #hours container -->	
@@ -130,7 +135,7 @@
 		<!-- FEATURES -->
 		<div id="features" class="content collapse">
 			<% Feature.all.each do |feature| %>
-				<div class="checkbox add-margin left">
+				<div class="checkbox margin-15-sides">
 					<label>
 						<%= check_box_tag "venue[feature_ids][]", feature.id, @venue.feature_ids.include?(feature.id), class:"regular-checkbox", onclick:"return false"%>
 						<small><%= feature.name %></small><br>
