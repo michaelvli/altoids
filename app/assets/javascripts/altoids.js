@@ -242,7 +242,7 @@ function initTogglers(){
 		}
 	});
 
-	// Menu pane: enables touch behavior for sign_up and log_in buttons (in the menu bar)
+	// Menu pane: enables touch behavior for sign_up and log_in buttons (in the menu bar vs in the actual form)
 	bindTouchButtons({
 		scope: "#menu",
 		buttonCollection: "#sign_up_button, #log_in_button",
@@ -270,7 +270,25 @@ function initTogglers(){
 			});
 		}
 	});
-		
+
+	// Slider pane: enable touch behavior for the submit buttons in "sign up" and "log in" forms
+	bindTouchButtons({
+		scope: "#sign_up_form, #log_in_form",
+		buttonCollection: ".btn",
+		stopPropagation: true, // need .stopPropagation because element overlaps with other .btns in #slider
+		mode: "flash",
+		callback: function(event){
+			toggleSlider(); // close slider
+			preLoadContent(this);
+			
+			// need .stopPropagation in addition to being needed within bindTouchButtons() since event 
+			// can bubble up DOM via the callback (within bindTouchButtons()).  Since bindTouchButtons
+			// also uses stopPropagation, the event will stop within #sign_up_form, #log_in_form, but
+			// be focused on an input field, causing the keyboard to remain visible in iOS.			
+			event.stopPropagation(); 
+		}
+	});
+	
 	// Slider pane: enables touch behavior and toggling for slider
 	bindTouchButtons({
 		scope: "#slider",
@@ -278,6 +296,7 @@ function initTogglers(){
 		mode: "flash",
 		callback: function(){
 			toggleSlider();
+			$("#logo").focus(); // hides keyboard on iOS
 		}
 	});
 
@@ -289,18 +308,6 @@ function initTogglers(){
 		callback: function(){
 			var sliderTitle = "Filter Results";
 			toggleSlider(sliderTitle);
-			preLoadContent(this);
-		}
-	});
-	
-	// Slider pane: enable touch behavior for the submit buttons in "sign up" and "log in" forms
-	bindTouchButtons({
-		scope: "#sign_up_form, #log_in_form",
-		buttonCollection: ".btn",
-		stopPropagation: true,
-		mode: "flash",
-		callback: function(){
-			toggleSlider(); // close slider
 			preLoadContent(this);
 		}
 	});
@@ -321,8 +328,8 @@ function initTogglers(){
 		}
 	});
 	
-// DEBUG:
-
+// BEGIN DEBUG //
+/*	
 	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
 		togglePane({
 			callback: function(){
@@ -333,13 +340,14 @@ function initTogglers(){
 	});
 
 	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
+
 		toggleSlider(); // close slider
 		preLoadContent($(this));
-		
-		event.stopPropagation();
+
+		event.stopPropagation(); // need .stopPropagation because element overlaps with other .btns in #slider
 		event.preventDefault();
 	});
-	
+
 	$("#menu").on("click", "#sign_up_button, #log_in_button", function(event){
 		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
 		var pageID = "#" + button_obj.data('page');
@@ -420,7 +428,8 @@ function initTogglers(){
 		
 		event.preventDefault();
 	});
-
+*/
+// END DEBUG //
 }
 
 
