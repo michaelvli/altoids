@@ -425,11 +425,15 @@ input.hidden[type="radio"]{
 //}
 
 .item{
-	video {
-		height: 0; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
-		width: 0; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button when video is done playing.
+	img{
+		width: 100%;
 	}
-	.play_button{
+	video {
+		display: none; // setting display to none so user won't be able to play video by triggering the video html element
+		height: 1px; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button.
+		width: 1px; // need to keep the video small (but not zero or else it won't load on ios) in order for it to "shrink" behind the thumbnail/glypicon play button.
+	}
+	.play_button{ // triggers the event handler that plays the video among other jquery functions (i.e. pause carousel, etc.)
 		color: white;
 		font-size: 3em;
 		opacity: 0.5;

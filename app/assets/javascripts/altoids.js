@@ -183,18 +183,41 @@ function initTogglers(){
 		}
 	});	
 	
+// NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.
 	// Menu pane: enables touch behavior for "log out" button
 	// Rails :remote => true attribute (found in the html of the "log out" button in the menu bar) is not necessary for touch events (but necessary for click events)
+//	bindTouchButtons({
+//		scope: "#menu",
+//		buttonCollection: ".btn-glass[data-method=delete]",
+//		mode: "toggle_one",
+//		callback: function(){
+//			
+//			var url = this.attr("href");
+//			loadContent(url, {
+//				requestMethod: "delete"
+//			});
+//			
+//			togglePane({
+//				pane: "menu",
+//				state: "close"
+//			});
+//		}
+//	});
+
+	// Menu pane: enables touch behavior for "log out" button
+	// for mobile, not using destroy action in session controller to log out bc can't redirect an ajax call 
+	// to the splash action. Thus, created code in splash action to check if user has actively pressed the 
+	// logout button.  Code below binds logout button from the menu and sends an ajax request to the session 
+	// controller, passing logout in the params hash which triggers the proper logic in the controller to
+	// log the user out and sending a response which includes the splash page.
 	bindTouchButtons({
 		scope: "#menu",
-		buttonCollection: ".btn-glass[data-method=delete]",
+		buttonCollection: ".btn-glass[data-button=logout]",
 		mode: "toggle_one",
 		callback: function(){
 			
-			var url = this.attr("href");
-			loadContent(url, {
-				requestMethod: "delete"
-			});
+			var url = "splash?logout=true";
+			loadContent(url); // default parameters for getting venues, sorted by events
 			
 			togglePane({
 				pane: "menu",
@@ -203,10 +226,11 @@ function initTogglers(){
 		}
 	});
 	
-	// Menu pane: enables touch behavior for menu selection buttons (except for "sign up" and "log in" buttons which is handled below)	
+	// Menu pane: enables touch behavior for menu selection buttons (except for "sign up" and "log in" buttons which is handled below)
 	bindTouchButtons({
 		scope: "#menu",
-		buttonCollection: ".btn-glass[data-method!=delete]",
+		buttonCollection: ".btn-glass[data-button!=logout]",		
+//		buttonCollection: ".btn-glass[data-method!=delete]", // not using normal destroy action in session controller to log the user out - using logic in the splash action instead (see above)
 		mode: "toggle_one",
 		callback: function(){
 			preLoadContent(this);
@@ -261,6 +285,7 @@ function initTogglers(){
 	bindTouchButtons({
 		scope: "#sign_up_form, #log_in_form",
 		buttonCollection: ".btn",
+		stopPropagation: true,
 		mode: "flash",
 		callback: function(){
 			toggleSlider(); // close slider
@@ -340,19 +365,38 @@ function initTogglers(){
 		});
 	});
 
+// NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.	
 	// used in conjunction with Rails :remote => true attribute (found in the html of the "log out" button in the menu bar)
-	$("#menu").on("click", "a[data-method=delete]", function(event){
-		$("#mainPane").find(".preloader").show();
-		
+//	$("#menu").on("click", ".btn-glass[data-method=delete]", function(event){
+//		
+//		var url = $(this).attr("href");
+//		loadContent(url, {
+//			requestMethod: "delete"
+//		});
+//		
+//		togglePane({
+//			pane: "menu",
+//			state: "close"
+//		});
+//		
+//		event.preventDefault();
+//	});
+	
+	$("#menu").on("click", ".btn-glass[data-button=logout]", function(event){
+
+		var url = "splash?logout=true";
+		loadContent(url); // default parameters for getting venues, sorted by events
+
 		togglePane({
 			pane: "menu",
 			state: "close"
-		});
-		
+		});	
+
 		event.preventDefault();
 	});
 	
-	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
+//	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
+	$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
 		preLoadContent($(this));
 		
 		togglePane({
@@ -469,7 +513,6 @@ function loadContent(url, options){
 //				alert($(this).attr("class"));
 //			}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
 //		});
-
 		fadeInContent(settings.callback);  // ensures thumbnails are fully loaded before preloader.gif fades out
 	});
 	
@@ -503,18 +546,20 @@ function fadeInContent(callback){
 		);
 	}
 	var imageCount = selector.length;
-	
+
 	var refreshId = setInterval(function() { // this code is executed every 500 milliseconds:
 						loadedImageCount = 0;	
 			
 						selector.each(
 							function(){
-								 if (parseInt($(this).find("img").css("width"), 10) > 200)
+
+								 if (parseInt($(this).find("img").css("width"), 10) >= 150)
 								 {
 									loadedImageCount = loadedImageCount + 1
 								 }
 							}
 						);
+
 						if (loadedImageCount >= imageCount)
 						{
 							clearInterval(refreshId);
@@ -785,7 +830,7 @@ function togglePane(options){
 
 	// pixelsScrolled and mainPaneTopPosition are used to take the user back to where they had scrolled in the mainPane prior to toggling the menu or rightPane
 	var pixelsScrolled = $("body").scrollTop(); // stores the number of pixels that the user has scrolled from the top in #mainPane prior to opening menu
-	var mainPaneTopPosition = $("#mainPane").position().top; // gets the vertical position of mainPane - this variable is used to "reset" the scrolling position of mainPane, when closing the menu or rightPane.
+	var mainPaneTopPosition = mainPane.position().top; // gets the vertical position of mainPane - this variable is used to "reset" the scrolling position of mainPane, when closing the menu or rightPane.
 
 	// toggle rightPane or menu?
 	if (settings.pane == 'menu') // if menu
@@ -808,24 +853,23 @@ function togglePane(options){
 	// open if 1) user manually specified "open" OR if 2) "state" is not passed in to the function and the menu is closed
 	if (settings.state == "open" || settings.state == "" && parseInt(mainPane.css('left'),10) == 0)
 	{  
-		// set pane title and unhide collapsed pane items (navbar and pane)	
+		// set pane title and unhide collapsed pane items (navbar and pane)
 		navbar_selector.find(".dynamicTitle").text(settings.title); // insert name of the venue for the title of the rightPane
 		navbar_selector.show(); // menu/rightPane starts off as display: none
 		$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to showing the selected pane
 		pane_selector.show(); // menu/rightPane starts off as display: none;	
 
 		// Change css of mainPane in order to "fix" its position so it doesn't move around when user scrolls on the open menu
-		mainPane.css('position', 'fixed'); // Need to use "fixed" position in order to prevent user from scrolling #mainPane when menu is open
-		mainPane.css('top', navbarHeight - pixelsScrolled); // Adjust height of #mainPane to account for the number of pixels that have been scrolled
+		mainPane.css('position', 'fixed') // Need to use "fixed" position in order to prevent user from scrolling #mainPane when menu is open.
+				.css('top', navbarHeight - pixelsScrolled); // Adjust height of #mainPane to account for the number of pixels that have been scrolled
 
 		// need to use absolute position of contents within the .preloader so that those elements (preloader icon and "loading...") will also slide with the rest of the mainPane
-		var pane = $("#mainPane");
-		var preloaderContent = pane.find(".preloader").find(".absolute-center"); // selects for the contents within .preloader in mainPane or rightPane
+		var preloaderContent = mainPane.find(".preloader").find(".absolute-center"); // selects for the contents within .preloader in mainPane or rightPane
 		var screenHeight = $(window).height(); // height of the viewport
 		var navbarHeight = $("#navbar").outerHeight(); // height of the navbar
 		
-		preloaderContent.css("position", "absolute"); // change position from fixed to absolute in order to allow for sliding with rest of the pane elements
-		preloaderContent.css("top",  .5*screenHeight - navbarHeight); // adjust top for absolute positioning to match position: absolute, top: 50%
+		preloaderContent.css("position", "absolute") // change position from fixed to absolute in order to allow for sliding with rest of the pane elements.
+						.css("top",  .5*screenHeight - navbarHeight); // adjust top for absolute positioning to match position: absolute, top: 50%
 
 		// return user to scroll position prior to opening menu (i.e. top of menu pane)
 		$('body').animate({
@@ -869,18 +913,17 @@ function togglePane(options){
 			function(){
 				if ($(this).attr("id") == lastSelector) // using lastSelector ensures that callback will be be executed repetitively for every selector in "slideContent"
 				{
-					// return mainPane to css state prior to opening menu:
-					mainPane.css('position', 'absolute'); // Undo fixed position after menu is closed to #mainPane is scrollable again.
-					mainPane.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
+					// return mainPane to css state prior to opening menu
+					mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
+							.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
 					
 					navbar_selector.hide(); // menu/rightPane starts off as display: none;			
 					pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
-				
-					// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down
-					var pane = $("#mainPane");
-					var preloaderContent = pane.find(".preloader").find(".absolute-center"); // selects for the contents within .preloader in mainPane or rightPane				
-					preloaderContent.css("position", "fixed"); // return position from absolute to fixed
-					preloaderContent.css("top", "50%"); // return top to 50%
+
+					// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down.
+					mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
+							.css("position", "fixed") // return position from absolute to fixed.
+							.css("top", "50%"); // return top to 50%
 
 					// return user to scroll position of mainPane after closing menu or rightPane
 					$('body').animate({
@@ -1111,28 +1154,61 @@ function initTouchOnCarousel(){
 	// 	bind the play button in videos to control:
 	// 	1) carousel cycling, and 
 	//	2) playing and resuming partially watched videos
-
+	//  alternative is to bind listeners that react to state of video (see below)
 	$("#myCarousel").on("touchstart", ".play_button", function(event){
 		$('#myCarousel').carousel("pause");
-		var video = $(this).siblings("video").first();
-
-		video.css("height", "1px"); // video tag needs to have dimensions > 0 to be downloaded
-		video.css("width", "1px"); // video tag needs to have dimensions > 0 to be downloaded
+		var video = $(this).siblings("video");
 		
-		video.get(0).play();
+		// video html element starts off hidden which prevents it from being loaded on iOS;
+		// thus, the user won't be able to play the video from pressing the video element.
+		// This enables the .play_button element to trigger the event handler to play the video instead.
+		// Following methods for preventing video from loading on iOS:
+		// 1. display: none
+		// 2. visibility: hidden - using this technique will cause video to track off the screen as it closes before disappearing - not good
+		// 3. width: 0, height: 0
+		// Using display: none so that video will vanish to a single point behind the center of the .play_button as it closes.
+		video.css("display", "block") // When user triggers the event handler, need to first load video on iOS by setting display: block.
+			 .get(0).play(); // play video
 
 		// iOS enters fullscreen when user is watching video
 		video.on("webkitendfullscreen", function(){
 
-			video.css("height", "0"); // reduce video tag dimensions to 0 in order to "disable" playbutton in iOS.
-			video.css("width", "0"); // reduce video tag dimensions to 0 in order to "disable" playbutton in iOS.
-
+		// when user has exited fullscreen, need to hide the video html element so it can't be triggered by the user
+		// hitting the video html element (enables the use of the .play_button in order to play the video)
+			video.css("display", "none"); // hide video html element
 			$("#myCarousel").carousel("cycle"); // restart carousel cycle
 			$(this).get(0).pause(); // pauses the video
 		});
 
-		event.stopPropagation();
+		event.stopPropagation(); // needed because of .play_button and #myCarousel are overlapping html elements
 	});
+	
+	// 	bind listeners that react to state of video:
+//$("#myCarousel").find("video").each(function(){
+//	var video = $(this);
+//	video.off("webkitbeginfullscreen")
+//	video.off("webkitendfullscreen")
+//
+//	// iOS enters fullscreen when user is watching video
+//	video.on("webkitbeginfullscreen", function(){
+//		$("#myCarousel").carousel("pause"); // pause carousel cycle
+//		video.get(0).play(); // restarts a video from where the user left off		
+//	});
+//	
+//	// iOS exits fullscreen when user is watching video
+//	video.on("webkitendfullscreen", function(){
+//		$("#myCarousel").carousel("cycle"); // restart carousel cycle
+//		video.get(0).pause(); // pauses the video
+//	});
+//
+////	video.on("play", function(){
+////		$("#myCarousel").carousel("pause"); // pause carousel cycle
+////	});
+//	
+////	video.on("ended", function(){
+////		$("#myCarousel").carousel("cycle"); // restart carousel cycle
+////	});
+//});
 
 	// binds touch events to distinguish between a tap (touchstart) vs. swipe (touchmove)
 	$(document).on('touchstart', "#myCarousel", function(event){
@@ -1418,8 +1494,8 @@ function initVideoBehavior(){
 	// Click events don't bubble to the "document" level on apple touch devices so need to add "touch" 
 	// events: http://stackoverflow.com/questions/10165141/jquery-on-and-delegate-doesnt-work-on-ipad
 	$(document).on('click touchend', '#main-content .glyphicon-play-circle', function(){
-		var selected_image = $(this).siblings('.thumbnail').first().children('img');
-		var selected_video = $(this).siblings('video').first();
+		var selected_image = $(this).siblings('.thumbnail').children('img');
+		var selected_video = $(this).siblings('video');
 		var video_listener = selected_video.get(0);
 
 	// if user pauses/stops video, 1) display image, 2)hide video, 3)restart carousel

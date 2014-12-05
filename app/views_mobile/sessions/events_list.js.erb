@@ -1,6 +1,6 @@
 //alert("Used AJAX to get event list");
 // dynamically load event list into the mainPane
-$('#mainPane').children('.dynamicContent').first().html("<%= escape_javascript(render partial: 'events_list', locals: { venue_event_months: @venue_event_months } || "There are no events at the moment") %>");
+$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'events_list', locals: { venue_event_months: @venue_event_months } || "There are no events at the moment") %>");
 
 // truncate event descriptions
 $('#events').find('.dotdotdot').dotdotdot({

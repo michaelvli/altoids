@@ -4,27 +4,47 @@ class SessionsController < ApplicationController
   # Using before_filter for rendering mobile vs. desktop versions - http://scottwb.com/blog/2012/02/23/a-better-way-to-add-mobile-pages-to-a-rails-site/
   # :check_for_mobile (in controllers/application_controller) - renders mobile (from app/views_mobile) or desktop (from app/views) view templates 
   # depending on cookie. If mobile template doesn't exist,  before_filter :check_for_mobile will fall back to desktop template.
-  before_filter :check_for_mobile, :only => [:splash, :create, :home, :events_list, :tearsheet, :destroy]
+  before_filter :check_for_mobile, :only => [:splash, :create, :home, :events_list, :tearsheet]
 
+	# splash action serves three purposes:
+	# 1.  redirect a logged in user to home page
+	# 2.  log out a mobile user (instead of using the normal destroy action)
+	# 3.  serve the splash page
+	# The splash action logs out a mobile user because rails doesn't have a clean way of handling ajax redirects.
+	# http://www.dextablogs.com/blog/2014/05/25/handling-ajax-redirects-in-rails/
+	# Because the mobile UI is ajax-based, Rail's lack of handling ajax redirects presents a problem if the
+	# client sends an ajax response to the destroy action and the splash page needs to be served (or we could put
+	# redundant code that creates an instance of @videos in the destroy action.
+	# The logout parameter in the params hash is initiated when the user clicks on the logout button within the menu (views_mobile/sessions/menu.html.erb)
+	# This parameter is then passed into the url argument of the ajax request that is send to the splash action.
 	def splash
-		if signed_in?
+		if (signed_in? && !params.has_key?(:logout)) # signed in user is not logging out
 			redirect_to home_path
-		else			
-			# returns a Activerecord relation vs. a model instance - http://stackoverflow.com/questions/6004891/undefined-method-for-activerecordrelation
-			
-		    @videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
+		else
+			if (signed_in? && params.has_key?(:logout) && params[:logout] = true) # signed in user is logging out
+				sign_out
+			end	
+		
+			# returns a Activerecord relation vs. a model instance - http://stackoverflow.com/questions/6004891/undefined-method-for-activerecordrelation	
+			@videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
 #			@venues = @venues.order("RANDOM()")
 #			@venues = @venues.limit(5) 		
-			
+				
 			# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
 			s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
 			@bucket = s3.buckets[ENV['AWS_BUCKET']]
 			# Code concepts below should be used in views/index.html.erb
 		#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
-		#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
+		#	@url = oject.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
 
 #			@user = User.new
-		end	
+
+			respond_to do |format|
+				format.html
+				format.js { render :template => 'sessions/destroy.js.erb'}
+			end
+
+		end		
 	end
 
 	
@@ -165,25 +185,8 @@ class SessionsController < ApplicationController
   	
 	def destroy
 		sign_out
-#		flash[:success] = 'See you next time!'
-#		redirect_to root_url
-
-	    @videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
-#		@venues = @venues.order("RANDOM()")
-#		@venues = @venues.limit(5) 		
-			
-		# Use Amazon AWS SDK methods (.new and .url_for) to get a url to the S3 object (the thumbnail)
-		s3 = AWS::S3.new(:access_key_id => ENV['AWS_KEY_ID_READ'], :secret_access_key => ENV['AWS_KEY_VALUE_READ'])
-		@bucket = s3.buckets[ENV['AWS_BUCKET']]
-		# Code concepts below should be used in views/index.html.erb
-	#	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
-	#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
-
-		respond_to do |format|
-			format.html
-			format.js { render :template => 'sessions/destroy.js.erb'}
-		end
-
+		flash[:success] = 'See you next time!'
+		redirect_to root_url
 	end
 
 	

@@ -4,7 +4,7 @@
 <% else %>
 	<!-- insert contents of _venue_list.html.erb within the .body div element -->
 	<!-- partial: venue_list contains filter button -->
-	$('#mainPane').children('.dynamicContent').first().html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
+	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
 	
 	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");

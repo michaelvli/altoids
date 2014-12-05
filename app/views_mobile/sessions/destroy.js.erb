@@ -1,4 +1,4 @@
-$('#mainPane').children('.dynamicContent').first().html("<%= escape_javascript(render template: 'sessions/splash') %>");
+$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'sessions/splash') %>");
 
 // initializes carousel with one active carousel item and sets slide interval speed
 initCarousel();

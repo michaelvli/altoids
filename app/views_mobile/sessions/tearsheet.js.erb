@@ -14,7 +14,7 @@ pane.find("#tearsheet").html("<%= escape_javascript(render partial: 'tearsheet')
 initCarousel();
 
 // initialize left/right swiping on carousel
-initTouchOnCarousel()
+initTouchOnCarousel();
 
 //  binds a touch handler for the 5 icon buttons on the venue tearsheet that toggle map, hours, features, website, and phone number info about a venue
 //  initTearsheetOptions() allows user to toggle map, hours, features, website, and phone number info about a venue
@@ -44,37 +44,6 @@ bindTouchButtons({
 		toggleEventDescription(this); // "this" passes the $(this) object to initEventButtons(button_obj) function
 	}
 });
-
-
-// 	bind the play button in videos to control:
-// 	1) carousel cycling, and 
-//	2) playing and resuming partially watched videos
-//$("#myCarousel").find("video").each(function(){
-//	var video = $(this);
-//	video.off("webkitbeginfullscreen")
-//	video.off("webkitendfullscreen")
-//
-//	// iOS enters fullscreen when user is watching video
-//	video.on("webkitbeginfullscreen", function(){
-//		$("#myCarousel").carousel("pause"); // pause carousel cycle
-//		video.get(0).play(); // restarts a video from where the user left off		
-//	});
-//	
-//	// iOS exits fullscreen when user is watching video
-//	video.on("webkitendfullscreen", function(){
-//		$("#myCarousel").carousel("cycle"); // restart carousel cycle
-//		video.get(0).pause(); // pauses the video
-//	});
-//
-////	video.on("play", function(){
-////		$("#myCarousel").carousel("pause"); // pause carousel cycle
-////	});
-//	
-////	video.on("ended", function(){
-////		$("#myCarousel").carousel("cycle"); // restart carousel cycle
-////	});
-//});
-
 
 
 /* debug */
