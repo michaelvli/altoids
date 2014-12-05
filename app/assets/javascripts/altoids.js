@@ -280,6 +280,18 @@ function initTogglers(){
 			toggleSlider();
 		}
 	});
+
+	// Slider pane: enables touch behavior and toggling for "Apply Filters" button
+	bindTouchButtons({
+		scope: "#apply_filter_navbar",
+		buttonCollection: "#apply_filter_button",
+		mode: "flash",
+		callback: function(){
+			var sliderTitle = "Filter Results";
+			toggleSlider(sliderTitle);
+			preLoadContent(this);
+		}
+	});
 	
 	// Slider pane: enable touch behavior for the submit buttons in "sign up" and "log in" forms
 	bindTouchButtons({
@@ -310,7 +322,7 @@ function initTogglers(){
 	});
 	
 // DEBUG:
-/*
+
 	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
 		togglePane({
 			callback: function(){
@@ -329,7 +341,6 @@ function initTogglers(){
 	});
 	
 	$("#menu").on("click", "#sign_up_button, #log_in_button", function(event){
-
 		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
 		var pageID = "#" + button_obj.data('page');
 
@@ -337,7 +348,7 @@ function initTogglers(){
 		var sliderTitle = $(this).data('title');
 
 		// only show the appropriate page in the slider
-		$('#slider-body').children().hide(); // hide all forms within #slider-body
+		$("#slider").find("body").children().hide(); // hide all forms within #slider-body
 		$(pageID).show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
 
 		// close menu pane
@@ -354,10 +365,11 @@ function initTogglers(){
 	});
 
 	$("#apply_filter_navbar").on("click", "#apply_filter_button", function(event){
-		alert("ok");
-//		var sliderTitle = "Filter Results";
-//		toggleSlider(sliderTitle);
-			
+
+		var sliderTitle = "Filter Results";
+		toggleSlider(sliderTitle);
+		preLoadContent($(this));
+		
 		event.preventDefault();
 	});
 	
@@ -408,7 +420,7 @@ function initTogglers(){
 		
 		event.preventDefault();
 	});
-*/
+
 }
 
 

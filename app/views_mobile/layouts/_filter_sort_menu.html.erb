@@ -1,3 +1,5 @@
+<div id="filter_sort_menu" class="collapse">
+
 	<%= form_tag home_path, :method => 'get', :id => "form_sortFilter" do %>
 <% if false %>
 		<%= hidden_field_tag :sort_order, params[:sort_order], {id:'sort_order'} %>
@@ -16,4 +18,10 @@
 		<%= render partial: "sort_options" %>		
 		<%= render partial: "filter_options" %>	
 
+		<div id="apply_filter_navbar" class="navbar-fixed-bottom collapse">
+			<%= button_tag "Apply Filters", id:"apply_filter_button", class:"btn btn-lg btn-primary col-xs-12", :data =>{ :page => "filter_sort_menu"} %>
+		</div>
+
 	<% end %>
+
+</div>	

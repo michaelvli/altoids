@@ -9,26 +9,14 @@
 			</div>	
 		</div>
 		<div class="body">
-			<% if signed_in? %>
+
+			<!-- FILTER/SORT MENU -->
+			<%= render partial: 'layouts/filter_sort_menu' %>
 			
-				<!-- FILTER/SORT MENU -->
-				<div id="filter_sort_menu">
+			<!-- LOG IN FORM -->
+			<%= render partial: 'layouts/log_in_form' %>
 				
-					<%= render partial: 'layouts/filter_sort_menu' %>
-					
-					<div id="apply_filter_navbar" class="navbar-fixed-bottom collapse">
-						<%= button_tag "Apply Filters", id:"apply_filter_button", class:"btn btn-lg btn-primary col-xs-12", :data =>{ :page => "filter_sort_menu"} %>
-					</div>
-					
-				</div>
-				
-			<% else %>
-			
-				<!-- LOG IN FORM -->
-				<%= render partial: 'layouts/log_in_form' %>
-				
-				<!-- SIGN UP FORM -->
-				<%= render partial: 'layouts/sign_up_form' %>
-				
-			<% end %>
+			<!-- SIGN UP FORM -->
+			<%= render partial: 'layouts/sign_up_form' %>				
+
 		</div>
