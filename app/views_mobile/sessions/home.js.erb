@@ -8,6 +8,7 @@
 	
 	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
+	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>");
 
 	// mainPane: enables touch behavior and toggling for translucent filter button
 	bindTouchButtons({

@@ -323,6 +323,8 @@ function initTogglers(){
 	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
 		toggleSlider(); // close slider
 		preLoadContent($(this));
+		
+		event.stopPropagation();
 		event.preventDefault();
 	});
 	
@@ -406,7 +408,7 @@ function initTogglers(){
 		
 		event.preventDefault();
 	});
-*/	
+*/
 }
 
 
