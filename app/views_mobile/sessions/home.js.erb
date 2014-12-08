@@ -7,7 +7,7 @@
 	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'venues_list', locals: { venues: @venues } || "There are no venues at the moment") %>");
 	
 	<!-- refreshes menu and slider -->
-	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
+//	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
 
 	// only show the appropriate page in the slider
 	$("#slider").find(".body").children().hide(); // hide all forms within #slider-body

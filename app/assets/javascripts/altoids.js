@@ -277,15 +277,11 @@ function initTogglers(){
 		buttonCollection: ".btn",
 		stopPropagation: true, // need .stopPropagation because element overlaps with other .btns in #slider
 		mode: "flash",
-		callback: function(event){
+		callback: function(){
 			toggleSlider(); // close slider
 			preLoadContent(this);
-			
-			// need .stopPropagation in addition to being needed within bindTouchButtons() since event 
-			// can bubble up DOM via the callback (within bindTouchButtons()).  Since bindTouchButtons
-			// also uses stopPropagation, the event will stop within #sign_up_form, #log_in_form, but
-			// be focused on an input field, causing the keyboard to remain visible in iOS.			
-			event.stopPropagation(); 
+
+			$("#logo").focus(); // hides keyboard on iOS
 		}
 	});
 	
@@ -663,7 +659,7 @@ function bindTouchButtons(options){
 	// able to scroll
 	$(settings.scope).on("touchstart", settings.buttonCollection, function(event){
 		var button = $(this);
-	
+		
 		// bind touchmove event
 		button.on("touchmove", function(){
 			button.off("touchend");
@@ -671,7 +667,7 @@ function bindTouchButtons(options){
 
 		// Bind touchstart functions to sort options to show .active state as well as check appropriate radio button.
 		button.on("touchend", function(event){
-			
+		
 			if (settings.mode == "flash")
 			{
 				button.addClass("active"); // puts button in .active state
