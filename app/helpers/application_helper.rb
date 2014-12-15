@@ -1,5 +1,9 @@
 module ApplicationHelper
 
+	def url_with_protocol(url)
+		/^http/i.match(url) ? url : "http://#{url}"
+	end
+	  
 	# Used in menu to identify selected item
 	def menu_selection(param_action, field, checked_or_active, options = {})
 		options[:default] ||= ""

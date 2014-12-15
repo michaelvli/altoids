@@ -1,0 +1,63 @@
+	<div class='padding-15'>
+		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+
+			<%= f.alert_message "Please fix the errors below:" %>
+<% if false %>  Debugging only
+			<%= f.error_summary %>
+<% end %>			
+				
+			<!-- Contact info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Contact Info</h3>
+				</div>	
+			</div>	
+			<%= render 'venues/form_contact', f: f %>
+
+			<!-- Additional Info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Additional Info</h3>
+				</div>
+			</div>	
+			<%= render 'venues/form_additional', f: f %>
+
+			<!-- Features panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Features</h3>
+				</div>
+			</div>	
+			<%= render 'venues/form_features', f: f %>
+
+			<!-- Venue Hours panel -->
+			<div class="form-group">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-9 col-md-offset-4 col-md-8">
+							<h3>Venue Hours</h3>
+						</div>
+					</div>	
+					<%= render 'venues/form_hours_venue', f: f %>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-9 col-md-8">
+							<h3>Kitchen Hours</h3>
+						</div>
+					</div>	
+					<%= render 'venues/form_hours_kitchen', f: f %>
+				</div>
+			</div>
+<% if false %>
+			<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
+				<%= f.submit 'Update Venue', class: 'btn btn-success col-xs-12', :data =>{ :page => "update"} %>
+			<% end %>	
+<% end %>
+
+			<div class="navbar-fixed-bottom">
+				<%= button_tag "Update Venue", id:"submit_venue_edit", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", :data =>{ :form => "form_venue_edit"} %>
+			</div>
+			
+		<% end %>
+	</div>	

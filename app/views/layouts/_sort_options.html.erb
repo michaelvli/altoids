@@ -1,0 +1,93 @@
+<!-- Radio buttons - used to pass parameter values by form if not using ajax. -->
+		<div class="section">
+			<span>SORT BY</span>
+		</div>
+
+		<div class="content">
+
+			<div id="sort_options" class="btn-group">
+				
+				<!-- Default selection: Events -->
+
+				<%= button_tag(type: "button", class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'event', 'active', default: true)}", id:"event") do %>
+					<span class="glyphicon glyphicon-ok"></span><br>
+					<%= radio_button_tag "sort_order", "event", filter_selection(params[:sort_order], "event", true, default: true), class: "hidden" %>
+					<span class="title text-center">Events</span>
+				<% end %>
+
+				<%= button_tag(type: "button", class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'distance', 'active')}", id:"distance") do %>
+					<span class="glyphicon glyphicon-map-marker"></span><br>
+					<%= radio_button_tag "sort_order", "distance", filter_selection(params[:sort_order], "distance", true), class: "hidden" %>					
+					<span class="title text-center">Distance<span>
+				<% end %>
+
+				<%= button_tag(type: "button", class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'name_asc', 'active')}", id:"name_asc") do %>
+					<span class="glyphicon glyphicon-arrow-down"></span><br>
+					<%= radio_button_tag "sort_order", "name_asc", filter_selection(params[:sort_order], "name_asc", true), class: "hidden" %>
+					<span class="title text-center">A-Z</span>
+				<% end %>
+								
+				<!-- Button Display: Z-A, Future Sort: Z-A -->
+				<%= button_tag(type: "button", class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'name_desc', 'active')}", id:"name_desc") do %>
+					<span class="glyphicon glyphicon-arrow-up"></span><br>
+					<%= radio_button_tag "sort_order", "name_desc", filter_selection(params[:sort_order], "name_desc", true), class: "hidden" %>					
+					<span class="title text-center">Z-A</span>
+				<% end %>
+				
+				<%= button_tag(type: "button", class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'neighborhood', 'active')}", id:"neighborhood") do %>
+					<span class="glyphicon glyphicon-pushpin"></span><br>
+					<%= radio_button_tag "sort_order", "neighborhood", filter_selection(params[:sort_order], "neighborhood", true), class: "hidden" %>
+					<span class="title text-center">Hood</span>
+				<% end %>
+				
+			</div>
+		</div>
+		
+		
+<% if false %>
+<!-- Radio buttons - used to pass parameter values by form if not using ajax. -->
+		<div class="section">
+			<span>SORT BY</span>
+		</div>
+
+		<div class="content">
+
+			<!-- data-toggle="buttons" disables links -->
+			<div id="sort_options" class="btn-group">
+				
+				<!-- Default selection: Events -->
+				<!-- params.merge - adds parameters (i.e. hidden parameters such as :search, url parameters from a previous request, etc.) to the url (besides the url parameters, :sort and :page) -->
+				<%= link_to home_path(params.merge(:sort_order => 'event', :page => nil)), class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'event', 'active', default: true)}", id:'event', :data => { :sort => 'event' } do %>
+					<span class="glyphicon glyphicon-ok"></span><br>
+					<%= radio_button_tag 'sort_order', 'event', filter_selection(params[:sort_order], 'event', true, default: true), class: "hidden" %>
+					<span class="title text-center">Events</span>
+				<% end %>
+
+				<%= link_to home_path(params.merge(:sort_order => 'distance', :page => nil)), class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'distance', 'active')}", id:'distance', :data => { :sort => 'distance' } do %>
+					<span class="glyphicon glyphicon-map-marker"></span><br>
+					<%= radio_button_tag 'sort_order', 'distance', filter_selection(params[:sort_order], 'distance', true), class: "hidden" %>
+					<span class="title text-center">Distance<span>
+				<% end %>
+
+				<%= link_to home_path(params.merge(:sort_order => 'name_asc', :page => nil)), class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'name_asc', 'active')}", id:'name_asc', :data => { :sort => 'name_asc' } do %>
+					<span class="glyphicon glyphicon-arrow-down"></span><br>
+					<%= radio_button_tag 'sort_order', 'name_asc', filter_selection(params[:sort_order], 'name_asc', true), class: "hidden" %>
+					<span class="title text-center">A-Z</span>
+				<% end %>
+								
+				<!-- Button Display: Z-A, Future Sort: Z-A -->	
+				<%= link_to home_path(params.merge(:sort_order => 'name_desc', :page => nil)), class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'name_desc', 'active')}", id:'name_desc', :data => { :sort => 'name_desc' } do %>
+					<span class="glyphicon glyphicon-arrow-up"></span><br>
+					<%= radio_button_tag 'sort_order', 'name_desc', filter_selection(params[:sort_order], 'name_desc', true), class: "hidden" %>
+					<span class="title text-center">Z-A</span>
+				<% end %>
+				
+				<%= link_to home_path(params.merge(:sort_order => 'neighborhood', :page => nil)), class:"btn btn-glass sort #{filter_selection(params[:sort_order], 'neighborhood', 'active')}", id:'neighborhood', :data => { :sort => 'neighborhood' } do %>
+					<span class="glyphicon glyphicon-pushpin"></span><br>
+					<%= radio_button_tag 'sort_order', 'neighborhood', filter_selection(params[:sort_order], 'neighborhood', true), class: "hidden" %>
+					<span class="title text-center">Hood</span>
+				<% end %>
+				
+			</div>
+		</div>
+<% end %>		

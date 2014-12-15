@@ -11,12 +11,12 @@
 					</div>	<!-- container -->
 
 					<div class="btn-description">
-						<div class="preheadline">
+						<div class="text-12">
 							<% if params[:action] == 'tearsheet' %>
 								<!-- Type of event -->
 								<%= event.event.name %>
 							<% else %>
-								<%= link_to({controller: "sessions", action: "tearsheet", id: event.venue.id }, class:"", data: { title: event.venue.name }) do %>							
+								<%= link_to({controller: "sessions", action: "tearsheet", id: event.venue.id }, class:"rightPane", data: { title: event.venue.name }) do %>							
 									<!-- Venue name + distance from user -->
 									<%= event.venue.name %>
 									<% if params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?%>
@@ -27,7 +27,7 @@
 						</div>
 						
 						<!-- Event name -->
-						<div class="headline">
+						<div class="text-14">
 							<%= event.name %>
 						</div>
 							<div class="time collapse">

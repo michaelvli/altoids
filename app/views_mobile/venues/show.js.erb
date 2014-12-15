@@ -1,0 +1,100 @@
+	if ($("#mainPane").find("#venue_show").length)
+	{
+		var pane = $("#mainPane");
+	}
+	else
+	{
+		var pane = $("#rightPane");
+		pane.find(".dynamicContent").html("<div id='venue_show'></div>");
+	}
+	
+	// load contents of partial: views_mobile/venues/_show.html.erb into mainPane or rightPane
+	pane.find("#venue_show").html("<%= escape_javascript(render partial: 'show') %>");
+	
+	// preload contents for edit in case user wants to modify info
+	$("#slider-content").html("<div id='venue_edit'><%= escape_javascript(render partial: 'edit') %></div>");
+	
+	// hide all forms within #slider-body; appropriate forms will be open with js.erb file	
+	$("#slider").find("div.body").children().hide();
+	$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
+
+//	rightPane: "Edit Venue" button	
+	bindTouchButtons({
+		scope: "#venue_show",
+		buttonCollection: "button.bottomNavbarButton",
+		mode: "flash",
+		callback: function(){
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
+			
+			var sliderTitle = this.data("title");
+			toggleSlider({
+				title: sliderTitle
+			});
+		}
+	});
+
+	//	slider: "Update Venue" button
+	bindTouchButtons({
+		scope: "#slider",
+		buttonCollection: "button.bottomNavbarButton",
+		mode: "flash",
+		callback: function(){
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
+
+			// Update index in mainPane
+			preLoadContent(this);
+			togglePane({
+				state: "close" // close rightPane
+			});
+			toggleSlider(); // close slider
+		}
+	});
+	
+// BEGIN DEBUG: //
+/*
+	<!-- rightPane: "Edit Venue" button -->
+	$("#venue_show").on("click", "button.bottomNavbarButton", function(event){
+	
+		var jqObj = $(this);
+		var sliderTitle = jqObj.data("title");
+		toggleSlider({
+			title: sliderTitle
+		});
+
+		event.preventDefault();
+	});
+	
+	<!-- slider: "Update Venue" button -->
+	$("#slider").on("click", "button.bottomNavbarButton", function(event){
+		// Update index in mainPane
+		preLoadContent($(this));
+
+		togglePane({
+			state: "close" // close rightPane
+		});
+		toggleSlider(); // close slider
+		
+		event.preventDefault();
+	});
+*/	
+// END DEBUG: //

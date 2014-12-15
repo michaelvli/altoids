@@ -21,6 +21,8 @@
 							<%= link_to "Venues", home_path, class:"btn btn-glass #{ menu_selection(params[:action], 'home', 'active', default: true) }", :data =>{ :button => "#venues" } %>
 							<div class="divider"></div>
 							<%= link_to "Events", events_list_path, class:"btn btn-glass #{ menu_selection(params[:action], 'events_list', 'active') }", :data =>{ :button => "#events" } %>
+							<div class="divider"></div>
+							<%= link_to "Videos", new_video_path, class:"btn btn-glass #{ menu_selection(params[:action], 'videos', 'active') }", :data =>{ :button => "#videos" } %>
 						</div>
 												
 						<% if current_user %>
@@ -29,7 +31,7 @@
 									ADMIN
 								</div>
 								<div class="btn-group-vertical">
-									<%= link_to "Venue Info", "#", class:"btn btn-glass", :data =>{ :button => "#venues_admin" } %>
+									<%= link_to "Venues Index", venues_path, class:"btn btn-glass", :data =>{ :button => "#venues_admin" } %>
 									<div class="divider"></div>
 									<%= link_to "Events", "#", class:"btn btn-glass", :data =>{ :button => "#events_admin" } %>
 									<div class="divider"></div>
@@ -52,7 +54,7 @@
 							
 							<!-- Venue Management dropdown menu -->						
 							<div class="section">
-								ACCOUNT
+								MY ACCOUNT
 							</div>
 							<div class="btn-group-vertical">
 								<%= link_to "Profile", "#", class:"btn btn-glass", :data =>{ :button => "#profile" } %>

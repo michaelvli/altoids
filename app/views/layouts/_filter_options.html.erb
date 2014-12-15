@@ -1,0 +1,83 @@
+		<!-- FILTER -->
+		<div id="filter_options">
+			<div class="section">
+				<span>FEATURES</span>
+			</div>
+			
+			<!-- data-toggle="buttons" disables links -->
+			<div class="btn-group-vertical">
+				<% for feature in Feature.all do %>
+					<label class="btn btn-glass">
+						<input id="<%= feature.name %>" class="filter" name="features[]" type="checkbox" value="<%= feature.name %>" <%= filter_selection(params[:features], feature.name, "checked") %> />&nbsp;<%= feature.name %>
+					</label>
+				<% end %>
+			</div>
+			
+			<div class="section">
+				<span>NEIGHBORHOOD</span>
+			</div>
+			
+
+			<!-- data-toggle="buttons" disables links -->
+			<div class="btn-group-vertical">
+				<% for neighborhood in Neighborhood.all do %>
+					<label class="btn btn-glass">
+						<input id="<%= neighborhood.name %>" class="filter" name="neighborhoods[]" type="checkbox" value="<%= neighborhood.name %>" <%= filter_selection(params[:neighborhoods], neighborhood.name, "checked") %> />&nbsp;<%= neighborhood.name %>
+					</label>
+				<% end %>
+			</div>
+		</div>
+
+			
+<% if false %>
+			<div class="section">
+				<span>FILTERS</span>
+			</div>
+	
+			<div class="content">
+<% if false %>			
+				<div class="subsection">
+					<span>SEARCH</span>
+				</div>
+		
+				<p>
+					<%= text_field_tag :search, params[:search] %>
+						<%= text_field_tag :search, params[:search], {id:'search'} %>
+						<%= submit_tag "Search", :name => nil %>
+				</p>
+<% end %>
+				<div class="subsection">
+					FEATURES
+				</div>
+				
+				<!-- data-toggle="buttons" disables links -->
+				<div class="btn-group-vertical">
+					<% for feature in Feature.all do %>
+						<label class="btn btn-glass">
+							<input id="<%= feature.name %>" class="filter" name="features[]" type="checkbox" value="<%= feature.name %>" <%= filter_selection(params[:features], feature.name, "checked") %> />&nbsp;<%= feature.name %>
+						</label>
+					<% end %>
+				</div>
+		
+				<div class="subsection">
+					NEIGHBORHOOD
+				</div>
+				
+				<!-- data-toggle="buttons" disables links -->
+				<div class="btn-group-vertical">
+					<% for neighborhood in Neighborhood.all do %>
+						<label class="btn btn-glass">
+							<input id="<%= neighborhood.name %>" class="filter" name="neighborhoods[]" type="checkbox" value="<%= neighborhood.name %>" <%= filter_selection(params[:neighborhoods], neighborhood.name, "checked") %> />&nbsp;<%= neighborhood.name %>
+						</label>
+					<% end %>
+<% if false %>
+					<label class="btn btn-glass filter_neighborhood">
+						<input id="Lincoln Park" name="neighborhood[]" type="checkbox" value="Lincoln Park" <%= filter_selection(params[:neighborhood], "Lincoln Park", "checked") %> /> Lincoln Park
+					</label>
+					<label class="btn btn-glass filter_neighborhood">
+						<input id="Old Town" name="neighborhood[]" type="checkbox" value="Old Town" <%= filter_selection(params[:neighborhood], "Old Town", "checked") %> /> Old Town
+					</label>
+<% end %>					
+				</div>
+			</div>
+<% end %>

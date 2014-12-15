@@ -78,7 +78,7 @@ function page_change_functions(){
 	// 2.  mainPane - User opens a tearsheet link directly from url ([domain]/tearsheet?id=1).
 	// 				- calls tearsheet.html.erb which inserts #tearsheet element within #mainPane,
 	//				calling code below:
-	if ($("#mainPane").find('#tearsheet').length)
+	if ($("#mainPane").find('#tearsheet').length || $("#mainPane").find('#venue_edit').length)
 	{
 		var url = window.location.href; // gets current url in browser
 		loadContent(url); // default parameters for getting venues, sorted by events
@@ -104,7 +104,7 @@ function load_DOM_functions(){
 	// Mobile functions only:
 	if ($.cookie( 'deviceType' ) == 'desktop' || $.cookie( 'deviceType' ) == 'tablet' || $.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
 //	if ($.cookie( 'deviceType' ) == 'phone' ) // if user doesn't have a cookie indicating size of device screen, set a cookie and reload site to get the appropriate version of page (mobile vs. desktop)
-	{	
+	{		
 		initTouchOnCarousel(); // initialize left/right swiping on carousel
 		initCarousel();  // initializes carousel with one active carousel item and sets slide interval speed
 		initTogglers();  // enables mobile screen to switch between the four main containers: #menu, #mainPane, #slider, and #specific-content
@@ -170,7 +170,7 @@ Platform: mobile only
 */
 function initTogglers(){
 	
-	// mainPane: enables touch behavior for menu button
+	// mainPane: binds menu button to toggle menu
 	bindTouchButtons({
 		scope: "#navbar",
 		buttonCollection: "#menu_button",
@@ -204,7 +204,7 @@ function initTogglers(){
 //		}
 //	});
 
-	// Menu pane: enables touch behavior for "log out" button
+	// Menu pane: binds "log out" button in menu
 	// for mobile, not using destroy action in session controller to log out bc can't redirect an ajax call 
 	// to the splash action. Thus, created code in splash action to check if user has actively pressed the 
 	// logout button.  Code below binds logout button from the menu and sends an ajax request to the session 
@@ -226,14 +226,25 @@ function initTogglers(){
 		}
 	});
 	
-	// Menu pane: enables touch behavior for menu selection buttons (except for "sign up" and "log in" buttons which is handled below)
+	// Menu pane: binds menu selection buttons (except for "sign up" and "log in" buttons which is handled below)
 	bindTouchButtons({
 		scope: "#menu",
 		buttonCollection: ".btn-glass[data-button!=logout]",		
 //		buttonCollection: ".btn-glass[data-method!=delete]", // not using normal destroy action in session controller to log the user out - using logic in the splash action instead (see above)
 		mode: "toggle_one",
 		callback: function(){
-			preLoadContent(this);
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
+			preLoadContent(this); // "this" is a jqObj referring to the clicked .btn-glass[data-button!=logout]
 		
 			togglePane({
 				pane: "menu",
@@ -242,18 +253,27 @@ function initTogglers(){
 		}
 	});
 
-	// Menu pane: enables touch behavior for sign_up and log_in buttons (in the menu bar vs in the actual form)
+	// Menu pane: binds sign_up and log_in buttons (in the menu bar vs in the actual form) to reveal relevant "sign up" or "log in" forms
 	bindTouchButtons({
 		scope: "#menu",
 		buttonCollection: "#sign_up_button, #log_in_button",
 		mode: "flash",
 		callback: function(){
-			
-			button_obj = this; // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
-			var pageID = "#" + button_obj.data('page');
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
+			var pageID = "#" + this.data('page');
 
 			// sets Slider's title
-			var sliderTitle = $(this).data('title');
+			var sliderTitle = this.data('title');
 
 			// only show the appropriate page in the slider
 			$("#slider").find(".body").children().hide(); // hide all forms within #slider-body
@@ -264,14 +284,16 @@ function initTogglers(){
 				pane: "menu",
 				state: "close",
 				callback: function(){
-					toggleSlider(sliderTitle); // open vertical slider after menu is closed
+					toggleSlider({ // open vertical slider after menu is closed
+						title: sliderTitle
+					});
 					$("#menu_button").removeClass("active"); // ensures menu_button is not active
 				}
 			});
 		}
 	});
 
-	// Slider pane: enable touch behavior for the submit buttons in "sign up" and "log in" forms
+	// Slider pane: binds submit buttons in "sign up" and "log in" forms
 	bindTouchButtons({
 		scope: "#sign_up_form, #log_in_form",
 		buttonCollection: ".btn",
@@ -279,36 +301,55 @@ function initTogglers(){
 		mode: "flash",
 		callback: function(){
 			toggleSlider(); // close slider
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
 			preLoadContent(this);
-
-			$("#logo").focus(); // hides keyboard on iOS
 		}
 	});
 	
-	// Slider pane: enables touch behavior and toggling for slider
+	// Slider pane: closes slider
 	bindTouchButtons({
 		scope: "#slider",
 		buttonCollection: "#btn-close",
 		mode: "flash",
 		callback: function(){
-			toggleSlider();
+			toggleSlider(); // close slider
 			$("#logo").focus(); // hides keyboard on iOS
 		}
 	});
-
-	// Slider pane: enables touch behavior and toggling for "Apply Filters" button
+	
+	// Slider pane: binds the "Apply Filters" button
 	bindTouchButtons({
-		scope: "#apply_filter_navbar",
-		buttonCollection: "#apply_filter_button",
+		scope: "#filter_sort_menu",
+		buttonCollection: "button.submit",
 		mode: "flash",
 		callback: function(){
-			var sliderTitle = "Filter Results";
-			toggleSlider(sliderTitle);
+			toggleSlider();
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
 			preLoadContent(this);
 		}
 	});
 	
-	// rightPane: enables touch behavior and toggling for back arrow button in the rightPane 
+	// rightPane: toggles back arrow button
 	bindTouchButtons({
 		scope: "#navbar-rightPane",
 		buttonCollection: "#back_arrow_button",
@@ -324,26 +365,16 @@ function initTogglers(){
 		}
 	});
 	
-// BEGIN DEBUG //
-/*	
-	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
+// BEGIN DEBUG //	
+/*
+	// Navbar: "menu" icon button
+	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
-			callback: function(){
-				$("#navbar-rightPane").find(".dynamicTitle").text("");	// empty title and contents of rightPane after it closes
-				$("#rightPane").find(".dynamicContent").text("");	// empty title and contents of rightPane after it closes				
-			}
+			pane: "menu"
 		});
 	});
 
-	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
-
-		toggleSlider(); // close slider
-		preLoadContent($(this));
-
-		event.stopPropagation(); // need .stopPropagation because element overlaps with other .btns in #slider
-		event.preventDefault();
-	});
-
+	// Menu: "sign up" and "log in" buttons that open the slider to show the appropriate form (vs. submit the form with user information)
 	$("#menu").on("click", "#sign_up_button, #log_in_button", function(event){
 		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
 		var pageID = "#" + button_obj.data('page');
@@ -360,29 +391,16 @@ function initTogglers(){
 			pane: "menu",
 			state: "close",
 			callback: function(){
-				toggleSlider(sliderTitle); // open vertical slider after menu is closed
+				toggleSlider({ // open vertical slider after menu is closed
+					title: sliderTitle
+				});	
 				$("#menu_button").removeClass("active"); // ensures menu_button is not active
 			}
 		});	
 	
 		event.preventDefault();
 	});
-
-	$("#apply_filter_navbar").on("click", "#apply_filter_button", function(event){
-
-		var sliderTitle = "Filter Results";
-		toggleSlider(sliderTitle);
-		preLoadContent($(this));
-		
-		event.preventDefault();
-	});
 	
-	$("#navbar").on("click", "#menu_button", function(){
-		togglePane({
-			pane: "menu"
-		});
-	});
-
 // NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.	
 	// used in conjunction with Rails :remote => true attribute (found in the html of the "log out" button in the menu bar)
 //	$("#menu").on("click", ".btn-glass[data-method=delete]", function(event){
@@ -400,6 +418,7 @@ function initTogglers(){
 //		event.preventDefault();
 //	});
 	
+	// Menu: "logout" menu button
 	$("#menu").on("click", ".btn-glass[data-button=logout]", function(event){
 
 		var url = "splash?logout=true";
@@ -413,10 +432,11 @@ function initTogglers(){
 		event.preventDefault();
 	});
 	
+	// Menu: menu buttons except for "logout"
 //	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
 	$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
-		preLoadContent($(this));
-		
+		preLoadContent($(this)); // gets the parent "form" element from the jquery object, "$(this)"
+
 		togglePane({
 			pane: "menu",
 			state: "close"
@@ -424,8 +444,224 @@ function initTogglers(){
 		
 		event.preventDefault();
 	});
-*/
+	
+	// Slider: "sign up" and "log in" buttons to submit a form (vs. opening slider with appropriate form)
+	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
+
+		toggleSlider(); // close slider
+		preLoadContent($(this));
+
+		event.stopPropagation(); // need .stopPropagation because element overlaps with other .btns in #slider
+		event.preventDefault();
+	});
+
+	// Slider: "Apply Filter" button
+	$("#filter_sort_menu").on("click", "button.submit", function(event){
+		toggleSlider(); // close slider
+		preLoadContent($(this)); // gets the parent "form" element from the jquery object, "$(this)"
+		
+		event.preventDefault();
+	});
+
+	// Slider: closes slider
+	$("#slider").on("click", "#btn-close", function(){
+		toggleSlider(); // close slider
+		$("#logo").focus(); // hides keyboard on iOS	
+	});
+
+	// rightPane: back arrow button
+	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
+		togglePane({
+			callback: function(){
+				$("#navbar-rightPane").find(".dynamicTitle").text("");	// empty title and contents of rightPane after it closes
+				$("#rightPane").find(".dynamicContent").text("");	// empty title and contents of rightPane after it closes				
+			}
+		});
+	});
+*/	
 // END DEBUG //
+}
+
+
+/*
+Function: bindTouchButtons()
+
+Purpose: 
+1.  Handles "keypress" event when user presses the "done" or "go" button on virtual keyboard (keycode: 13)
+2.  Binds specified delegated touch events
+3.  Distinguish between touchend vs touch move - this allows users to scroll or "click" on a touch screen.  
+	Without being able to distinguish the difference, users will have trouble scrolling as all touch actions 
+	would trigger a "click".
+4.  Adds/removes active class for a button to create a flash or toggle.  A flash is triggered when user
+	presses a button that lights up (i.e. active state) and immediately turns off.  A toggle is triggered 
+	when a user presses a button that lights up and stays "on" until the user presses the button again.  A
+	group of buttons may have multiple buttons that may be turned on (like checked checkboxes) or a single 
+	button that is toggled at a time (such as with radio buttons)
+
+Notes: 
+1. 	Use touch events instead of click event to avoid the brief delay between pressing a button and observing
+	the tiggered behavior (i.e. screen moving or button toggling).
+2.  alert boxes interfere with touch event cycle; causes the browser to remember the touch end event (button is always behind by one event - notice this when checkout the custom data attribute in the alert box)
+	http://stackoverflow.com/questions/7463594/how-do-i-prevent-touchend-event-from-apparently-being-remembered-by-the-browse
+	Be sure to use setTimeout as seen in code below
+	
+Called by: 
+1. altoids.js
+2. views_mobile\sessions\tearsheet.js.erb
+3. views_mobile\sessions\home.js.erb
+
+Platform: mobile only
+*/
+function bindTouchButtons(options){
+	// Mode has 4 options for button active state:
+	// 1) toggle_checkbox = multiple buttons can be active at once, 
+	// 2) toggle_radio = only one button as well as relevant radio button is active at a time,
+	// 3) toggle_one = only one button is active at a time (no radio buttons involved),
+	// 4) flash = a single button flashes
+	// 5) none = no active state for button
+	var settings = $.extend({
+		// These are the defaults.
+		scope: "body", // the "bound" element for a delegated event
+		buttonCollection: "", // the selector used in a delegated event
+		stopPropagation: false, // sets jquery .stopPropagation() method - for overlapping html elements - http://stackoverflow.com/questions/11499169/target-element-in-overlapping-element
+		mode: "none", // toggle mode for a button
+		callback: ""
+	}, options );
+	
+	// clear previous bindings
+	$(settings.scope).off("touchstart", settings.buttonCollection);
+	
+// need to disable click handler for the same touch event because when using links, it's possible to activate 
+// the link when "touching" just outside of the <a> element within the following:
+//   	<div class="btn-vertical-group">
+//   		<a class="btn">
+//			</a>
+//  	</div>
+//	$(settings.scope).on("click", settings.buttonCollection, function(event){
+//		event.preventDefault();
+//	});
+	
+	// execute callback if user clicks "done" or "go" on virtual keyboard
+	$(settings.scope).off("keypress", "input");
+	$(settings.scope).on("keypress", "input", function(event){
+		if (event.which == 13) // keycode for "done" button on keyboard
+		{
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{
+				// Need setTimeout bc alert box messes up the touchevent lifecycle - see notes above				
+//				setTimeout(function() {
+					// this vs $(this):
+					// this = DOM element
+					// $(this) = DOM element wrapped in a jquery object
+					// alert($(this) + " : " + this + " : " + $(this).get(0))
+					// alert(this == $(this).get(0));
+					
+					// .call() is a javascript function that invokes the callback represented by 
+					// settings.callback() while passing the jquery object, "$(this)", that will set
+					// the value of "this" in the callback.
+					settings.callback.call($(this));
+					// alternatively, if the callback contains argument in the anonymous 
+					// function - i.e. function(argumentRepresenting$This){} used to 
+					// represent "$(this)", it's possible to use the following instead (without the call method):
+					// settings.callback($(this));					
+//				}, 0);
+			}			
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	});
+
+	// Use touchstart event to check if the user is "pressing" a button (vs. scrolling):
+	// 1. Touchstart event binds touchmove and touchend events when user touches a screen.
+	// 2. If the user moves (i.e. scrolls), touchstart unbinds the touchend event.
+	// 3. If the user releases contact from the screen without moving, the bound touchend event will be triggered.
+	// Note: touchstart event doesn't trigger preventDefault() by itself as this would prevent the user from being
+	// able to scroll
+	$(settings.scope).on("touchstart", settings.buttonCollection, function(event){
+		var button = $(this);
+		
+		// bind touchmove event
+		button.on("touchmove", function(){
+			button.off("touchend");
+		});
+
+		// Bind touchstart functions to sort options to show .active state as well as check appropriate radio button.
+		button.on("touchend", function(event){
+		
+			if (settings.mode == "flash")
+			{
+				button.addClass("active"); // puts button in .active state
+				setTimeout(function () { // setTimeout function creates a slight delay, causing button to flash
+					button.toggleClass("active"); // removes .active state
+				}, 50);
+			}
+			else if (settings.mode == "toggle_radio")
+			{
+				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
+				// setTimeout provides a small delay before putting the button in .active state.
+				// Without the delay, button will not reach .active state, probably because the previous function 
+				// to remove .active state from non-relevant buttons takes too long and javascript is asynchronous.
+				setTimeout(function () { 
+					// toggles .active state and if radio buttons exist, select a button
+					button.addClass("active").find("input:radio").prop("checked", true); 
+				}, 0);
+			}
+			else if (settings.mode == "toggle_one")
+			{
+				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
+				// setTimeout provides a small delay before putting the button in .active state.
+				// Without the delay, button will not reach .active state, probably because the previous function 
+				// to remove .active state from non-relevant buttons takes too long and javascript is asynchronous.
+				setTimeout(function () { 
+					button.toggleClass("active"); // toggles .active state
+				}, 0);
+			}
+			else if (settings.mode == "toggle_checkbox")
+			{
+				var checkbox = button.addClass("active").find("input:checkbox"); // puts button in .active state
+				
+				setTimeout(function () {
+					button.toggleClass("active"); // removes .active state, causing button to flicker
+				}, 50)
+		
+				// toggle checkbox
+				if (checkbox.prop("checked") == true)
+				{
+					checkbox.prop("checked", false);
+				}	
+				else
+				{
+					checkbox.prop("checked", true);
+				}
+			}
+			
+			button.off("touchend");
+
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{
+				// Need setTimeout bc alert box messes up the touchevent lifecycle - see notes above				
+				//setTimeout(function() {
+					// .call() is a javascript function that invokes the callback represented by 
+					// settings.callback() while passing the jquery object, "button", that will set
+					// the value of "this" in the callback.
+					settings.callback.call(button); // .call() passes the value of "button" (a jqObj) to the callback function stored by "settings.callback"
+					// alternatively, if the callback contains argument in the anonymous 
+					// function - i.e. function(argumentRepresenting$This){} used to 
+					// represent "button", it's possible to use the following instead (without the call method):
+					// settings.callback(button);
+				//}, 0);
+			}
+			
+			if (settings.stopPropagation == true)
+			{
+				event.stopPropagation();
+			}			
+			event.preventDefault();
+		});
+		// touchstart doesn't trigger preventDefault() by itself as this would prevent the user from scrolling
+	});
 }
 
 
@@ -496,7 +732,7 @@ Platform: desktop and mobile
 function loadContent(url, options){
 	var settings = $.extend({
 		// These are the defaults.
-		pane: "mainPane", // mainPane or rightPane - used to determine which preloader to trigger
+		pane: "mainPane", // mainPane, rightPane, or slider - used to determine where new content should be loaded
 		serializedData: "", // 
 		requestMethod: "get", // get or post or delete
 		callback: ""
@@ -515,6 +751,8 @@ function loadContent(url, options){
 //	var screenHeight = $(window).outerHeight(); // get the height of the screen, including padding and borders
 //	$("#" + settings.pane).find(".preloader").css("height", screenHeight).show();
 
+	$("#logo").focus(); // hides keyboard on iOS
+	
 	$("#" + settings.pane).find(".preloader").show();
 	
 	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
@@ -591,149 +829,6 @@ function fadeInContent(callback){
 							});
 						}
 					}, 200);
-}
-
-
-/*
-Function: bindTouchButtons()
-
-Purpose: 
-1.  Binds specified delegated touch events
-2.  Distinguish between touchend vs touch move - this allows users to scroll or "click" on a touch screen.  
-	Without being able to distinguish the difference, users will have trouble scrolling as all touch actions 
-	would trigger a "click".
-3.  Adds/removes active class for a button to create a flash or toggle.  A flash is triggered when user
-	presses a button that lights up (i.e. active state) and immediately turns off.  A toggle is triggered 
-	when a user presses a button that lights up and stays "on" until the user presses the button again.  A
-	group of buttons may have multiple buttons that may be turned on (like checked checkboxes) or a single 
-	button that is toggled at a time (such as with radio buttons)
-
-Notes: 
-1. 	Use touch events instead of click event to avoid the brief delay between pressing a button and observing
-	the tiggered behavior (i.e. screen moving or button toggling).
-2.  alert boxes interfere with touch event cycle; causes the browser to remember the touch end event (button is always behind by one event - notice this when checkout the custom data attribute in the alert box)
-	http://stackoverflow.com/questions/7463594/how-do-i-prevent-touchend-event-from-apparently-being-remembered-by-the-browse
-	Be sure to use setTimeout as seen in code below
-	
-Called by: 
-1. altoids.js
-2. views_mobile\sessions\tearsheet.js.erb
-3. views_mobile\sessions\home.js.erb
-
-Platform: mobile only
-*/
-function bindTouchButtons(options){
-	// Mode has 4 options for button active state:
-	// 1) toggle_checkbox = multiple buttons can be active at once, 
-	// 2) toggle_radio = only one button as well as relevant radio button is active at a time,
-	// 3) toggle_one = only one button is active at a time (no radio buttons involved),
-	// 4) flash = a single button flashes
-	// 5) none = no active state for button
-	var settings = $.extend({
-		// These are the defaults.
-		scope: "body", // the "bound" element for a delegated event
-		buttonCollection: "", // the selector used in a delegated event
-		stopPropagation: false, // sets jquery .stopPropagation() method - for overlapping html elements - http://stackoverflow.com/questions/11499169/target-element-in-overlapping-element
-		mode: "none", // toggle mode for a button
-		callback: ""
-	}, options );
-	
-	// clear previous bindings
-	$(settings.scope).off("touchstart", settings.buttonCollection);
-	
-// need to disable click handler for the same touch event because when using links, it's possible to activate 
-// the link when "touching" just outside of the <a> element within the following:
-//   	<div class="btn-vertical-group">
-//   		<a class="btn">
-//			</a>
-//  	</div>
-//	$(settings.scope).on("click", settings.buttonCollection, function(event){
-//		event.preventDefault();
-//	});
-	
-	// Use touchstart event to check if the user is "pressing" a button (vs. scrolling):
-	// 1. Touchstart event binds touchmove and touchend events when user touches a screen.
-	// 2. If the user moves (i.e. scrolls), touchstart unbinds the touchend event.
-	// 3. If the user releases contact from the screen without moving, the bound touchend event will be triggered.
-	// Note: touchstart event doesn't trigger preventDefault() by itself as this would prevent the user from being
-	// able to scroll
-	$(settings.scope).on("touchstart", settings.buttonCollection, function(event){
-		var button = $(this);
-		
-		// bind touchmove event
-		button.on("touchmove", function(){
-			button.off("touchend");
-		});
-
-		// Bind touchstart functions to sort options to show .active state as well as check appropriate radio button.
-		button.on("touchend", function(event){
-		
-			if (settings.mode == "flash")
-			{
-				button.addClass("active"); // puts button in .active state
-				setTimeout(function () { // setTimeout function creates a slight delay, causing button to flash
-					button.toggleClass("active"); // removes .active state
-				}, 50);
-			}
-			else if (settings.mode == "toggle_radio")
-			{
-				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
-				// setTimeout provides a small delay before putting the button in .active state.
-				// Without the delay, button will not reach .active state, probably because the previous function 
-				// to remove .active state from non-relevant buttons takes too long and javascript is asynchronous.
-				setTimeout(function () { 
-					// toggles .active state and if radio buttons exist, select a button
-					button.addClass("active").find("input:radio").prop("checked", true); 
-				}, 0);
-			}
-			else if (settings.mode == "toggle_one")
-			{
-				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
-				// setTimeout provides a small delay before putting the button in .active state.
-				// Without the delay, button will not reach .active state, probably because the previous function 
-				// to remove .active state from non-relevant buttons takes too long and javascript is asynchronous.
-				setTimeout(function () { 
-					button.toggleClass("active"); // toggles .active state
-				}, 0);
-			}
-			else if (settings.mode == "toggle_checkbox")
-			{
-				var checkbox = button.addClass("active").find("input:checkbox"); // puts button in .active state
-				
-				setTimeout(function () {
-					button.toggleClass("active"); // removes .active state, causing button to flicker
-				}, 50)
-		
-				// toggle checkbox
-				if (checkbox.prop("checked") == true)
-				{
-					checkbox.prop("checked", false);
-				}	
-				else
-				{
-					checkbox.prop("checked", true);
-				}
-			}
-			
-			button.off("touchend");
-
-			// execute callback if one was provided
-			if (settings.callback != "")
-			{
-				// Need setTimeout bc alert box messes up the touchevent lifecycle - see notes above				
-				//setTimeout(function() {
-					settings.callback.call(button);
-				//}, 0);
-			}
-			
-			if (settings.stopPropagation == true)
-			{
-				event.stopPropagation();
-			}			
-			event.preventDefault();
-		});
-		// touchstart doesn't trigger preventDefault() by itself as this would prevent the user from scrolling
-	});
 }
 
 
@@ -830,11 +925,10 @@ Notes:
 Platform: mobile only
 */
 function togglePane(options){
-	var slideContent = $('#mainPane, #navbar, #navbar-fixed-bottom'), // the elements that need to "slide"
+	var slideContent = $('#mainPane, #navbar, div.navbar-fixed-bottom'), // the elements that need to "slide"
 		mainPane = $('#mainPane'),
 		screenWidth = mainPane.width(), // get width of the #mainPane
-		navbarHeight = $('#navbar').outerHeight(), // get height of navbar
-		lastSelector = slideContent.last().attr("id"); 	// sets a lastSelector to the last id selector in slideContent; otherwise, callbacks used in .animate(); otherwise, callbacks may be repetitively executed due to multiple selectors used.
+		navbarHeight = $('#navbar').outerHeight() // get height of navbar
 
 	var settings = $.extend({
 		// These are the defaults.
@@ -896,23 +990,25 @@ function togglePane(options){
 			}, 1, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
 			function(){}
 		);
-
+		
 		// open pane
 		slideContent.animate({
 			left: animateLeft, // for float left elements (i.e. menu button)
-			right: animateRight // for float right elements (i.e. logo)
-			}, 400,
-			function(){
-				if ($(this).attr("id") == lastSelector) // using lastSelector ensures that callback will be be executed repetitively for every selector in "slideContent"
-				{
-					// execute callback if one was provided
-					if (settings.callback != "")
-					{
-						settings.callback.call(this);
-					}
-				}
+			right: animateRight // for float right elements (i.e. logo)		
+		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{			
+				// .call() is a javascript function that invokes the callback represented by 
+				// settings.callback() while passing the jquery object, "$(this)", that will set
+				// the value of "this" in the callback.
+				settings.callback.call($(this));
+				// alternatively, if the callback contains argument in the anonymous 
+				// function - i.e. function(argumentRepresenting$This){} used to 
+				// represent "$(this)", it's possible to use the following instead (without the call method):
+				// settings.callback($(this));					
 			}
-		);		
+		});
 	}
 	else // Otherwise, close pane
 	{
@@ -928,40 +1024,43 @@ function togglePane(options){
 		slideContent.animate({
 			left: 0, // for float left elements (i.e. menu button)
 			right: 0 // for float right elements (i.e. logo)
-			}, 400,	
-			function(){
-				if ($(this).attr("id") == lastSelector) // using lastSelector ensures that callback will be be executed repetitively for every selector in "slideContent"
-				{
-					// return mainPane to css state prior to opening menu
-					mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
-							.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
-					
-					navbar_selector.hide(); // menu/rightPane starts off as display: none;			
-					pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
+		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
 
-					// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down.
-					mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
-							.css("position", "fixed") // return position from absolute to fixed.
-							.css("top", "50%"); // return top to 50%
-
-					// return user to scroll position of mainPane after closing menu or rightPane
-					$('body').animate({
-						scrollTop: navbarHeight - mainPaneTopPosition  + 'px'
-						}, 0,
-						function(){
-						}
-					);
+			// return mainPane to css state prior to opening menu
+			mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
+					.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
 					
-					// execute callback if one was provided
-					if (settings.callback != "")
-					{
-						settings.callback.call(this);
-					}
+			navbar_selector.hide(); // menu/rightPane starts off as display: none;			
+			pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
+
+			// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down.
+			mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
+					.css("position", "fixed") // return position from absolute to fixed.
+					.css("top", "50%"); // return top to 50%
+
+			// return user to scroll position of mainPane after closing menu or rightPane
+			$('body').animate({
+				scrollTop: navbarHeight - mainPaneTopPosition  + 'px'
+				}, 0,
+				function(){
 				}
+			);
+					
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{
+				// .call() is a javascript function that invokes the callback represented by 
+				// settings.callback() while passing the jquery object, "$(this)", that will set
+				// the value of "this" in the callback.
+				settings.callback.call($(this));
+				// alternatively, if the callback contains argument in the anonymous 
+				// function - i.e. function(argumentRepresenting$This){} used to 
+				// represent "$(this)", it's possible to use the following instead (without the call method):
+				// settings.callback($(this));					
 			}
-		);
-	}
-}
+		});	// animation().promise().done();
+	}  // close pane
+} // function togglePane()
 
 
 /*
@@ -974,16 +1073,21 @@ Supports the slider pane by
 
 Platform: mobile only
 */
-function toggleSlider(title, callback){
+function toggleSlider(options){
 	var slider = $('#slider');
-	var sliderTitle = title || "";
 	var navbar = slider.find(".navbar-pane");
 	var body = slider.find(".body");
 	var mainPane = $('#mainPane');
 
-	if (sliderTitle != "")
+	var settings = $.extend({
+		// These are the defaults.
+		title: "", // include a title for the pane (i.e. venue name)
+		callback: ""
+	}, options );
+		
+	if (settings.title != "")
 	{
-		$('#slider').find(".dynamicTitle").text(sliderTitle);
+		$('#slider').find(".dynamicTitle").text(settings.title);
 	}	
 
 	// 	Need to know the bottom of the browser window for 2 reasons:
@@ -1008,7 +1112,7 @@ function toggleSlider(title, callback){
 		var sliderEndPosition = screenHeight + pixelsFromTop; // get the height of the screen, including padding and borders
 		var sliderStartPosition = pixelsFromTop;
 		
-		$("#apply_filter_navbar").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
+//		$("#slider").find("div.navbar-fixed-bottom").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
 	
 		mainPane.show(); // hide content underneath slider in case of overflow
 	}
@@ -1027,12 +1131,25 @@ function toggleSlider(title, callback){
 			if ($(this).toggle().css('display') == "block") // if slider is open after toggle, hide mainPane
 			{
 				mainPane.hide();
-				$("#apply_filter_navbar").fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
+//				$("#slider").find("div.navbar-fixed-bottom").fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
 			}
 
 			var navbarHeight = navbar.outerHeight();
 			navbar.css('position', 'fixed'); // transition from relative to fixed positioning
 			body.css('top', navbarHeight); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
+		
+			// execute callback if one was provided
+			if (settings.callback != "")
+			{
+				// .call() is a javascript function that invokes the callback represented by 
+				// settings.callback() while passing the jquery object, "$(this)", that will set
+				// the value of "this" in the callback.
+				settings.callback.call($(this));
+				// alternatively, if the callback contains argument in the anonymous 
+				// function - i.e. function(argumentRepresenting$This){} used to 
+				// represent "$(this)", it's possible to use the following instead (without the call method):
+				// settings.callback($(this));					
+			}		
 		}
 	);
 }
