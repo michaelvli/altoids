@@ -1,0 +1,52 @@
+	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'venues/index.html.erb') %>");	
+	
+//	mainPane: bind venue buttons of class=".rightPane" to open rightPane
+	bindTouchButtons({
+		scope: "#venues_index",
+		buttonCollection: ".rightPane",
+		mode: "flash",
+		callback: function(){
+			var button_obj = $(this);
+			var url = button_obj.attr("href"); // get the url of the button
+			
+			$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+			
+			// open rightPane
+			togglePane({
+				state: "open",
+				title: button_obj.data("title"),
+				callback: function(){
+					// load content
+					loadContent(url, {
+						pane: "rightPane"
+					});
+				}
+			});
+		}
+	});
+
+	
+// BEGIN DEBUG: //
+/*
+	$("#venues_index").on("click", ".rightPane", function(event){
+		var button_obj = $(this);
+		var url = button_obj.attr("href"); // get the url of the button
+
+		$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+			
+		// open rightPane
+		togglePane({
+			state: "open",
+			title: button_obj.data("title"),
+			callback: function(){
+				// load content
+				loadContent(url, {
+					pane: "rightPane"
+				});
+			}
+		});
+
+		event.preventDefault();
+	});
+*/
+// END DEBUG: //

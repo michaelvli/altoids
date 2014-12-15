@@ -39,7 +39,7 @@
 			<% end %>
 
 			<% if !@venue.website.nil? %>
-				<%= link_to 'http://' + @venue.website, class:"btn btn-glass", :id => "website", target:"_blank", :data =>{ :button => "website" } do %>					
+				<%= link_to url_with_protocol(@venue.website), class:"btn btn-glass", :id => "website", target:"_blank", :data =>{ :button => "website" } do %>					
 					<span class="glyphicon glyphicon-cloud"></span><br>
 					<span class="text-center">Website</span>
 				<% end %>
@@ -142,7 +142,7 @@
 					</label>
 				</div>
 			<% end %>
-		</div>	<!-- #features container -->	
+		</div>	<!-- #features container -->
 
 	</div> <!-- #map-features-hours -->
 	

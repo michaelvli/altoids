@@ -8,10 +8,15 @@
 				<h4 class="dynamicTitle text-center"></h4>
 			</div>	
 		</div>
+		
 		<div class="body">
+			<!-- Dynamic Content -->
+			<div id="slider-content" class="dynamicContent">
+				<!-- content loaded by ajax -->
+			</div>
 
 			<!-- FILTER/SORT MENU -->
-			<%= render partial: 'layouts/filter_sort_menu' %>
+			<%= render 'layouts/filter_sort_menu' %>
 			
 			<!-- LOG IN FORM -->
 			<%= render partial: 'layouts/log_in_form' %>

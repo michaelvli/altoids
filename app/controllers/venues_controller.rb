@@ -1,16 +1,20 @@
 class VenuesController < ApplicationController
-  before_action :signed_in_user  #see listing 9.44
-  before_action :venue_user, only: [:show, :edit, :update]
-  before_action :correct_venue_user, only: [:show, :edit, :update]
-  before_action :admin_user, only: [:new, :create, :index, :destroy]
+#  before_action :signed_in_user  #see listing 9.44
+#  before_action :venue_user, only: [:show, :edit, :update]
+#  before_action :correct_venue_user, only: [:show, :edit, :update]
+#  before_action :admin_user, only: [:new, :edit, :create, :index, :destroy]
+
+#  before_filter :check_for_mobile, :only => [:index, :edit]
  
   def index
 	@venues = Venue.all
+#	@venues = Venue.joins(:neighborhood)		
+#	@venue_event_months = @venue_events.group_by { |month| month.start_time.strftime("%B") }
   end
   
   def show
 	@venue = Venue.find(params[:id])
-	@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+	@days_of_week = Date::ABBR_DAYNAMES
   end
   
   def new
@@ -40,6 +44,7 @@ class VenuesController < ApplicationController
   end 
     
   def edit
+#  	@venues = Venue.all
 	@venue = Venue.find(params[:id])
 #	@days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
 #	@days_of_week = Date::DAYNAMES
@@ -55,7 +60,7 @@ class VenuesController < ApplicationController
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated"
 	  if current_user.account_type == "admin"
-		redirect_to venues_path  #takes user to index action in venue controller	  
+		redirect_to venues_path  #takes user to index action in venue controller
 	  else
 		redirect_to venue_path(current_user.venue_id)
 	  end

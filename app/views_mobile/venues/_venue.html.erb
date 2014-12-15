@@ -1,0 +1,31 @@
+<div class="btn btn-glass">
+				<div class="btn-description">
+					<div class="row">
+						<div class="col-xs-12 text-14 text-left">
+							<%= link_to({controller: "venues", action: "show", id: venue.id }, class:"rightPane", data: { title: venue.name }) do %>
+								<!-- Venue name + distance from user -->
+								<%= venue.name %>
+								<% if params.has_key?(:latitude) && !params[:latitude].blank? && params.has_key?(:longitude) && !params[:longitude].blank?%>
+									(<%= venue.distance.round(1) %> miles)<br>
+								<% end %>
+							<% end %>
+						</div>	
+					</div>
+					<div class="row">
+						<div class="col-xs-6 text-12">
+							<%= venue.neighborhood.name %>
+							<br>
+							Events: <%= link_to venue.venue_events.count, venue_events_path(:venue_id => venue.id) %>
+							<br>
+							Tearsheet Views: TBD
+						</div>
+						<div class="col-xs-6 text-12">
+							Finished Videos: <%= link_to venue.count_videos("finished"), videos_path(:venue_id => venue.id) %>
+							<br>
+							Processing Videos: <%= venue.count_videos("processing") %>
+							<br>
+							Failed Videos: <%= venue.count_videos("failed") %>
+						</div>
+					</div>	
+				</div> <!-- btn-description -->
+</div>

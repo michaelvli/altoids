@@ -11,10 +11,12 @@ class VideosController < ApplicationController
 	@bucket = s3.buckets[ENV['AWS_BUCKET']]
 	# Code concepts below should be used in views/index.html.erb
 #	object = @bucket.objects['uploads/video/attachment/191/uploadify_test.png']
-#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s
-		
+#	@url = object.url_for(:get, { :expires => 1200.minutes.from_now, :secure => true }).to_s	
   end
 
+  def new
+  end
+  
   def create
 # 	Using jquery upload (vs. Carrierwave) to upload videos.  Thus, .fileupload() (assets/javascript/video.js.coffee)
 #	has dataType set to "script" which means it is expecting to receive a javascript from the server which

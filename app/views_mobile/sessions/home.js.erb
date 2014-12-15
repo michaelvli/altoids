@@ -16,23 +16,26 @@
 
 	// mainPane: enables touch behavior and toggling for translucent filter button
 	bindTouchButtons({
-		scope: "#navbar_bottom",
+		scope: "div.navbar-fixed-bottom",
 		buttonCollection: "#filter_button",
 		mode: "flash",
 		callback: function(){
 			var sliderTitle = "Filter Results";
-			toggleSlider(sliderTitle);
+			toggleSlider({
+				title: sliderTitle
+			});
+
 		}
 	});
 	
-	// slider: sort options
+	// slider: sort icon buttons
 	bindTouchButtons({
 		scope: "#sort_options",
 		buttonCollection: ".btn-glass",
 		mode: "toggle_radio"
 	});
 
-	// slider: filter options
+	// slider: filter checkboxes
 	bindTouchButtons({
 		scope: "#filter_options",
 		buttonCollection: ".btn-glass",
@@ -42,7 +45,7 @@
 //	<!-- mainPane: bind thumbnails of class=".rightPane" to open rightPane -->
 	bindTouchButtons({
 		scope: "#venues",
-		buttonCollection: ".rightPane",
+		buttonCollection: "a.rightPane",
 		mode: "flash",
 		callback: function(){
 			var button_obj = $(this);
@@ -66,8 +69,8 @@
 	
 	
 // DEBUG:
-/*	
-	$("#venues").on("click", ".rightPane", function(event){
+
+	$("#venues").on("click", "a.rightPane", function(event){
 		var button_obj = $(this);
 		var url = button_obj.attr("href"); // get the url of the button
 		
@@ -87,13 +90,14 @@
 		event.preventDefault();
 	});
 
-	$("#navbar_bottom").on("click", "#filter_button", function(event){
+	$("div.navbar-fixed-bottom").on("click", "#filter_button", function(event){
 		var sliderTitle = "Filter Results";
-		toggleSlider(sliderTitle);
-			
+		toggleSlider({
+			title: sliderTitle
+		});	
 		event.preventDefault();
 	});
-*/	
+
 <% end %>
 
 <% if @venues.next_page %>

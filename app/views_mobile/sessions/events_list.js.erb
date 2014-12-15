@@ -1,4 +1,3 @@
-//alert("Used AJAX to get event list");
 // dynamically load event list into the mainPane
 $('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'events_list', locals: { venue_event_months: @venue_event_months } || "There are no events at the moment") %>");
 
@@ -24,7 +23,7 @@ bindTouchButtons({
 //  takes user to tearsheet of the venue for the event when user clicks on an Event button
 bindTouchButtons({
 	scope: "#events",
-	buttonCollection: "a",
+	buttonCollection: ".rightPane",
 	stopPropagation: true, // need to use jquery .stopPropagation() in order to prevent "a" element from bubbling up to .btn-glass and triggering toggleEventDescription() in code above
 	mode: "flash",
 	callback: function(){
@@ -54,16 +53,18 @@ bindTouchButtons({
 	mode: "flash",
 	callback: function(){
 		var sliderTitle = "Filter Results";
-		toggleSlider(sliderTitle);
+		toggleSlider({
+			title: sliderTitle
+		});
 	}
 });
 
 
 
-// DEBUG:
+/* BEGIN DEBUG */
 
 /*
-$("#events").on("click", "a", function(event){
+$("#events").on("click", ".rightPane", function(event){
 	var jqObj = $(this);
 	var url = jqObj.attr("href"); // get the url of the button
 	
@@ -91,3 +92,4 @@ $("#events").on("click", ".btn-glass", function(event){
 	event.preventDefault();
 });
 */
+/* END DEBUG */
