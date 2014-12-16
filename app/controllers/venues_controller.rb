@@ -53,7 +53,8 @@ class VenuesController < ApplicationController
   end
   
   def update
-	parse_time
+Rails.logger.debug("DEBUG: ABOUT TO PARSE TIME")
+#	parse_time
 
     @venue = Venue.find(params[:id])
 Rails.logger.debug("DEBUG: REACHED VENUES UPDATE! PARAMS: #{params.inspect}")
