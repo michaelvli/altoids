@@ -435,11 +435,14 @@ function initTogglers(){
 	// Menu: menu buttons except for "logout"
 //	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
 	$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
-		preLoadContent($(this)); // gets the parent "form" element from the jquery object, "$(this)"
+		var jqObj = $(this);
 
 		togglePane({
 			pane: "menu",
-			state: "close"
+			state: "close",
+			callback: function(){
+				preLoadContent(jqObj); // gets the parent "form" element from the jquery object, "$(this)"
+			}
 		});
 		
 		event.preventDefault();
@@ -925,8 +928,8 @@ Notes:
 Platform: mobile only
 */
 function togglePane(options){
-	var slideContent = $('#mainPane, #navbar, div.navbar-fixed-bottom'), // the elements that need to "slide"
-		mainPane = $('#mainPane'),
+	var mainPane = $('#mainPane'),
+		slideContent = $("#mainPane, #navbar, #mainPane div.navbar-fixed-bottom"), // the elements that need to "slide"
 		screenWidth = mainPane.width(), // get width of the #mainPane
 		navbarHeight = $('#navbar').outerHeight() // get height of navbar
 
@@ -998,6 +1001,7 @@ function togglePane(options){
 			left: animateLeft, // for float left elements (i.e. menu button)
 			right: animateRight // for float right elements (i.e. logo)		
 		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
+
 			// execute callback if one was provided
 			if (settings.callback != "")
 			{
@@ -1023,11 +1027,13 @@ function togglePane(options){
 		}
 
 		// slide menu to the left
+		// NOTE: .promise() may not be executed if selectors in "slideContent" are dynamically removed
+		// such as when the filter button may be removed while executing function preloadContent() or 
+		// function loadContent()
 		slideContent.animate({
 			left: 0, // for float left elements (i.e. menu button)
 			right: 0 // for float right elements (i.e. logo)
-		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
-
+		}, 400).promise().done(function(){ // see NOTE above - callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
 			// return mainPane to css state prior to opening menu
 			mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
 					.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
@@ -1045,6 +1051,7 @@ function togglePane(options){
 				scrollTop: navbarHeight - mainPaneTopPosition  + 'px'
 				}, 0,
 				function(){
+
 				}
 			);
 					
