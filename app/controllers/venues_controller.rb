@@ -60,6 +60,8 @@ class VenuesController < ApplicationController
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated"
 	  if current_user.account_type == "admin"
+#	Rails.logger.debug("GOT TO VENUES UPDATE!")	  
+#	Rails.logger.debug("GOT ZENCODER RESPONSE: #{params.inspect}")	  
 		redirect_to venues_path  #takes user to index action in venue controller
 	  else
 		redirect_to venue_path(current_user.venue_id)

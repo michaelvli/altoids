@@ -366,7 +366,7 @@ function initTogglers(){
 	});
 	
 // BEGIN DEBUG //	
-/*
+
 	// Navbar: "menu" icon button
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
@@ -478,7 +478,7 @@ function initTogglers(){
 			}
 		});
 	});
-*/	
+	
 // END DEBUG //
 }
 
