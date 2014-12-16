@@ -10,4 +10,12 @@
 
 <div id="venue_edit">
 	<!-- content inserted via AJAX -->
+	
+		<div class='padding-15'>
+		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+
+			<%= f.alert_message "Please fix the errors below:" %>
+
+		<% end %>
+	</div>	
 </div>

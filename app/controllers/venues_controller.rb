@@ -53,17 +53,12 @@ class VenuesController < ApplicationController
   end
   
   def update
-Rails.logger.debug("DEBUG: ABOUT TO PARSE TIME")
-#	parse_time
+	parse_time
 
     @venue = Venue.find(params[:id])
-Rails.logger.debug("DEBUG: REACHED VENUES UPDATE! PARAMS: #{params.inspect}")
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated"
-Rails.logger.debug("DEBUG: SUCCESFULLY UPDATED!")
 	  if current_user.account_type == "admin"
-Rails.logger.debug("DEBUG: GONNA REDIRECT!")	  
-#	Rails.logger.debug("GOT ZENCODER RESPONSE: #{params.inspect}")	  
 		redirect_to venues_path  #takes user to index action in venue controller
 	  else
 		redirect_to venue_path(current_user.venue_id)
@@ -71,6 +66,8 @@ Rails.logger.debug("DEBUG: GONNA REDIRECT!")
     else
 	  flash.now[:error] = "Oops... look like we have errors."
 	  @days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
+#	  render js: "alert('oh crap');"
+#	  render js: "togglePane({state: 'open'});"
       render 'edit'
     end
   end

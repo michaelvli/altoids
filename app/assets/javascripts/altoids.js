@@ -966,11 +966,13 @@ function togglePane(options){
 	// open if 1) user manually specified "open" OR if 2) "state" is not passed in to the function and the menu is closed
 	if (settings.state == "open" || settings.state == "" && parseInt(mainPane.css('left'),10) == 0)
 	{  
+
 		// set pane title and unhide collapsed pane items (navbar and pane)
 		navbar_selector.find(".dynamicTitle").text(settings.title); // insert name of the venue for the title of the rightPane
 		navbar_selector.show(); // menu/rightPane starts off as display: none
+
 		$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to showing the selected pane
-		pane_selector.show(); // menu/rightPane starts off as display: none;	
+		pane_selector.show(); // menu/rightPane starts off as display: none;
 
 		// Change css of mainPane in order to "fix" its position so it doesn't move around when user scrolls on the open menu
 		mainPane.css('position', 'fixed') // Need to use "fixed" position in order to prevent user from scrolling #mainPane when menu is open.
@@ -998,7 +1000,7 @@ function togglePane(options){
 		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
 			// execute callback if one was provided
 			if (settings.callback != "")
-			{			
+			{
 				// .call() is a javascript function that invokes the callback represented by 
 				// settings.callback() while passing the jquery object, "$(this)", that will set
 				// the value of "this" in the callback.
