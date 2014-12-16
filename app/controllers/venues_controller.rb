@@ -56,11 +56,12 @@ class VenuesController < ApplicationController
 	parse_time
 
     @venue = Venue.find(params[:id])
-	    
+Rails.logger.debug("DEBUG: REACHED VENUES UPDATE! PARAMS: #{params.inspect}")
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated"
+Rails.logger.debug("DEBUG: SUCCESFULLY UPDATED!")
 	  if current_user.account_type == "admin"
-#	Rails.logger.debug("GOT TO VENUES UPDATE!")	  
+Rails.logger.debug("DEBUG: GONNA REDIRECT!")	  
 #	Rails.logger.debug("GOT ZENCODER RESPONSE: #{params.inspect}")	  
 		redirect_to venues_path  #takes user to index action in venue controller
 	  else
