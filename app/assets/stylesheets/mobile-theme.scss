@@ -284,10 +284,11 @@ input.hidden[type="radio"]{
 	position: fixed;
 	top: 0;
 	width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (border) + 15px (margin-right)	
-	min-height: 51px;
+	min-height: 52px;
 	padding: 5px 0;	
 	z-index: 1025; // needs to be underneath of navbar which has z-index: 1030
-	background-color: $color-darker;
+	background-color: $color-darkest;
+	border-bottom: 1px solid $color-dark;
 	color: $color-lightest;
 	.title{
 		position: absolute;
@@ -309,7 +310,8 @@ input.hidden[type="radio"]{
 
 .navbar-header{
 //	overflow:hidden;
-	background-color: $color-darker;
+	background-color: $color-darkest;
+	border-bottom: 1px solid $color-dark;
 }
 
 .navbar-brand {
@@ -325,8 +327,8 @@ input.hidden[type="radio"]{
 .navbar-fixed-bottom {
 	// inherits display: none from .collapse class in #slider
 	text-align: center;
-	background-color: transparent;
-	padding: 0 4px 4px 4px; // prevents browser scrollbars from interferring with button.
+	background-color: $color-darkest;
+	padding: 4px 4px 4px 4px; // prevents browser scrollbars from interferring with button.
 	z-index: 5;
 }
 
@@ -560,6 +562,9 @@ input.hidden[type="radio"]{
 		position: relative;
 		z-index: 1035; // needs to be on top of navbar which has z-index: 1030
 		width: 100%
+	}
+	.navbar-fixed-bottom{
+		display: none;
 	}
 }
 

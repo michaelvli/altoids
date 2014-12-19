@@ -1,3 +1,24 @@
+// show.js.erb is called by two scenarios: 1) show action in venues controller, or 2) update action in venues controller
+	if (<%= params.has_key?(:updated) && params[:updated] %>) // Scenario #2 - after information has been successfully updated via the update action in the venues controller
+	{
+		var rightPaneTitle = $("#rightPane-title");
+		
+		// refresh venue name in navbar of rightPane if changed
+		if (rightPaneTitle.text() != "<%= escape_javascript(@venue.name) %>")
+		{
+			rightPaneTitle.fadeOut().text("<%= escape_javascript(@venue.name) %>").fadeIn();
+		}
+	}
+	else // Scenario #1 - show.html.erb is called by show action and inserted into rightPane or mainPane
+	{
+		// Except for .preloader, hide all elements within #slider-body; appropriate forms
+		$("#slider").find("div.body").children().not(".preloader").hide();
+		
+		// Show dynamic content inserted in #slider-content
+		$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
+	}
+
+	// sets the show.html.erb content in either the rightPane (if user clicks on a link in a new browser) or mainPane (normal flow)
 	if ($("#mainPane").find("#venue_show").length)
 	{
 		var pane = $("#mainPane");
@@ -13,11 +34,9 @@
 	
 	// preload contents for edit in case user wants to modify info
 	$("#slider-content").html("<div id='venue_edit'><%= escape_javascript(render partial: 'edit') %></div>");
-	
-	// hide all forms within #slider-body; appropriate forms will be open with js.erb file	
-	$("#slider").find("div.body").children().hide();
-	$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
 
+	fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
+	
 //	rightPane: "Edit Venue" button	
 	bindTouchButtons({
 		scope: "#venue_show",
@@ -35,7 +54,6 @@
 			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
 			// regardless whether it represents the "input" element or buttonCollection to determine the 
 			// appropriate Rails controller/action.
-			
 			var sliderTitle = this.data("title");
 			toggleSlider({
 				title: sliderTitle
@@ -49,6 +67,12 @@
 		buttonCollection: "button.bottomNavbarButton",
 		mode: "flash",
 		callback: function(){
+		
+			// preLoadContent() has fadeInContent set to false which means function will not call loadContent();
+			// thus, .preloader will not be displayed (bc loadContent displays .preloader) which is why it must 
+			// be called here (and then faded out upon executing the code in the corresponding js.erb file)
+			$("#rightPane").find(".preloader").show();
+
 			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
 			// method of either:
 			// 1. the "keypress" event, or
@@ -59,22 +83,24 @@
 			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
 			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
 			// regardless whether it represents the "input" element or buttonCollection to determine the 
-			// appropriate Rails controller/action.
-
-			// Update index in mainPane
-			preLoadContent(this);
-			togglePane({
-				state: "close" // close rightPane
-			});
-			toggleSlider(); // close slider
+			// appropriate Rails controller/action.			
+			var jqObj = this;
+			toggleSlider({
+				state: "close",
+				callback: function(){
+					// trigger update action in venues controller	
+					preLoadContent(jqObj,{ 
+						fadeInContent: false // prevent content from fading in; instead execute code in corresponding js.erb file ("show.js.erb" or "show.js.erb", depending on validation status)
+					});
+				}
+			}); // close slider		
 		}
 	});
 	
 // BEGIN DEBUG: //
-
+/*
 	<!-- rightPane: "Edit Venue" button -->
 	$("#venue_show").on("click", "button.bottomNavbarButton", function(event){
-	
 		var jqObj = $(this);
 		var sliderTitle = jqObj.data("title");
 		toggleSlider({
@@ -83,18 +109,26 @@
 
 		event.preventDefault();
 	});
-	
+
 	<!-- slider: "Update Venue" button -->
 	$("#slider").on("click", "button.bottomNavbarButton", function(event){
-		// Update index in mainPane
-		preLoadContent($(this));
-
-		togglePane({
-			state: "close" // close rightPane
-		});
-		toggleSlider(); // close slider
+		// preLoadContent() has fadeInContent set to false which means function will not call loadContent();
+		// thus, .preloader will not be displayed (bc loadContent displays .preloader) which is why it must 
+		// be called here (and then faded out upon executing the code in the appropriate js.erb file
+		$("#rightPane").find(".preloader").show();
 		
+		var jqObj = $(this);
+		toggleSlider({
+			state: "close",
+			callback: function(){
+				// trigger update action in venues controller	
+				preLoadContent(jqObj,{ 
+					fadeInContent: false // prevent content from fading in; instead execute code in corresponding js.erb file ("show.js.erb" or "show.js.erb", depending on validation status)
+				});
+			}
+		}); // close slider
+				
 		event.preventDefault();
 	});
-
+*/
 // END DEBUG: //

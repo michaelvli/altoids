@@ -14,7 +14,7 @@ class VenuesController < ApplicationController
   
   def show
 	@venue = Venue.find(params[:id])
-	@days_of_week = Date::ABBR_DAYNAMES
+	@days_of_week = Date::ABBR_DAYNAMES	
   end
   
   def new
@@ -56,19 +56,29 @@ class VenuesController < ApplicationController
 	parse_time
 
     @venue = Venue.find(params[:id])
+
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated"
 	  if current_user.account_type == "admin"
-		redirect_to venues_path  #takes user to index action in venue controller
+#		redirect_to venues_path  #takes user to index action in venue controller
+		# redirect_to takes user to show action in venue controller, accessing venues.rb model (executing 
+		# callbacks such as format_phone_number) prior to executing show.js.erb.
+		# redirect_to below is also passing params[:updated] = true to the show action
+		redirect_to venue_path(id: @venue.id, updated: true) 
+		
+		# Not using render below. Instead, using redirect_to because it will access venues.rb model first
+		# which executes callbacks such as format_phone_number within venues.rb.
+		# params[:updated] = true # need to set params[:updated] which will be passed to show.js.erb via the render statement below:
+		# render 'show'
 	  else
 		redirect_to venue_path(current_user.venue_id)
 	  end
     else
 	  flash.now[:error] = "Oops... look like we have errors."
-	  @days_of_week = [:monday, :tuesday, :wednesday, :thursday, :friday, :saturday, :sunday]
-#	  render js: "alert('oh crap');"
-#	  render js: "togglePane({state: 'open'});"
-      render 'edit'
+	  @days_of_week = Date::ABBR_DAYNAMES
+	  render 'edit'
+#	  render js: "alert(#{@venue_name});"
+#	  render js: "togglePane({state: 'open', callback: function(){toggleSlider({state: 'open'});}});"	  
     end
   end
  

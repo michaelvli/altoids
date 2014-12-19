@@ -1,10 +1,8 @@
 	<div class='padding-15'>
 		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
-
-			<%= f.alert_message "Please fix the errors below:" %>
-<% if false %>  Debugging only
-			<%= f.error_summary %>
-<% end %>			
+		
+			<!-- turn off error summary -->
+			<%= f.alert_message "Please fix the errors below:", error_summary: false %>
 				
 			<!-- Contact info panel -->
 			<div class="form-group">

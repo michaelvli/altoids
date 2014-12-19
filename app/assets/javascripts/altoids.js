@@ -366,7 +366,7 @@ function initTogglers(){
 	});
 	
 // BEGIN DEBUG //	
-
+/*
 	// Navbar: "menu" icon button
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
@@ -436,7 +436,6 @@ function initTogglers(){
 //	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
 	$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
 		var jqObj = $(this);
-
 		togglePane({
 			pane: "menu",
 			state: "close",
@@ -481,7 +480,7 @@ function initTogglers(){
 			}
 		});
 	});
-	
+*/	
 // END DEBUG //
 }
 
@@ -681,11 +680,16 @@ Called by:
 	
 Platform: mobile only
 */
-function preLoadContent(jqObj){
+function preLoadContent(jqObj, options){
 	var form = jqObj.parents("form"); // grab the form tag
 	var requestMethod = form.attr("method") || "get"; // Grabs the method attribute specified within the form.  If form does not exist, then the request must be GET since 1) only a form can specify POST method and 2) GET methods can be specified within forms or by urls
 	var serializedData = form.serialize() || "";
 	var url = form.attr("action") || jqObj.attr("href"); // get the action attribute from the relevant form, if one exists; otherwise, get the url of the button 
+
+	var settings = $.extend({
+		// These are the defaults.
+		fadeInContent: true
+	}, options );
 
 	sort_order = getURLParameters(url, 'sort_order');
 
@@ -694,7 +698,8 @@ function preLoadContent(jqObj){
 		getGeolocation(function(){
 			loadContent(url,{
 				serializedData: serializedData,
-				requestMethod: requestMethod
+				requestMethod: requestMethod,
+				fadeInContent: settings.fadeInContent
 			});
 		});
 	}
@@ -702,7 +707,8 @@ function preLoadContent(jqObj){
 	{
 		loadContent(url,{
 			serializedData: serializedData,
-			requestMethod: requestMethod
+			requestMethod: requestMethod,
+			fadeInContent: settings.fadeInContent
 		});
 	}
 }
@@ -737,10 +743,10 @@ function loadContent(url, options){
 		// These are the defaults.
 		pane: "mainPane", // mainPane, rightPane, or slider - used to determine where new content should be loaded
 		serializedData: "", // 
-		requestMethod: "get", // get or post or delete
-		callback: ""
+		requestMethod: "get", // get or post or delete (delete is used in conjunction with destroy action in controller)
+		fadeInContent: true		
 	}, options );
-	
+
 	var latitude = checkSessionStorage('latitude'), 
 		longitude = checkSessionStorage('longitude')
 		
@@ -773,7 +779,18 @@ function loadContent(url, options){
 //				alert($(this).attr("class"));
 //			}//	Callback function that is fired after the ellipsis is added, receives two parameters: isTruncated(boolean), orgContent(string).
 //		});
-		fadeInContent(settings.callback);  // ensures thumbnails are fully loaded before preloader.gif fades out
+
+		// fadeInContent may need to be "manually" called after additional code is executed prior to 
+		// showing content (i.e. when user submits form data to "update" or "create" action in the controller,
+		// sometimes that information may have validation errors that the user needs to correct before the
+		// corresponding record can be created or updated.  Thus, the user may be returned to the "edit" or 
+		// "new" view page again which is when additional code (toggling mainPane, rightPane, and/or the 
+		// slider) needs to be executed prior to calling function fadeInContent().  This additional code will
+		// be in the corresponding js.erb file
+		if (settings.fadeInContent == true)
+		{
+			fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
+		}		
 	});
 	
 	request.fail(function(){
@@ -787,7 +804,7 @@ Called by:
 	1) altoids.js
 	2) destroy.js.erb
 */
-function fadeInContent(callback){
+function fadeInContent(){
 	var	loadedImageCount = 0;
 	
 	if ($("#myCarousel").length)
@@ -823,13 +840,7 @@ function fadeInContent(callback){
 						if (loadedImageCount >= imageCount)
 						{
 							clearInterval(refreshId);
-							$(".preloader").fadeOut(400, function(){
-								// execute callback if one was provided
-								if (callback != "")
-								{
-									callback();
-								}							
-							});
+							$(".preloader").fadeOut(400);
 						}
 					}, 200);
 }
@@ -971,7 +982,10 @@ function togglePane(options){
 	{  
 
 		// set pane title and unhide collapsed pane items (navbar and pane)
-		navbar_selector.find(".dynamicTitle").text(settings.title); // insert name of the venue for the title of the rightPane
+		if (settings.title != "")
+		{
+			navbar_selector.find(".dynamicTitle").text(settings.title); // insert name of the venue for the title of the rightPane
+		}	
 		navbar_selector.show(); // menu/rightPane starts off as display: none
 
 		$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to showing the selected pane
@@ -1087,13 +1101,16 @@ function toggleSlider(options){
 	var navbar = slider.find(".navbar-pane");
 	var body = slider.find(".body");
 	var mainPane = $('#mainPane');
-
+	var rightPane = $('#rightPane');
+	var bottomButton = slider.find(".navbar-fixed-bottom");
+	
 	var settings = $.extend({
 		// These are the defaults.
 		title: "", // include a title for the pane (i.e. venue name)
+		state: "", // manually force the slider open or closed - defaulted to toggle
 		callback: ""
 	}, options );
-		
+
 	if (settings.title != "")
 	{
 		$('#slider').find(".dynamicTitle").text(settings.title);
@@ -1110,11 +1127,10 @@ function toggleSlider(options){
 	// 2) be fixed at the end of the .animate() function
 	var pixelsFromTop = $(window).scrollTop();
 
-	if (slider.css('display') == 'none') // if slider is closed, then open
+	if (settings.state == "open" || settings.state == "" && slider.css('display') == 'none') // if slider is closed, then open
 	{
 		var sliderEndPosition = pixelsFromTop;
 		var sliderStartPosition = screenHeight + pixelsFromTop; // get the height of the screen, including padding and borders
-		
 	}
 	else // if slider is open, then close
 	{
@@ -1124,29 +1140,31 @@ function toggleSlider(options){
 //		$("#slider").find("div.navbar-fixed-bottom").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
 	
 		mainPane.show(); // hide content underneath slider in case of overflow
+		rightPane.show();
+		bottomButton.fadeOut(200); // hide "apply filters" button prior to slider closing
 	}
-	
+
 	slider.css('top', sliderStartPosition); // sets the top of the slider to the top or bottom of the screen
 	
 	navbar.css('position', 'relative'); // ensure that .navbar within #slider starts off as relative positioning; otherwise, the navbar will not "slide down" when closing the slider
 	body.css('top', 0); // ensures that .body within #slider is directly under the navbar (used when slider is closing); otherwise, body of the slider will be "too far" down from the slider navbar
-	
-		
+
 	slider.animate({
 		'top': sliderEndPosition + 'px', // slides the vertical slider to top or bottom of screen.
 		'display': 'show' // shows the contents of the vertical slide as it slides; after animation is over, #slider will revert back to display: none
 		}, 400, 
 		function(){
+			// need to .toggle() the slider since it starts off as display: none; else, slider will disappear after animation is complete.
 			if ($(this).toggle().css('display') == "block") // if slider is open after toggle, hide mainPane
 			{
 				mainPane.hide();
-//				$("#slider").find("div.navbar-fixed-bottom").fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
+				rightPane.hide();
+				bottomButton.fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
 			}
-
 			var navbarHeight = navbar.outerHeight();
 			navbar.css('position', 'fixed'); // transition from relative to fixed positioning
 			body.css('top', navbarHeight); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
-		
+			
 			// execute callback if one was provided
 			if (settings.callback != "")
 			{

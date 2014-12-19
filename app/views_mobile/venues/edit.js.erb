@@ -1,0 +1,10 @@
+// load edit_form with error messages
+$("#venue_edit").html("<%= escape_javascript(render partial: 'edit') %>");
+
+// open slider
+toggleSlider({
+	state: "open",
+	callback: function(){
+		fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
+	}
+});
