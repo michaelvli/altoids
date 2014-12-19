@@ -255,8 +255,8 @@ function initTogglers(){
 
 	// Menu pane: binds sign_up and log_in buttons (in the menu bar vs in the actual form) to reveal relevant "sign up" or "log in" forms
 	bindTouchButtons({
-		scope: "#menu",
-		buttonCollection: "#sign_up_button, #log_in_button",
+		scope: "#menu, #mainPane",
+		buttonCollection: "#sign_up_button, #log_in_button, #create_free_account_button",
 		mode: "flash",
 		callback: function(){
 			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
@@ -275,9 +275,13 @@ function initTogglers(){
 			// sets Slider's title
 			var sliderTitle = this.data('title');
 
-			// only show the appropriate page in the slider
-			$("#slider").find(".body").children().hide(); // hide all forms within #slider-body
-			$(pageID).show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
+			// Slider has 4 nested pages (and only one should be displayed at a time):
+			// 1) #slider-content (dynamic content retrieved by ajax goes here)
+			// 2) #sign_up_form
+			// 3) #log_in_form
+			// 4) #filter_sort_menu
+			$("#slider").find("div.body").children().hide(); // hide all pages within #slider-body
+			$(pageID).show(); // show the relevant page
 
 			// close menu pane
 			togglePane({
@@ -366,7 +370,7 @@ function initTogglers(){
 	});
 	
 // BEGIN DEBUG //	
-/*
+
 	// Navbar: "menu" icon button
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
@@ -375,17 +379,21 @@ function initTogglers(){
 	});
 
 	// Menu: "sign up" and "log in" buttons that open the slider to show the appropriate form (vs. submit the form with user information)
-	$("#menu").on("click", "#sign_up_button, #log_in_button", function(event){
+	$("#menu, #mainPane").on("click", "#sign_up_button, #log_in_button, #create_free_account_button", function(event){
 		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
 		var pageID = "#" + button_obj.data('page');
 
 		// sets Slider's title
 		var sliderTitle = $(this).data('title');
 
-		// only show the appropriate page in the slider
-		$("#slider").find("body").children().hide(); // hide all forms within #slider-body
-		$(pageID).show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
-
+		// Slider has 4 nested pages (and only one should be displayed at a time):
+		// 1) #slider-content (dynamic content retrieved by ajax goes here)
+		// 2) #sign_up_form
+		// 3) #log_in_form
+		// 4) #filter_sort_menu
+		$("#slider").find("div.body").children().hide(); // hide all pages within #slider-body
+		$(pageID).show(); // show the relevant page
+			
 		// close menu pane
 		togglePane({
 			pane: "menu",
@@ -480,7 +488,7 @@ function initTogglers(){
 			}
 		});
 	});
-*/	
+
 // END DEBUG //
 }
 
@@ -940,8 +948,9 @@ Platform: mobile only
 */
 function togglePane(options){
 	var mainPane = $('#mainPane'),
+		navbar = $('#navbar')
 		slideContent = $("#mainPane, #navbar, #mainPane div.navbar-fixed-bottom"), // the elements that need to "slide"
-		screenWidth = mainPane.width(), // get width of the #mainPane
+		screenWidth = mainPane.outerWidth(), // get width of the #mainPane
 		navbarHeight = $('#navbar').outerHeight() // get height of navbar
 
 	var settings = $.extend({
@@ -964,11 +973,12 @@ function togglePane(options){
 	{
 		// need width of menuButton and margin between menuButton and left edge of navbar in order to calculate the 
 		// distance that the menu bar should slide while maintaining an exposed menu button.
+		// substracted an extra -1px in animateLeft and animateRight to remove gaps
 		var menuButton = $('#menu_button'),
-			menuButtonWidth = menuButton.outerWidth(), // width of meny button including border and padding
+			menuButtonWidth = menuButton.outerWidth(), // width of menu button including border and padding
 			margin = menuButton.offset().left, // margin between left edge of navbar and menu button.
-			animateLeft = screenWidth - menuButtonWidth - (2 * margin), // position (in pixels) that the float left elements (i.e. menu button) should slide to the left
-			animateRight = -screenWidth + menuButtonWidth + (2 * margin); // position (in pixels) that the float right elements (i.e. logo) should slide to the left
+			animateLeft = screenWidth - menuButtonWidth - (2 * margin) -1, // position (in pixels) that the float left elements (i.e. menu button) should slide to the left
+			animateRight = -screenWidth + menuButtonWidth + (2 * margin) -1; // position (in pixels) that the float right elements (i.e. logo) should slide to the left
 	}
 	else // else rightPane
 	{
@@ -979,7 +989,9 @@ function togglePane(options){
 	// open or close:
 	// open if 1) user manually specified "open" OR if 2) "state" is not passed in to the function and the menu is closed
 	if (settings.state == "open" || settings.state == "" && parseInt(mainPane.css('left'),10) == 0)
-	{  
+	{		
+		// show temporary border to delineate navbar in mainPane vs navbar in menu; otherwise, panes look like they blend together
+		navbar.css("border-left", "1px solid #2d2d2d"); // SASS variable, $color-dark = #2d2d2d 
 
 		// set pane title and unhide collapsed pane items (navbar and pane)
 		if (settings.title != "")
@@ -1040,6 +1052,9 @@ function togglePane(options){
 			}, 0);
 		}
 
+		// hide temporary border; otherwise, it will be noticable when menu is closed
+		navbar.css("border-left", "0"); // navbar left-border should be hidden when menu is closed
+		
 		// slide menu to the left
 		// NOTE: .promise() may not be executed if selectors in "slideContent" are dynamically removed
 		// such as when the filter button may be removed while executing function preloadContent() or 
@@ -1054,7 +1069,7 @@ function togglePane(options){
 					
 			navbar_selector.hide(); // menu/rightPane starts off as display: none;			
 			pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
-
+			
 			// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down.
 			mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
 					.css("position", "fixed") // return position from absolute to fixed.

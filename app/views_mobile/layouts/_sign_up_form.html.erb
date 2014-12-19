@@ -1,4 +1,30 @@
-				<div id='sign_up_form' class='padding-20 collapse'>
+				<div id='sign_up_form' class='padding-15 collapse'>
+					<%= bootstrap_form_for(:user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+						<%= f.alert_message "Please fix the errors below:" %>
+						<%= render 'users/form', f: f %>
+						<br>
+						<!-- Policy agreement checkbox -->
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="checkbox-container">
+									<%= check_box_tag :policy_agreement, 1, params[:remember_me] %>
+								</div>
+								<div class="checkbox-label">
+									By signing up, you agree to the Terms of Use and Privacy Policy
+								</div>
+							</div>	
+						</div>	
+						<br>
+						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
+							<%= f.submit 'Sign Up', class: 'btn btn-success col-xs-12', :data =>{ :page => "sign_up_form"}  %>
+						<% end %>	
+					<% end %>				
+				</div>
+
+
+
+<% if false %>				
+<div id='sign_up_form' class='padding-20 collapse'>
 					<%= bootstrap_form_for(:user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
 						<%= f.alert_message "Please fix the errors below:" %>
 						<%= render 'users/form', f: f %>
@@ -19,3 +45,4 @@
 					<% end %>
 <% end %>					
 				</div>
+<% end %>				

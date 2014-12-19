@@ -10,17 +10,15 @@
 	</div><!-- /.carousel -->
 
 	<!-- Jumbotron -->
-	<div class="jumbotron dark">
-		<h3><strong>CHECK OUT THE VIBE</strong></h3>
+	<div class="jumbotron">
+		<h3 class="text-center"><strong>CHECK OUT THE VIBE</strong></h3>
 		<p class="grey-text">Why read reviews when you can see for yourself?  We provide videos. You choose the venue.</p>
 	</div>
 	
 	<!-- Jumbotron -->
-	<div class="jumbotron">
+	<div class="jumbotron background-darkest text-center">
 		<P>Watch videos</p>
 		<p>Discover events</p>
 		<p>Find specials</p>
-		<%= button_tag class:'btn btn-primary slideToggler', id:'sign_up', :data => { :button => '#sign_up_form' } do %>
-			Create Your Free Account
-		<% end %>
+		<%= link_to "Create Your Free Account", new_user_path, class:"btn btn-md btn-primary", id: "create_free_account_button", :data =>{ :page => "sign_up_form", :title => "Join Barfly"} %>
 	</div>

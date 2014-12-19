@@ -24,6 +24,22 @@ body {
 	color: $color-lightest;
 } 
 
+.checkbox-container{
+	display: inline;
+}
+.checkbox-label{
+	display: inline;
+	line-height: 1.5em;
+}
+
+.no-padding-left{
+	padding-left: 0;
+}
+
+.no-padding-right{
+	padding-right: 0;
+}
+
 .padding-15{
 	padding: 15px;
 }
@@ -48,6 +64,16 @@ input.hidden[type="radio"]{
 .margin-15-sides{
 	margin-left: 15px;
 	margin-right: 15px;
+}
+
+.jumbotron{
+	margin: 0;
+	color: $color-darker;
+}
+
+.background-darkest{
+	color: $color-light;
+	background: $color-darkest
 }
 
 /* buttons
@@ -284,7 +310,7 @@ input.hidden[type="radio"]{
 	position: fixed;
 	top: 0;
 	width: calc(100% - 75px); // need to account for the # of pixels that remain showing from the navbar: 15px (margin-left) + 43px (#menu_button - class: "navbar-toggle") + 2px (border) + 15px (margin-right)	
-	min-height: 52px;
+	min-height: 51px;
 	padding: 5px 0;	
 	z-index: 1025; // needs to be underneath of navbar which has z-index: 1030
 	background-color: $color-darkest;
@@ -471,7 +497,7 @@ input.hidden[type="radio"]{
 	left: 0;
 	z-index: 100;
 	width: 100%;
-	height: 1500px;
+//	height: 1500px;
 	background-color: $color-darkest; // needed in order to "cover up" #menu when sliding
 	color: $color-light;
 }
@@ -503,7 +529,7 @@ input.hidden[type="radio"]{
 	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
 	.header{
 		text-align: center;
-		margin: 0px 0px 0px 0px;
+		margin: -1px 0px 0px 0px;
 		padding: 30px 15px 30px 15px;
 		background-color: $color-darkest;
 		.btn{

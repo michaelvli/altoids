@@ -1,8 +1,18 @@
-					<%= f.email_field :email, hide_label: true, placeholder: 'Email' %>
-					<%= f.password_field :password, hide_label: true, placeholder: 'Password' %>
-					<div class="form_group">
+					<%= f.email_field :email, placeholder: 'Email' %>
+					<%= f.password_field :password, placeholder: 'Password' %>
+					<div class="row">
 						<div class="col-xs-12">
-							<small><%= link_to "Forgot your password?", new_password_reset_path %></small><br>
-							<div class="checkbox-container"><small><%= check_box_tag :remember_me, 1, params[:remember_me] %><div class="checkbox-label">&nbsp;&nbsp;Remember Me</div></small></div>
+							<%= link_to "Forgot your password?", new_password_reset_path %><br>
 						</div>
-					</div>	
+					</div>
+					<br>
+					<div class="row">
+						<div class="col-xs-12">
+							<div class="checkbox-container">
+								<%= check_box_tag :remember_me, 1, params[:remember_me] %>
+							</div>
+							<div class="checkbox-label">
+								Remember Me
+							</div>
+						</div>	
+					</div>
