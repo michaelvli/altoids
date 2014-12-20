@@ -8,7 +8,8 @@
 	
 	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
-
+	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>");
+	
 	// only show the appropriate page in the slider
 	$("#slider").find(".body").children().hide(); // hide all forms within #slider-body
 	$("#filter_sort_menu").show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
@@ -68,8 +69,8 @@
 	});
 	
 	
-// DEBUG:
-
+// BEGIN DEBUG: //
+/*
 	$("#venues").on("click", "a.rightPane", function(event){
 		var button_obj = $(this);
 		var url = button_obj.attr("href"); // get the url of the button
@@ -97,7 +98,8 @@
 		});	
 		event.preventDefault();
 	});
-
+*/
+// END DEBUG //
 <% end %>
 
 <% if @venues.next_page %>

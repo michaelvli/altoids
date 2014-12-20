@@ -1,10 +1,10 @@
-				<div id='log_in_form' class='padding-15 collapse'>
 					<!-- form goes directly to the create action in sessions controller -->
 					<%= bootstrap_form_for(:session, url: sessions_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+					
 						<%= render 'sessions/log_in_fields', f: f %>
 						<br>
+						
 						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
 							<%= f.submit 'Sign In', class: 'btn btn-success col-xs-12', :data =>{ :page => "log_in_form"} %>
 						<% end %>	
 					<% end %>
-				</div>

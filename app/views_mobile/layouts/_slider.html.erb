@@ -14,6 +14,10 @@
 			<!-- Preloader -->	
 			<%= render 'layouts/preloader' %>
 
+			<!-- anchor for status messages -->
+			<div class="status_message">
+			</div>
+
 			<!-- Dynamic Content -->
 			<div id="slider-content" class="dynamicContent">
 				<!-- content loaded by ajax -->
@@ -22,10 +26,15 @@
 			<!-- FILTER/SORT MENU -->
 			<%= render 'layouts/filter_sort_menu' %>
 			
-			<!-- LOG IN FORM -->
-			<%= render partial: 'layouts/log_in_form' %>
-				
-			<!-- SIGN UP FORM -->
-			<%= render partial: 'layouts/sign_up_form' %>				
-
+			<% if !signed_in? %>
+				<!-- LOG IN FORM -->
+				<div id='log_in_form' class='padding-15 collapse'>
+					<%= render partial: 'layouts/log_in_form' %>
+				</div>	
+					
+				<!-- SIGN UP FORM -->
+				<div id='sign_up_form' class='padding-15 collapse'>
+					<%= render partial: 'layouts/sign_up_form' %>
+				</div>
+			<% end %>
 		</div>

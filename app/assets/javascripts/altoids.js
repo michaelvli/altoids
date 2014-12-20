@@ -370,7 +370,7 @@ function initTogglers(){
 	});
 	
 // BEGIN DEBUG //	
-
+/*
 	// Navbar: "menu" icon button
 	$("#navbar").on("click", "#menu_button", function(){
 		togglePane({
@@ -488,7 +488,7 @@ function initTogglers(){
 			}
 		});
 	});
-
+*/
 // END DEBUG //
 }
 
@@ -1167,8 +1167,7 @@ function toggleSlider(options){
 	slider.animate({
 		'top': sliderEndPosition + 'px', // slides the vertical slider to top or bottom of screen.
 		'display': 'show' // shows the contents of the vertical slide as it slides; after animation is over, #slider will revert back to display: none
-		}, 400, 
-		function(){
+		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(sliderContent)
 			// need to .toggle() the slider since it starts off as display: none; else, slider will disappear after animation is complete.
 			if ($(this).toggle().css('display') == "block") // if slider is open after toggle, hide mainPane
 			{
@@ -1191,7 +1190,7 @@ function toggleSlider(options){
 				// function - i.e. function(argumentRepresenting$This){} used to 
 				// represent "$(this)", it's possible to use the following instead (without the call method):
 				// settings.callback($(this));					
-			}		
+			}
 		}
 	);
 }

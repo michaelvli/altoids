@@ -1,0 +1,23 @@
+// splash.js.erb is called by two scenarios: 
+// 1) create action in sessions controller (when logging in), or 
+// 2) create action in users controller (when signing up)
+
+if (<%= params.has_key?(:create_user) && params[:create_user] %>) // Scenario #2
+{
+	// error from signing up
+	$("#sign_up_form").html("<%= escape_javascript(render partial: 'layouts/sign_up_form') %>");
+}
+else // Scenario #1
+{
+	// error from logging in
+//	$("#mainPane").find(".status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
+	$("#slider").find(".status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
+}
+
+// open slider
+toggleSlider({
+	state: "open",
+	callback: function(){
+		fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
+	}
+});

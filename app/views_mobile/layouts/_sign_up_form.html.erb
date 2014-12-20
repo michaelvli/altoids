@@ -1,8 +1,14 @@
-				<div id='sign_up_form' class='padding-15 collapse'>
-					<%= bootstrap_form_for(:user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
-						<%= f.alert_message "Please fix the errors below:" %>
+					<!-- need to @user instance variable in order to pass validation errors, if any -->
+					<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+			
+						<!-- turn off error summary -->
+						<%= f.alert_message "Please fix the errors below:", error_summary: false %>
+
+						<!-- new user sign up fields -->
 						<%= render 'users/form', f: f %>
+						
 						<br>
+						
 						<!-- Policy agreement checkbox -->
 						<div class="row">
 							<div class="col-xs-12">
@@ -15,12 +21,11 @@
 							</div>	
 						</div>	
 						<br>
+						
 						<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
 							<%= f.submit 'Sign Up', class: 'btn btn-success col-xs-12', :data =>{ :page => "sign_up_form"}  %>
 						<% end %>	
-					<% end %>				
-				</div>
-
+					<% end %>
 
 
 <% if false %>				

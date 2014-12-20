@@ -58,7 +58,7 @@ class VenuesController < ApplicationController
     @venue = Venue.find(params[:id])
 
 	if @venue.update_attributes(venue_params)
-	  flash[:success] = "Venue updated"
+	  flash[:success] = "Venue updated!"
 	  if current_user.account_type == "admin"
 #		redirect_to venues_path  #takes user to index action in venue controller
 		# redirect_to takes user to show action in venue controller, accessing venues.rb model (executing 

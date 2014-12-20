@@ -1,7 +1,13 @@
-// show.js.erb is called by two scenarios: 1) show action in venues controller, or 2) update action in venues controller
-	if (<%= params.has_key?(:updated) && params[:updated] %>) // Scenario #2 - after information has been successfully updated via the update action in the venues controller
+// show.js.erb is called by two scenarios: 
+// 1) show action in venues controller (initial call to show without any attempt to update), or 
+// 2) update action in venues controller (after a successful update)
+
+	if (<%= params.has_key?(:updated) && params[:updated] %>) // Scenario #2 - successful update
 	{
 		var rightPaneTitle = $("#rightPane-title");
+
+		// update status message in rightPane
+		$("#rightPane").find(".status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
 		
 		// refresh venue name in navbar of rightPane if changed
 		if (rightPaneTitle.text() != "<%= escape_javascript(@venue.name) %>")
@@ -98,7 +104,7 @@
 	});
 	
 // BEGIN DEBUG: //
-
+/*
 	<!-- rightPane: "Edit Venue" button -->
 	$("#venue_show").on("click", "button.bottomNavbarButton", function(event){
 		var jqObj = $(this);
@@ -130,5 +136,5 @@
 				
 		event.preventDefault();
 	});
-
+*/
 // END DEBUG: //

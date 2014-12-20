@@ -26,14 +26,16 @@ class UsersController < ApplicationController
 		  redirect_to users_path
 		end
     else
-		@venues = Venue.venues_with_events_only
-		@venues = @venues.order("RANDOM()")
-		@venues = @venues.limit(5)
+#		@venues = Venue.venues_with_events_only
+#		@venues = @venues.order("RANDOM()")
+#		@venues = @venues.limit(5)
 	  if current_user && current_user.account_type == "admin" # if user has signed in already, then creating a new user must be done by an admin in which case admin should be taken to users/new.html.erb
 		flash.now[:error] = "Uh oh... please fix your info"
-		render 'new' 
-	  else  # if user has not logged in and received an error message, then user needs to be taken to splash page with appropriate window displayed
-		render :template => "sessions/splash"
+		render 'new'
+	  else  
+#		render :template => "sessions/splash" # if user has not logged in and received an error message, then user needs to be taken to splash page with appropriate window displayed
+		params[:create_user] = true
+		render 'sessions/splash' # if user has not logged in and received an error message, then call splash.js.erb to take user back to splash page with slider open to the "sign up" form displayed
 	  end
     end
   end

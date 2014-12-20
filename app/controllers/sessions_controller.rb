@@ -24,7 +24,9 @@ class SessionsController < ApplicationController
 			if (signed_in? && params.has_key?(:logout) && params[:logout] = true) # signed in user is logging out
 				sign_out
 			end	
-		
+
+			@user = User.new # in case new user signs up
+			
 			# returns a Activerecord relation vs. a model instance - http://stackoverflow.com/questions/6004891/undefined-method-for-activerecordrelation	
 			@videos = Video.get_videos.where("live = ?", false).where("status = ?", "finished")
 #			@venues = @venues.order("RANDOM()")
@@ -171,14 +173,17 @@ class SessionsController < ApplicationController
 
 	def create
 		user = User.find_by(email: params[:session][:email].downcase)
-	
+
 		if user && user.authenticate(params[:session][:password])
 			sign_in(user)  #sign_in method found in sessions_helper
       		flash[:success] = 'Welcome back, ' + user.first_name + '!'
 			redirect_back_or home_path
 		else
 			flash[:error] = 'Invalid email/password combination'
-			redirect_to splash_path	#render doesn't count as a page request so flash would persist one page too long which is why we need to use flash.now			
+			params[:create_session] = true
+			@user = User.new
+			render 'splash'
+#			redirect_to splash_path	#render doesn't count as a page request so flash would persist one page too long which is why we need to use flash.now
 		end
    
 	end

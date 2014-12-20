@@ -39,16 +39,16 @@
 	<header>
 		<%= render 'layouts/navigation' %>
 	</header>
-			
-	<div class="container">
-		<%= render 'layouts/messages', flash: flash %>
-	</div>
 	
 	<!-- MAIN CONTENT -->
 	<div id="mainPane">
 
 		<!-- Preloader -->	
 		<%= render 'layouts/preloader' %>
+
+		<!-- anchor for status messages -->
+		<div class="status_message">
+		</div>
 
 		<div class="body dynamicContent">
 			<%= yield %>
