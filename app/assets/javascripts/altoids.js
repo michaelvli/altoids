@@ -256,21 +256,14 @@ function initButtons_Menu(){
 			// sets Slider's title
 			var sliderTitle = this.data('title');
 
-			// Slider has 4 nested pages (and only one should be displayed at a time):
-			// 1) #slider-content (dynamic content retrieved by ajax goes here)
-			// 2) #sign_up_form
-			// 3) #log_in_form
-			// 4) #filter_sort_menu
-			$("#slider").find("div.body").children().not(".status_message").hide(); // hide all pages within #slider-body
-			$(pageID).show(); // show the relevant page
-
 			// close menu pane
 			togglePane({
 				pane: "menu",
 				state: "close",
 				callback: function(){
 					toggleSlider({ // open vertical slider after menu is closed
-						title: sliderTitle
+						title: sliderTitle,
+						sliderChild: pageID // pageID = #log_in_form || #sign_up_form
 					});
 					$("#menu_button").removeClass("active"); // ensures menu_button is not active
 				}
