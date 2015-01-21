@@ -38,7 +38,7 @@ Plugins:
 */
 $(function() {
 //	alert("DOM READY");	
-	debug = true; // global variable
+	debug = false; // global variable: true = "clicks" are active, false = only initButtons_XXX are active
 	
 	load_DOM_functions();			
 });
@@ -289,14 +289,6 @@ function initButtons_Menu(){
 
 			// sets Slider's title
 			var sliderTitle = $(this).data('title');
-
-			// Slider has 4 nested pages (and only one should be displayed at a time):
-			// 1) #slider-content (dynamic content retrieved by ajax goes here)
-			// 2) #sign_up_form
-			// 3) #log_in_form
-			// 4) #filter_sort_menu
-			$("#slider").find("div.body").children().not(".status_message").hide(); // hide all pages within #slider-body
-			$(pageID).show(); // show the relevant page
 				
 			// close menu pane
 			togglePane({
@@ -304,7 +296,8 @@ function initButtons_Menu(){
 				state: "close",
 				callback: function(){
 					toggleSlider({ // open vertical slider after menu is closed
-						title: sliderTitle
+						title: sliderTitle, 
+						sliderChild: pageID
 					});	
 					$("#menu_button").removeClass("active"); // ensures menu_button is not active
 				}
@@ -1170,6 +1163,12 @@ function toggleSlider(options){
 		// These are the defaults.
 		title: "", // include a title for the pane (i.e. venue name)
 		state: "", // manually force the slider open or closed - defaulted to toggle
+		sliderChild: "#filter_sort_menu", // slider-child element of #slider to present (see views_mobile/layouts/_slider.html.erb)
+			//	slider-child options:
+			// 		1. #filter_sort_menu
+			//		2. #slider-content (dynamically inserted content)
+			//		3. #log_in_form
+			//		4. #sign_up_form
 		callback: ""
 	}, options );
 
@@ -1184,7 +1183,7 @@ function toggleSlider(options){
 	// use pixelsFromTop to determine where the slider should:
 	// 1) stop as it slides up, and 
 	// 2) be fixed at the end of the .animate() function
-	var pixelsFromTop = $(window).scrollTop();
+//	var pixelsFromTop = $(window).scrollTop();
 
 	// set title within navbar of slider
 	if (settings.title != "")
@@ -1193,12 +1192,18 @@ function toggleSlider(options){
 	}
 
 	if (settings.state == "open" || (settings.state == "" && slider.css('display') == 'none')) // if slider is closed, then open
-			{			
+	{			
 		// slide needs to open with the scrollbar at the top.  To set scrollbar to the top without disturbing
 		// the contents of rightPane, need to change position of rightPane "static" to "fixed" prior to 
 		// setting the scrollbar to the top
 //		rightPane.css("position", "fixed").css("top", -pixelsFromTop + rightPaneNavbarHeight); // freeze rightPane so it doesn't move as slider opens
 //		$("html, body").animate({ scrollTop: 0 }, 0); // move scrollbar to top
+
+		// Except for .preloader and .status_message, hide all elements within #slider-body; appropriate forms
+		$("#slider").find("div.body").children().not(".preloader").hide();
+			
+		// Show dynamic content inserted in #slider-content
+		$(settings.sliderChild).show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
 
 		// slider opens from bottom to top
 		slider.css('top', screenHeight); // sets the top of the slider to the bottom of the screen prior to opening

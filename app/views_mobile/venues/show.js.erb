@@ -20,10 +20,10 @@
 	else // Scenario #1 - show.html.erb is called by show action and inserted into rightPane or mainPane
 	{
 		// Except for .preloader, hide all elements within #slider-body; appropriate forms
-		$("#slider").find("div.body").children().not(".preloader").hide();
+//		$("#slider").find("div.body").children().not(".preloader").hide();
 		
 		// Show dynamic content inserted in #slider-content
-		$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
+//		$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
 	}
 		
 	// load contents of partial: views_mobile/venues/_show.html.erb into rightPane
@@ -53,7 +53,8 @@
 			// appropriate Rails controller/action.
 			var sliderTitle = this.data("title");
 			toggleSlider({
-				title: sliderTitle
+				title: sliderTitle,
+				sliderChild: "#slider-content"
 			});
 		}
 	});
@@ -102,7 +103,8 @@ if (debug)
 		var jqObj = $(this);
 		var sliderTitle = jqObj.data("title");
 		toggleSlider({
-			title: sliderTitle
+			title: sliderTitle,
+			sliderChild: "#slider-content"
 		});
 
 		event.preventDefault();

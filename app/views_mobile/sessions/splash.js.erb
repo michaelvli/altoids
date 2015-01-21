@@ -9,17 +9,20 @@ if (<%= params.has_key?(:create_user) && params[:create_user] %>) // Scenario #2
 	// #log_in_form) - see "alert messages" at https://github.com/bootstrap-ruby/rails-bootstrap-forms
 	// Thus, need to reload the page (vs. using .html() to insert status message from controller)
 	$("#sign_up_form").html("<%= escape_javascript(render partial: 'layouts/sign_up_form') %>")
+	var pageID = "#sign_up_form"
 }
 else // Scenario #1
 {
 	// error from logging in
 //	$("#log_in_form").html("<%= escape_javascript(render partial: 'layouts/log_in_form') %>");
 	$("#log_in_form").find("div.status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
+	var pageID = "#log_in_form";
 }
 
 // open slider
 toggleSlider({
 	state: "open",
+	sliderChild: pageID,
 	callback: function(){
 	}
 });
