@@ -1,4 +1,4 @@
-		<div class="navbar-pane">
+		<div id="sliderNavBar" class="navbar-pane">
 			<!-- Close (X) button -->
 			<%= button_tag class:'navbar-button', id:'btn-close' do %>
 				<span aria-hidden="true">&times;</span>
@@ -12,7 +12,7 @@
 		<div class="body">
 		
 			<!-- Preloader -->	
-			<%= render 'layouts/preloader' %>
+			<%= render "layouts/preloader" %>
 
 			<!-- anchor for status messages -->
 			<div class="status_message">
@@ -24,16 +24,25 @@
 			</div>
 
 			<!-- FILTER/SORT MENU -->
-			<%= render 'layouts/filter_sort_menu' %>
+			<div id="filter_sort_menu" class="collapse">
+				<%= render 'layouts/filter_sort_menu' %>
+			</div>
 			
 			<% if !signed_in? %>
 				<!-- LOG IN FORM -->
-				<div id='log_in_form' class='padding-15 collapse'>
+				<div id='log_in_form' class='padding-15 scrollable collapse'>
+					<!-- anchor for status messages -->
+					<div class="status_message">
+					</div>
+
 					<%= render partial: 'layouts/log_in_form' %>
 				</div>	
 					
 				<!-- SIGN UP FORM -->
-				<div id='sign_up_form' class='padding-15 collapse'>
+				<!-- #sign_up_form uses bootstrap_form_for's alert message protocol 
+					(vs .status_message element used in #log_in_form) - 
+					see "alert messages" at https://github.com/bootstrap-ruby/rails-bootstrap-forms -->					
+				<div id='sign_up_form' class='padding-15 scrollable collapse'>
 					<%= render partial: 'layouts/sign_up_form' %>
 				</div>
 			<% end %>

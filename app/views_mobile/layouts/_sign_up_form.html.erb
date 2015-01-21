@@ -1,6 +1,6 @@
 					<!-- need to @user instance variable in order to pass validation errors, if any -->
 					<%= bootstrap_form_for(@user, url: users_path, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
-			
+
 						<!-- turn off error summary -->
 						<%= f.alert_message "Please fix the errors below:", error_summary: false %>
 

@@ -18,12 +18,14 @@ class SessionsController < ApplicationController
 	# The logout parameter in the params hash is initiated when the user clicks on the logout button within the menu (views_mobile/sessions/menu.html.erb)
 	# This parameter is then passed into the url argument of the ajax request that is send to the splash action.
 	def splash
-		if (signed_in? && !params.has_key?(:logout)) # signed in user is not logging out
+
+#		if (signed_in? && !params.has_key?(:logout)) # signed in user is not logging out
+		if (signed_in?) # signed in user
 			redirect_to home_path
 		else
-			if (signed_in? && params.has_key?(:logout) && params[:logout] = true) # signed in user is logging out
-				sign_out
-			end	
+#			if (signed_in? && params.has_key?(:logout) && params[:logout] = true) # signed in user is logging out
+#				sign_out
+#			end	
 
 			@user = User.new # in case new user signs up
 			
@@ -44,6 +46,7 @@ class SessionsController < ApplicationController
 			respond_to do |format|
 				format.html
 				format.js { render :template => 'sessions/destroy.js.erb'}
+#				format.js { render js: "alert('Hello Rails');"}
 			end
 
 		end		
@@ -100,6 +103,7 @@ class SessionsController < ApplicationController
 		respond_to do |format|
 			format.html
 			format.js { render :template => 'sessions/home.js.erb', locals: {scroll: params[:scroll]} }
+#			format.js { render :js => "alert('in sessions/home');" }
 		end
 	end
 
@@ -188,6 +192,7 @@ class SessionsController < ApplicationController
    
 	end
   	
+	# destroy action is called via the logout button in menu (i.e. function initButtons_Menu())
 	def destroy
 		sign_out
 		flash[:success] = 'See you next time!'

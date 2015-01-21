@@ -1,6 +1,8 @@
-// show.js.erb is called by two scenarios: 
-// 1) show action in venues controller (initial call to show without any attempt to update), or 
-// 2) update action in venues controller (after a successful update)
+// show.js.erb is called by the following scenarios: 
+// 1) 	User views venue information in the rightPane prior to making any updates (i.e. executing the "show" 
+//		action in venues controller.
+// 2) 	After user successfully updates venue information (i.e. successfully executing the "update" action 
+//		in venues controller).
 
 	if (<%= params.has_key?(:updated) && params[:updated] %>) // Scenario #2 - successful update
 	{
@@ -23,23 +25,12 @@
 		// Show dynamic content inserted in #slider-content
 		$("#slider-content").show(); // show the relevant page: 1)dynamic content (#slider-content), 2) #sign_up_form, 3) #log_in_form, or 4) #filter_sort_menu
 	}
-
-	// sets the show.html.erb content in either the rightPane (if user clicks on a link in a new browser) or mainPane (normal flow)
-	if ($("#mainPane").find("#venue_show").length)
-	{
-		var pane = $("#mainPane");
-	}
-	else
-	{
-		var pane = $("#rightPane");
-		pane.find(".dynamicContent").html("<div id='venue_show'></div>");
-	}
-	
-	// load contents of partial: views_mobile/venues/_show.html.erb into mainPane or rightPane
-	pane.find("#venue_show").html("<%= escape_javascript(render partial: 'show') %>");
+		
+	// load contents of partial: views_mobile/venues/_show.html.erb into rightPane
+	$("#rightPane").find(".dynamicContent").html("<%= escape_javascript(render partial: 'show') %>");
 	
 	// preload contents for edit in case user wants to modify info
-	$("#slider-content").html("<div id='venue_edit'><%= escape_javascript(render partial: 'edit') %></div>");
+	$("#slider-content").html("<%= escape_javascript(render partial: 'edit') %>");
 
 	fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
 	
@@ -103,8 +94,9 @@
 		}
 	});
 	
-// BEGIN DEBUG: //
-/*
+// BEGIN DEBUG //
+if (debug)
+{	
 	<!-- rightPane: "Edit Venue" button -->
 	$("#venue_show").on("click", "button.bottomNavbarButton", function(event){
 		var jqObj = $(this);
@@ -117,7 +109,8 @@
 	});
 
 	<!-- slider: "Update Venue" button -->
-	$("#slider").on("click", "button.bottomNavbarButton", function(event){
+	<!-- need to use .off() preceding the .on() since #slider element is never "refreshed" via .html() -->
+	$("#slider").off("click", "button.bottomNavbarButton").on("click", "button.bottomNavbarButton", function(event){
 		// preLoadContent() has fadeInContent set to false which means function will not call loadContent();
 		// thus, .preloader will not be displayed (bc loadContent displays .preloader) which is why it must 
 		// be called here (and then faded out upon executing the code in the appropriate js.erb file
@@ -133,8 +126,8 @@
 				});
 			}
 		}); // close slider
-				
+		
 		event.preventDefault();
 	});
-*/
-// END DEBUG: //
+}
+// END DEBUG //

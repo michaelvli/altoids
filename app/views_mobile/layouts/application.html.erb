@@ -21,25 +21,57 @@
 			https://www.reinteractive.net/posts/116-12-tips-for-the-rails-asset-pipeline			
 			Precompiling assets: http://guides.rubyonrails.org/asset_pipeline.html#precompiling-assets
 			Preprocessing: http://edgeguides.rubyonrails.org/asset_pipeline.html
-	-->		
-	<%= stylesheet_link_tag "mobile-manifest", media: "all", "data-turbolinks-track" => true %>
+	-->
+	<%= stylesheet_link_tag "mobile-manifest", media: "all", "data-turbolinks-track" => true %>		
+
 
 	<!-- includes application.js (manifest file) -->
 	<%= javascript_include_tag "application.js", "data-turbolinks-track" => true %>
 
+
+<% if false %>
+
+<script data-turbolinks-track="true" src="/assets/jquery.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/jquery_ujs.js?body=1"></script>
+
+<script data-turbolinks-track="true" src="/assets/bootstrap/affix.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/alert.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/button.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/carousel.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/collapse.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/dropdown.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/tab.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/transition.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/scrollspy.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/modal.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/tooltip.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap/popover.js?body=1"></script>
+<script data-turbolinks-track="true" src="/assets/bootstrap.js?body=1"></script>
+
+<script data-turbolinks-track="true" src="/assets/altoids.js?body=1"></script>
+
+<% end %>
+
+
 	<%= csrf_meta_tags %>
 </head>
 
-<% if (cookies[:deviceType] == 'desktop' || cookies[:deviceType] == 'tablet' || cookies[:deviceType] == 'phone') %>
-	<body>
-<% else %>
-	<body class='collapse'> <!-- use <body ontouchstart=""> to simulate a "click" when hitting a button for touch screen devices - http://stackoverflow.com/questions/3885018/active-pseudo-class-doesnt-work-in-mobile-safari -->
-<% end %>	
+<% if false %>
+
+	<% if (cookies[:deviceType] == 'desktop' || cookies[:deviceType] == 'tablet' || cookies[:deviceType] == 'phone') %>
+		<body>
+	<% else %>
+		<body class='collapse'> <!-- use <body ontouchstart=""> to simulate a "click" when hitting a button for touch screen devices - http://stackoverflow.com/questions/3885018/active-pseudo-class-doesnt-work-in-mobile-safari -->
+	<% end %>	
+
+<% end %>
+
+<body>
 
 	<header>
 		<%= render 'layouts/navigation' %>
 	</header>
-	
+
 	<!-- MAIN CONTENT -->
 	<div id="mainPane">
 
@@ -57,16 +89,34 @@
 	</div>
 	
 	<!-- MENU -->
-	<div id="menu" class="collapse">
+	<!-- 
+		the div#menu element contains the .scrollable class because all content within the parental element
+		uses momentum scrolling 
+	-->
+	<div id="menu" class="collapse scrollable">
 		<%= render 'layouts/menu' %>
 	</div>
 
 	<!-- Right Pane -->
+	<!-- 
+		the div#rightPane element does not contain the .scrollable class because the rightPane may contain a
+		.navbar-fixed-bottom element which will move if included within element with the .scrollable class 
+		(i.e. the .navbar-fixed-bottom element must be outside of the element with the .scrollable class).  
+		Thus, need to put .scrollable class within the specific parent element that uses momentum scrolling. 
+		This may be in files loaded via ajax.
+	-->
 	<div id="rightPane" class="collapse">
 		<%= render 'layouts/rightPane' %>
 	</div>
 
 	<!-- Vertical Slider -->
+	<!-- 
+		the div#slider element does not contain the .scrollable class because the slider may contain a
+		.navbar-fixed-bottom element which will move if included within element with the .scrollable class 
+		(i.e. the .navbar-fixed-bottom element must be outside of the element with the .scrollable class).  
+		Thus, need to put .scrollable class within the specific parent element that uses momentum scrolling. 
+		This may be in files loaded via ajax.
+	-->
 	<div id="slider" class="collapse">
 		<%= render 'layouts/slider' %>
 	</div>

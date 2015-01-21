@@ -36,9 +36,10 @@ Plugins:
 	Type: Ruby Gem
 	
 */
-	
 $(function() {
 //	alert("DOM READY");	
+	debug = true; // global variable
+	
 	load_DOM_functions();			
 });
 
@@ -49,7 +50,7 @@ $(function() {
 	$(document).on('page:change', page_change_functions); // is triggered by page:change - https://github.com/rails/turbolinks
 //	$(document).on('page:update', page_update_functions); // is triggered by page:change PLUS on jQuery's ajaxSucess, if jQuery is available (otherwise you can manually trigger it when calling XMLHttpRequest in your own code) - https://github.com/rails/turbolinks
 //	$(document).on('page:load', page_load_functions); // is fired at the end of the loading process. - https://github.com/rails/turbolinks
-		
+
 function page_before_change_functions(){
 	alert("page_before_change");
 }
@@ -62,25 +63,12 @@ function page_receive_functions(){
 function page_change_functions(){
 //	alert("page_change");
 
-
 	// Load venue thumbnails
 	// Venue thumbnails are always loaded by AJAX bc need to check client for geolocation info.
 	// #venues is inserted into DOM via views_mobile/sessions/home.html.erb
 	if ($("#mainPane").find('#venues').length)
 	{
 		var url = "home";
-		loadContent(url); // default parameters for getting venues, sorted by events
-	}
-	
-	// Loads tearsheets
-	// Venue tearsheets are loaded by AJAX via two ways:
-	// 1.  rightPane - calls tearsheet.js.erb which loads the page (does not utilize code below)
-	// 2.  mainPane - User opens a tearsheet link directly from url ([domain]/tearsheet?id=1).
-	// 				- calls tearsheet.html.erb which inserts #tearsheet element within #mainPane,
-	//				calling code below:
-	if ($("#mainPane").find('#tearsheet').length || $("#mainPane").find('#venue_edit').length)
-	{
-		var url = window.location.href; // gets current url in browser
 		loadContent(url); // default parameters for getting venues, sorted by events
 	}
 	
@@ -92,11 +80,11 @@ function page_change_functions(){
 }
 
 function page_update_functions(){
-	alert("page_update");
+//	alert("page_update");
 }
 
 function page_load_functions(){
-	alert("page_load");
+//	alert("page_load");
 }
 
 function load_DOM_functions(){
@@ -107,7 +95,11 @@ function load_DOM_functions(){
 	{		
 		initTouchOnCarousel(); // initialize left/right swiping on carousel
 		initCarousel();  // initializes carousel with one active carousel item and sets slide interval speed
-		initTogglers();  // enables mobile screen to switch between the four main containers: #menu, #mainPane, #slider, and #specific-content
+		initButtons_Menu();  // binds touch buttons for #menu element
+		initButtons_Main();  // binds touch buttons for #mainPane element
+		initButtons_Right();  // binds touch buttons for #rightPane element
+		initButtons_Slider();  // binds touch buttons for #slider element
+		
 //		hijackMenuButtons();
 //		initPopState(); // 1) binds popstate event, 2) loads url contents via ajax
 //		getTearsheet();
@@ -168,24 +160,11 @@ Source: http://www.learningjquery.com/2009/02/slide-elements-in-different-direct
 
 Platform: mobile only
 */
-function initTogglers(){
-	
-	// mainPane: binds menu button to toggle menu
-	bindTouchButtons({
-		scope: "#navbar",
-		buttonCollection: "#menu_button",
-		mode: "toggle_one",
-		callback: function(){
-			// toggle menu
-			togglePane({
-				pane: "menu"
-			});
-		}
-	});	
-	
-// NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.
-	// Menu pane: enables touch behavior for "log out" button
-	// Rails :remote => true attribute (found in the html of the "log out" button in the menu bar) is not necessary for touch events (but necessary for click events)
+function initButtons_Menu(){
+		
+// Destroy action is NOT called via data-method=delete; instead, passing "logout" parameter instead (see below)
+// Menu pane: enables touch behavior for "log out" button
+// Rails :remote => true attribute (found in the html of the "log out" button in the menu bar) is not necessary for touch events (but necessary for click events)
 //	bindTouchButtons({
 //		scope: "#menu",
 //		buttonCollection: ".btn-glass[data-method=delete]",
@@ -205,18 +184,20 @@ function initTogglers(){
 //	});
 
 	// Menu pane: binds "log out" button in menu
-	// for mobile, not using destroy action in session controller to log out bc can't redirect an ajax call 
-	// to the splash action. Thus, created code in splash action to check if user has actively pressed the 
-	// logout button.  Code below binds logout button from the menu and sends an ajax request to the session 
-	// controller, passing logout in the params hash which triggers the proper logic in the controller to
-	// log the user out and sending a response which includes the splash page.
+	// for mobile, using destroy action:
+	// 1.  pass url = "logout" to router
+	// 2.  router matches url to "destroy" action in sessions controller
+	// 3.  controller executes "sign_out" method
+	// 4.  controller redirects to splash action
+	// 5.  because step #1 is ajax, splash.js.erb is called	
 	bindTouchButtons({
 		scope: "#menu",
 		buttonCollection: ".btn-glass[data-button=logout]",
 		mode: "toggle_one",
 		callback: function(){
 			
-			var url = "splash?logout=true";
+//			var url = "splash?logout=true";
+			var url = "logout";
 			loadContent(url); // default parameters for getting venues, sorted by events
 			
 			togglePane({
@@ -280,7 +261,7 @@ function initTogglers(){
 			// 2) #sign_up_form
 			// 3) #log_in_form
 			// 4) #filter_sort_menu
-			$("#slider").find("div.body").children().hide(); // hide all pages within #slider-body
+			$("#slider").find("div.body").children().not(".status_message").hide(); // hide all pages within #slider-body
 			$(pageID).show(); // show the relevant page
 
 			// close menu pane
@@ -297,62 +278,121 @@ function initTogglers(){
 		}
 	});
 
-	// Slider pane: binds submit buttons in "sign up" and "log in" forms
+	
+// BEGIN DEBUG //
+	if (debug)
+	{	
+		// Menu: "sign up" and "log in" buttons that open the slider to show the appropriate form (vs. submit the form with user information)
+		$("#menu, #mainPane").on("click", "#sign_up_button, #log_in_button, #create_free_account_button", function(event){
+			button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
+			var pageID = "#" + button_obj.data('page');
+
+			// sets Slider's title
+			var sliderTitle = $(this).data('title');
+
+			// Slider has 4 nested pages (and only one should be displayed at a time):
+			// 1) #slider-content (dynamic content retrieved by ajax goes here)
+			// 2) #sign_up_form
+			// 3) #log_in_form
+			// 4) #filter_sort_menu
+			$("#slider").find("div.body").children().not(".status_message").hide(); // hide all pages within #slider-body
+			$(pageID).show(); // show the relevant page
+				
+			// close menu pane
+			togglePane({
+				pane: "menu",
+				state: "close",
+				callback: function(){
+					toggleSlider({ // open vertical slider after menu is closed
+						title: sliderTitle
+					});	
+					$("#menu_button").removeClass("active"); // ensures menu_button is not active
+				}
+			});	
+		
+			event.preventDefault();
+		});
+		
+	// NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.	
+		// used in conjunction with Rails :remote => true attribute (found in the html of the "log out" button in the menu bar)
+	//	$("#menu").on("click", ".btn-glass[data-method=delete]", function(event){
+	//		
+	//		var url = $(this).attr("href");
+	//		loadContent(url, {
+	//			requestMethod: "delete"
+	//		});
+	//		
+	//		togglePane({
+	//			pane: "menu",
+	//			state: "close"
+	//		});
+	//		
+	//		event.preventDefault();
+	//	});
+		
+		// Menu: "logout" menu button
+		$("#menu").on("click", ".btn-glass[data-button=logout]", function(event){
+
+	//		var url = "splash?logout=true";
+			var url = "logout";
+			loadContent(url); // default parameters for getting venues, sorted by events
+
+			togglePane({
+				pane: "menu",
+				state: "close"
+			});	
+
+			event.preventDefault();
+		});
+		
+		// Menu: menu buttons except for "logout"
+	//	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
+		$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
+			var jqObj = $(this);
+			togglePane({
+				pane: "menu",
+				state: "close",
+				callback: function(){
+					preLoadContent(jqObj); // gets the parent "form" element from the jquery object, "$(this)"
+				}
+			});
+			
+			event.preventDefault();
+		});
+	}
+// END DEBUG //
+}
+
+function initButtons_Main(){
+	
+	// mainPane: binds menu button to toggle menu
 	bindTouchButtons({
-		scope: "#sign_up_form, #log_in_form",
-		buttonCollection: ".btn",
-		stopPropagation: true, // need .stopPropagation because element overlaps with other .btns in #slider
-		mode: "flash",
+		scope: "#navbar",
+		buttonCollection: "#menu_button",
+		mode: "toggle_one",
 		callback: function(){
-			toggleSlider(); // close slider
-			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
-			// method of either:
-			// 1. the "keypress" event, or
-			// 2. the "touchend" event
-			// within bindTouchButtons.  
-			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
-			// element within the "scope" parameter of this function.  On the other hand, if the callback is
-			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
-			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
-			// regardless whether it represents the "input" element or buttonCollection to determine the 
-			// appropriate Rails controller/action.
-			preLoadContent(this);
+			// toggle menu
+			togglePane({
+				pane: "menu"
+			});
 		}
 	});
-	
-	// Slider pane: closes slider
-	bindTouchButtons({
-		scope: "#slider",
-		buttonCollection: "#btn-close",
-		mode: "flash",
-		callback: function(){
-			toggleSlider(); // close slider
-			$("#logo").focus(); // hides keyboard on iOS
-		}
-	});
-	
-	// Slider pane: binds the "Apply Filters" button
-	bindTouchButtons({
-		scope: "#filter_sort_menu",
-		buttonCollection: "button.submit",
-		mode: "flash",
-		callback: function(){
-			toggleSlider();
-			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
-			// method of either:
-			// 1. the "keypress" event, or
-			// 2. the "touchend" event
-			// within bindTouchButtons.  
-			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
-			// element within the "scope" parameter of this function.  On the other hand, if the callback is
-			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
-			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
-			// regardless whether it represents the "input" element or buttonCollection to determine the 
-			// appropriate Rails controller/action.
-			preLoadContent(this);
-		}
-	});
-	
+
+// BEGIN DEBUG //
+	if (debug)
+	{	
+		// Navbar: "menu" icon button
+		$("#navbar").on("click", "#menu_button", function(){
+			togglePane({
+				pane: "menu"
+			});
+		});
+	}
+// END DEBUG //	
+}
+
+function initButtons_Right(){
+
 	// rightPane: toggles back arrow button
 	bindTouchButtons({
 		scope: "#navbar-rightPane",
@@ -363,133 +403,101 @@ function initTogglers(){
 				callback: function(){
 					// clear title and contents of rightPane after it closes
 					$("#navbar-rightPane").find(".dynamicTitle").text("");	// clear title
-					$("#rightPane").find(".dynamicContent").text("");	// clear content
+					var rightPane = $("#rightPane");
+					rightPane.find(".dynamicContent").text("");	// clear content
+					rightPane.css("position", "fixed").css("top", "52px"); // reset position to fixed - when user toggles map, features, or hours button on tearsheet, position = relative and top = 0px (allows .animate({scrolltop: 0}) to function).
 				}
 			});
 		}
 	});
-	
-// BEGIN DEBUG //	
-/*
-	// Navbar: "menu" icon button
-	$("#navbar").on("click", "#menu_button", function(){
-		togglePane({
-			pane: "menu"
+
+// BEGIN DEBUG //
+	if (debug)
+	{	
+		$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
+			togglePane({
+				callback: function(){
+					// clear title and contents of rightPane after it closes
+					$("#navbar-rightPane").find(".dynamicTitle").text("");	// clear title
+					var rightPane = $("#rightPane");
+					rightPane.find(".dynamicContent").text("");	// clear content
+					rightPane.css("position", "fixed").css("top", "52px"); // reset position to fixed - when user toggles map, features, or hours button on tearsheet, position = relative and top = 0px (allows .animate({scrolltop: 0}) to function).
+				}
+			});
 		});
-	});
+	}
+// END DEBUG //	
+}
 
-	// Menu: "sign up" and "log in" buttons that open the slider to show the appropriate form (vs. submit the form with user information)
-	$("#menu, #mainPane").on("click", "#sign_up_button, #log_in_button, #create_free_account_button", function(event){
-		button_obj = $(this) // button object is created from the "this" parameter passed by the callback in bindTouchButtons()
-		var pageID = "#" + button_obj.data('page');
+function initButtons_Slider(){
 
-		// sets Slider's title
-		var sliderTitle = $(this).data('title');
-
-		// Slider has 4 nested pages (and only one should be displayed at a time):
-		// 1) #slider-content (dynamic content retrieved by ajax goes here)
-		// 2) #sign_up_form
-		// 3) #log_in_form
-		// 4) #filter_sort_menu
-		$("#slider").find("div.body").children().hide(); // hide all pages within #slider-body
-		$(pageID).show(); // show the relevant page
-			
-		// close menu pane
-		togglePane({
-			pane: "menu",
-			state: "close",
-			callback: function(){
-				toggleSlider({ // open vertical slider after menu is closed
-					title: sliderTitle
-				});	
-				$("#menu_button").removeClass("active"); // ensures menu_button is not active
-			}
-		});	
-	
-		event.preventDefault();
-	});
-	
-// NOT USING DESTROY ACTION TO LOGOUT USER.	Instead, using code within splash action of session controller for logout functionality.	
-	// used in conjunction with Rails :remote => true attribute (found in the html of the "log out" button in the menu bar)
-//	$("#menu").on("click", ".btn-glass[data-method=delete]", function(event){
-//		
-//		var url = $(this).attr("href");
-//		loadContent(url, {
-//			requestMethod: "delete"
-//		});
-//		
-//		togglePane({
-//			pane: "menu",
-//			state: "close"
-//		});
-//		
-//		event.preventDefault();
-//	});
-	
-	// Menu: "logout" menu button
-	$("#menu").on("click", ".btn-glass[data-button=logout]", function(event){
-
-		var url = "splash?logout=true";
-		loadContent(url); // default parameters for getting venues, sorted by events
-
-		togglePane({
-			pane: "menu",
-			state: "close"
-		});	
-
-		event.preventDefault();
+	// Slider pane: binds submit buttons in "sign up" and "log in" forms
+	bindTouchButtons({
+		scope: "#sign_up_form, #log_in_form",
+		buttonCollection: ".btn",
+		stopPropagation: true, // need .stopPropagation because element overlaps with other .btns in #slider
+		mode: "flash",
+		callback: function(){		
+			// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+			// method of either:
+			// 1. the "keypress" event, or
+			// 2. the "touchend" event
+			// within bindTouchButtons.  
+			// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+			// element within the "scope" parameter of this function.  On the other hand, if the callback is
+			// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+			// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+			// regardless whether it represents the "input" element or buttonCollection to determine the 
+			// appropriate Rails controller/action.
+			var jqObj = this;
+			toggleSlider({
+				callback: function(){
+					// NOTE: need to call preloadcontent after slider has closed; otherwise, it's possible 
+					// that the slider will not be properly "closed" (i.e. "display" property is not reset
+					// to "none", and "top" is not reset to "0") which would cause abnormal slider behavior
+					// next time the user opens the slider.
+					preLoadContent(jqObj);
+				}
+			}); // close slider
+		}
 	});
 	
-	// Menu: menu buttons except for "logout"
-//	$("#menu").on("click", ".btn-glass[data-method!=delete]", function(event){
-	$("#menu").on("click", ".btn-glass[data-button!=logout]", function(event){
-		var jqObj = $(this);
-		togglePane({
-			pane: "menu",
-			state: "close",
-			callback: function(){
-				preLoadContent(jqObj); // gets the parent "form" element from the jquery object, "$(this)"
-			}
+	// Slider pane: closes slider
+	bindTouchButtons({
+		scope: "#slider",
+		buttonCollection: "#btn-close",
+		mode: "flash",
+		callback: function(){
+			toggleSlider(); // close slider
+		}
+	});
+	
+// BEGIN DEBUG //
+	if (debug)
+	{	
+		// Slider: "sign up" and "log in" buttons to submit a form (vs. opening slider with appropriate form)
+		$("#sign_up_form, #log_in_form").on("click", "input.btn", function(event){
+			var jqObj = $(this);
+			toggleSlider({
+				callback: function(){
+					// NOTE: need to call preloadcontent after slider has closed; otherwise, it's possible 
+					// that the slider will not be properly "closed" (i.e. "display" property is not reset
+					// to "none", and "top" is not reset to "0") which would cause abnormal slider behavior
+					// next time the user opens the slider.
+					preLoadContent(jqObj);
+				}
+			}); // close slider
+
+			event.stopPropagation(); // need .stopPropagation because element overlaps with other .btns in #slider
+			event.preventDefault();
 		});
-		
-		event.preventDefault();
-	});
-	
-	// Slider: "sign up" and "log in" buttons to submit a form (vs. opening slider with appropriate form)
-	$("#sign_up_form, #log_in_form").on("click", ".btn", function(event){
 
-		toggleSlider(); // close slider
-		preLoadContent($(this));
-
-		event.stopPropagation(); // need .stopPropagation because element overlaps with other .btns in #slider
-		event.preventDefault();
-	});
-
-	// Slider: "Apply Filter" button
-	$("#filter_sort_menu").on("click", "button.submit", function(event){
-		toggleSlider(); // close slider
-		preLoadContent($(this)); // gets the parent "form" element from the jquery object, "$(this)"
-		
-		event.preventDefault();
-	});
-
-	// Slider: closes slider
-	$("#slider").on("click", "#btn-close", function(){
-		toggleSlider(); // close slider
-		$("#logo").focus(); // hides keyboard on iOS	
-	});
-
-	// rightPane: back arrow button
-	$("#navbar-rightPane").on("click", "#back_arrow_button", function(){
-		togglePane({
-			callback: function(){
-				$("#navbar-rightPane").find(".dynamicTitle").text("");	// empty title and contents of rightPane after it closes
-				$("#rightPane").find(".dynamicContent").text("");	// empty title and contents of rightPane after it closes				
-			}
+		// Slider: closes slider
+		$("#slider").on("click", "#btn-close", function(){
+			toggleSlider(); // close slider
 		});
-	});
-*/
-// END DEBUG //
+	}
+// END DEBUG //	
 }
 
 
@@ -619,6 +627,8 @@ function bindTouchButtons(options){
 			}
 			else if (settings.mode == "toggle_one")
 			{
+// Error: clicking a menu button the second time untoggle the active state			
+//alert("uh oh: " + button);
 				$(settings.scope + " " + settings.buttonCollection).not(button).removeClass("active"); // only one sort button can be active at a time
 				// setTimeout provides a small delay before putting the button in .active state.
 				// Without the delay, button will not reach .active state, probably because the previous function 
@@ -694,6 +704,11 @@ function preLoadContent(jqObj, options){
 	var serializedData = form.serialize() || "";
 	var url = form.attr("action") || jqObj.attr("href"); // get the action attribute from the relevant form, if one exists; otherwise, get the url of the button 
 
+// 	Need setTimeout bc alert box messes up the touchevent lifecycle - see notes above					
+//	setTimeout(function () {
+//		alert(url);
+//	}, 0);	
+
 	var settings = $.extend({
 		// These are the defaults.
 		fadeInContent: true
@@ -756,7 +771,7 @@ function loadContent(url, options){
 	}, options );
 
 	var latitude = checkSessionStorage('latitude'), 
-		longitude = checkSessionStorage('longitude')
+		longitude = checkSessionStorage('longitude');
 		
 	// add latitude and longitude information if it exists to the serialized data
 	if (latitude != 'undefined' &&  longitude!= 'undefined')
@@ -767,11 +782,11 @@ function loadContent(url, options){
 	
 //	var screenHeight = $(window).outerHeight(); // get the height of the screen, including padding and borders
 //	$("#" + settings.pane).find(".preloader").css("height", screenHeight).show();
-
+		
 	$("#logo").focus(); // hides keyboard on iOS
 	
 	$("#" + settings.pane).find(".preloader").show();
-	
+
 	// use AJAX to retrieve dynamic content, passing the url and serialized (and redundant-free) parameters
 	var request = 	$.ajax({
 						type: settings.requestMethod,
@@ -803,7 +818,8 @@ function loadContent(url, options){
 	
 	request.fail(function(){
 //		alert("error!");
-	});		
+	});
+	
 }
 
 /*
@@ -813,32 +829,35 @@ Called by:
 	2) destroy.js.erb
 */
 function fadeInContent(){
+
+
 	var	loadedImageCount = 0;
-	
+
 	if ($("#myCarousel").length)
 	{
-		var selector = $(".item.active");
+		var selector = $("div.item.active");
 	}
 	else
 	{
 		var selector = $(".thumbnail");
 
-		// return user to scroll position prior to opening menu					
+		// return scrollbar to top prior to fading in loaded content
 		$('body').animate({
 				scrollTop: 0
 			}, 0,
-			function(){}
+			function(){
+			}
 		);
 	}
 	var imageCount = selector.length;
-
+	var stopwatch = 0;
 	var refreshId = setInterval(function() { // this code is executed every 500 milliseconds:
-						loadedImageCount = 0;	
-			
+						loadedImageCount = 0;
+						
 						selector.each(
 							function(){
 
-								 if (parseInt($(this).find("img").css("width"), 10) >= 150)
+								 if (parseInt($(this).find("img").css("height"), 10) >= 100)
 								 {
 									loadedImageCount = loadedImageCount + 1
 								 }
@@ -847,10 +866,20 @@ function fadeInContent(){
 
 						if (loadedImageCount >= imageCount)
 						{
-							clearInterval(refreshId);
-							$(".preloader").fadeOut(400);
+							clearInterval(refreshId); // ends setInterval()
+							$("div.preloader").fadeOut(400);
 						}
+						else
+						{
+							stopwatch = stopwatch + 200;
+							if (stopwatch >= 20000) // 10 seconds
+							{
+								alert("Please check your connection and reload browser");
+								clearInterval(refreshId); // ends setInterval()
+							}
+						}						
 					}, 200);
+
 }
 
 
@@ -914,11 +943,20 @@ function initTearsheetOptions(button_obj){
 				navbarHeight = $("#navbar").outerHeight(), // height of the navbar
 				scrollUpPixels = selectorTopPosition + selectorHeight - screenHeight + navbarHeight;
 
-			$("body").animate({
-				scrollTop: scrollUpPixels + 'px'
-				}, 400, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
-				function(){}
-			);
+				
+			// position can't be "fixed" in order for .animate({scrolltop: 0}) below to function.
+			// position is reset to "fixed" once the user clicks on the backbutton on the rightPane to return to mainPane
+			$("#rightPane").css("position", "relative").css("top", "0").promise().done(function(){
+
+				$("body").animate({
+					scrollTop: scrollUpPixels + 'px'
+					}, 400, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
+					function(){
+					}
+				);			
+				
+			});
+			
 	
 		});// opens a hidden container with the toggled content
 	}
@@ -965,15 +1003,15 @@ function togglePane(options){
 	var navbar_selector = $("#navbar-"+settings.pane); // either "menu" or "rightPane"
 
 	// pixelsScrolled and mainPaneTopPosition are used to take the user back to where they had scrolled in the mainPane prior to toggling the menu or rightPane
-	var pixelsScrolled = $("body").scrollTop(); // stores the number of pixels that the user has scrolled from the top in #mainPane prior to opening menu
-	var mainPaneTopPosition = mainPane.position().top; // gets the vertical position of mainPane - this variable is used to "reset" the scrolling position of mainPane, when closing the menu or rightPane.
+//	var pixelsScrolled = $("body").scrollTop(); // stores the number of pixels that the user has scrolled from the top in #mainPane prior to opening menu
+//	var mainPaneTopPosition = mainPane.position().top; // gets the vertical position of mainPane - this variable is used to "reset" the scrolling position of mainPane, when closing the menu or rightPane.
 
 	// toggle rightPane or menu?
 	if (settings.pane == 'menu') // if menu
 	{
 		// need width of menuButton and margin between menuButton and left edge of navbar in order to calculate the 
 		// distance that the menu bar should slide while maintaining an exposed menu button.
-		// substracted an extra -1px in animateLeft and animateRight to remove gaps
+		// subtracted an extra -1px in animateLeft and animateRight to remove gaps
 		var menuButton = $('#menu_button'),
 			menuButtonWidth = menuButton.outerWidth(), // width of menu button including border and padding
 			margin = menuButton.offset().left, // margin between left edge of navbar and menu button.
@@ -997,30 +1035,32 @@ function togglePane(options){
 		if (settings.title != "")
 		{
 			navbar_selector.find(".dynamicTitle").text(settings.title); // insert name of the venue for the title of the rightPane
-		}	
-		navbar_selector.show(); // menu/rightPane starts off as display: none
-
-		$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to showing the selected pane
+		}
+		
+		// need to display either menu or rightPane but not both at the same time; otherwise, they may overlap each other
+		$("#navbar-menu, #navbar-rightPane").hide(); // ensures navbar for menu/rightPane are hidden prior to opening the selected pane
+		$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to opening the selected pane
+		navbar_selector.show(); // navbar for menu/rightPane starts off as display: none
 		pane_selector.show(); // menu/rightPane starts off as display: none;
 
 		// Change css of mainPane in order to "fix" its position so it doesn't move around when user scrolls on the open menu
-		mainPane.css('position', 'fixed') // Need to use "fixed" position in order to prevent user from scrolling #mainPane when menu is open.
-				.css('top', navbarHeight - pixelsScrolled); // Adjust height of #mainPane to account for the number of pixels that have been scrolled
+//		mainPane.css('position', 'fixed') // Need to use "fixed" position in order to prevent user from scrolling #mainPane when menu is open.
+//				.css('top', navbarHeight - pixelsScrolled); // Adjust height of #mainPane to account for the number of pixels that have been scrolled
 
-		// need to use absolute position of contents within the .preloader so that those elements (preloader icon and "loading...") will also slide with the rest of the mainPane
-		var preloaderContent = mainPane.find(".preloader").find(".absolute-center"); // selects for the contents within .preloader in mainPane or rightPane
-		var screenHeight = $(window).height(); // height of the viewport
-		var navbarHeight = $("#navbar").outerHeight(); // height of the navbar
+		// need to use absolute position of contents within the .preloader so that those elements (preloader icon and "loading...") will also slide left or right with the rest of the mainPane
+//		var preloaderContent = mainPane.find(".preloader").find(".absolute-center"); // selects for the contents within .preloader in mainPane or rightPane
+//		var screenHeight = $(window).height(); // height of the viewport
+//		var navbarHeight = $("#navbar").outerHeight(); // height of the navbar
 		
-		preloaderContent.css("position", "absolute") // change position from fixed to absolute in order to allow for sliding with rest of the pane elements.
-						.css("top",  .5*screenHeight - navbarHeight); // adjust top for absolute positioning to match position: absolute, top: 50%
+//		preloaderContent.css("position", "absolute") // change position from fixed to absolute in order to allow for sliding with rest of the pane elements.
+//						.css("top",  .5*screenHeight - navbarHeight); // adjust top for absolute positioning to match position: absolute, top: 50%
 
 		// return user to scroll position prior to opening menu (i.e. top of menu pane)
-		$('body').animate({
-			scrollTop: 0 + 'px'
-			}, 1, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
-			function(){}
-		);
+//		$('body').animate({
+//			scrollTop: 0 + 'px'
+//			}, 1, // can't use 0 because it will cause #mainPane to scroll for a second before executing animate, creating a "flicker" right before the menu slides open.
+//			function(){}
+//		);
 		
 		// open pane
 		slideContent.animate({
@@ -1055,6 +1095,8 @@ function togglePane(options){
 		// hide temporary border; otherwise, it will be noticable when menu is closed
 		navbar.css("border-left", "0"); // navbar left-border should be hidden when menu is closed
 		
+//		$("#menu").css("-webkit-overflow-scrolling", "none");
+				
 		// slide menu to the left
 		// NOTE: .promise() may not be executed if selectors in "slideContent" are dynamically removed
 		// such as when the filter button may be removed while executing function preloadContent() or 
@@ -1063,26 +1105,29 @@ function togglePane(options){
 			left: 0, // for float left elements (i.e. menu button)
 			right: 0 // for float right elements (i.e. logo)
 		}, 400).promise().done(function(){ // see NOTE above - callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(slideContent)
+		
+//			$("#navbar-menu, #navbar-rightPane").hide(); // ensures navbar for menu/rightPane are hidden prior to opening the selected pane
+//			$("#menu, #rightPane").hide(); // ensures all panes are hidden prior to opening the selected pane
+
 			// return mainPane to css state prior to opening menu
-			mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
-					.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
+//			mainPane.css('position', 'absolute') // Undo fixed position after menu is closed to #mainPane is scrollable again.
+//					.css('top', navbarHeight); // Undo fixed position after menu is closed to #mainPane is scrollable again.					
 					
-			navbar_selector.hide(); // menu/rightPane starts off as display: none;			
-			pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
+//			navbar_selector.hide(); // menu/rightPane starts off as display: none;			
+//			pane_selector.hide(); // hide menu/rightPane when pane is closing so it doesn't overflow
 			
 			// need to revert back to fixed position of contents within the .preloader so that those elements (preloader icon and "loading...") won't move around if user scrolls up or down.
-			mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
-					.css("position", "fixed") // return position from absolute to fixed.
-					.css("top", "50%"); // return top to 50%
+//			mainPane.find(".preloader").find(".absolute-center") // selects for the contents within .preloader in mainPane or rightPane.
+//					.css("position", "fixed") // return position from absolute to fixed.
+//					.css("top", "50%"); // return top to 50%
 
 			// return user to scroll position of mainPane after closing menu or rightPane
-			$('body').animate({
-				scrollTop: navbarHeight - mainPaneTopPosition  + 'px'
-				}, 0,
-				function(){
-
-				}
-			);
+//			$('body').animate({
+//				scrollTop: navbarHeight - mainPaneTopPosition  + 'px'
+//				}, 0,
+//				function(){
+//				}
+//			);
 					
 			// execute callback if one was provided
 			if (settings.callback != "")
@@ -1113,11 +1158,13 @@ Platform: mobile only
 */
 function toggleSlider(options){
 	var slider = $('#slider');
-	var navbar = slider.find(".navbar-pane");
-	var body = slider.find(".body");
+	var sliderNavbar = slider.find(".navbar-pane");
+	var sliderBody = slider.find(".body");
 	var mainPane = $('#mainPane');
 	var rightPane = $('#rightPane');
+	var rightPaneNavbarHeight = $("#navbar-rightPane").outerHeight();
 	var bottomButton = slider.find(".navbar-fixed-bottom");
+	var sliderScrollableContent = slider.find(".scrollable");
 	
 	var settings = $.extend({
 		// These are the defaults.
@@ -1126,11 +1173,8 @@ function toggleSlider(options){
 		callback: ""
 	}, options );
 
-	if (settings.title != "")
-	{
-		$('#slider').find(".dynamicTitle").text(settings.title);
-	}	
-
+	$("#logo").focus(); // hides keyboard on iOS
+			
 	// 	Need to know the bottom of the browser window for 2 reasons:
 	//	1. Open slider: This is where the vertical slide "first appears" before sliding up to top of browser window
 	// 	2. Close slider: this the destination point to where the vertical slider will disappear as it slides down from top of browser window
@@ -1142,43 +1186,93 @@ function toggleSlider(options){
 	// 2) be fixed at the end of the .animate() function
 	var pixelsFromTop = $(window).scrollTop();
 
-	if (settings.state == "open" || settings.state == "" && slider.css('display') == 'none') // if slider is closed, then open
+	// set title within navbar of slider
+	if (settings.title != "")
 	{
-		var sliderEndPosition = pixelsFromTop;
-		var sliderStartPosition = screenHeight + pixelsFromTop; // get the height of the screen, including padding and borders
+		$('#slider').find(".dynamicTitle").text(settings.title);
 	}
+
+	if (settings.state == "open" || (settings.state == "" && slider.css('display') == 'none')) // if slider is closed, then open
+			{			
+		// slide needs to open with the scrollbar at the top.  To set scrollbar to the top without disturbing
+		// the contents of rightPane, need to change position of rightPane "static" to "fixed" prior to 
+		// setting the scrollbar to the top
+//		rightPane.css("position", "fixed").css("top", -pixelsFromTop + rightPaneNavbarHeight); // freeze rightPane so it doesn't move as slider opens
+//		$("html, body").animate({ scrollTop: 0 }, 0); // move scrollbar to top
+
+		// slider opens from bottom to top
+		slider.css('top', screenHeight); // sets the top of the slider to the bottom of the screen prior to opening
+
+		// slider starts off as display: none; thus, need to .show() before calling .animate()
+		slider.show().animate({
+			'top': 0 + 'px' // slides the vertical slider to top or bottom of screen.
+			}, 2000).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(sliderContent)
+				// hide non-slider content; otherwise, if user scrolls down far enough, content from the other panes may be visible
+//				mainPane.hide();
+//				rightPane.hide();
+
+				bottomButton.fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
+
+				// need to "fix" the slider navbar to top so it will remain visible as user scrolls in the slider
+				sliderNavbar.css("position", "fixed").css("top", 0); // transition from relative to fixed positioning
+				var sliderNavbarHeight = sliderNavbar.outerHeight();
+				sliderBody.css('top', sliderNavbarHeight); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
+				
+				// execute callback if one was provided
+				if (settings.callback != "")
+				{
+					// .call() is a javascript function that invokes the callback represented by 
+					// settings.callback() while passing the jquery object, "$(this)", that will set
+					// the value of "this" in the callback.
+					settings.callback.call($(this));
+					// alternatively, if the callback contains argument in the anonymous 
+					// function - i.e. function(argumentRepresenting$This){} used to 
+					// represent "$(this)", it's possible to use the following instead (without the call method):
+					// settings.callback($(this));					
+				}
+			}
+		); // .animate() - open slider
+	} // if {open slider }
 	else // if slider is open, then close
 	{
-		var sliderEndPosition = screenHeight + pixelsFromTop; // get the height of the screen, including padding and borders
-		var sliderStartPosition = pixelsFromTop;
-		
-//		$("#slider").find("div.navbar-fixed-bottom").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
-	
-		mainPane.show(); // hide content underneath slider in case of overflow
-		rightPane.show();
+		slider.find("div.navbar-fixed-bottom").hide(); // hide "apply filters" button - executes before slider starts to close for a smoother UI
+		mainPane.show(); // show content underneath slider before slider opens
+		rightPane.show(); // show content underneath slider before slider opens
 		bottomButton.fadeOut(200); // hide "apply filters" button prior to slider closing
-	}
-
-	slider.css('top', sliderStartPosition); // sets the top of the slider to the top or bottom of the screen
-	
-	navbar.css('position', 'relative'); // ensure that .navbar within #slider starts off as relative positioning; otherwise, the navbar will not "slide down" when closing the slider
-	body.css('top', 0); // ensures that .body within #slider is directly under the navbar (used when slider is closing); otherwise, body of the slider will be "too far" down from the slider navbar
-
-	slider.animate({
-		'top': sliderEndPosition + 'px', // slides the vertical slider to top or bottom of screen.
-		'display': 'show' // shows the contents of the vertical slide as it slides; after animation is over, #slider will revert back to display: none
-		}, 400).promise().done(function(){ // callback is executed only when animation is complete; putting the .callback in success handler for .animation() method will results in callback being called multiple times, once for each selector in $(sliderContent)
-			// need to .toggle() the slider since it starts off as display: none; else, slider will disappear after animation is complete.
-			if ($(this).toggle().css('display') == "block") // if slider is open after toggle, hide mainPane
-			{
-				mainPane.hide();
-				rightPane.hide();
-				bottomButton.fadeIn(200); // show "apply filters" button - executes after slider is open for a smoother UI
+		
+		// move scrollbar of rightPane to where the user left off prior to opening slider:
+		// 1.  get vertical position or rightPane
+		// 2.  make rightPane scrollable by removing "fixed" position
+		// 3.  move scrollbar to appropriate position
+		
+		// #1 - gets the vertical position of rightPane and height of slider navbar
+		// NOTE: needs to be grabbed before position reverts to "static"
+		var rightPaneTopPosition = $("#rightPane").position().top;
+		var sliderNavbarHeight = sliderNavbar.outerHeight();
+		
+		// #2 - remove "fixed" position
+//		rightPane.css("position", "static"); // return rightpane to default positioning (i.e. undo "fixed" position)
+		
+		// #3 - move scrollbar to original position before user opened slider
+		// "body" element is used in place of "#rightPane" because rightPane is not a scrollable element
+		$("body").animate({
+			scrollTop: -(rightPaneTopPosition - sliderNavbarHeight) + 'px'
+			}, 0,
+			function(){
 			}
-			var navbarHeight = navbar.outerHeight();
-			navbar.css('position', 'fixed'); // transition from relative to fixed positioning
-			body.css('top', navbarHeight); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
-			
+		);
+		
+		$("#slider, #sliderNavBar").animate({
+			'top': screenHeight + 'px' // slides the vertical slider to top or bottom of screen.
+		}, 2000).promise().done(function(){
+			// reset the slider, slider nav bar, and slider body to original css prior to opening (i.e. prepares
+			// the slider for when user opens it again)
+			sliderNavbar.css("position", "static"); // transition from relative to fixed positioning
+			sliderBody.css('top', 0); // move .body within #slider down by the height of the .header; otherwise, body of the slider will run underneath the bar
+			sliderScrollableContent.scrollTop(0); // move scrollbar for all .scrollable elements within #slider to the top
+			slider.css('top', 0) // return slider to default top: 0 (i.e. undo top: screenHeight)
+				  .hide(); // hide slider
+				  
 			// execute callback if one was provided
 			if (settings.callback != "")
 			{
@@ -1191,11 +1285,11 @@ function toggleSlider(options){
 				// represent "$(this)", it's possible to use the following instead (without the call method):
 				// settings.callback($(this));					
 			}
-		}
-	);
+		});
+	} // else {close slider}
 }
 
-
+				
 /* *****
 Function name: toggleEventDescriptions
 
@@ -1289,21 +1383,49 @@ Called by:
 Platform: mobile and desktop
 */
 function initCarousel(){
-	// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
-	$("#myCarousel").find(".active.item").each(function( index ) {
-		if(index != 0){
-			$(this).removeClass('active');
-		}
-	});
 	
-	// Unhide carousel after .active class has been removed from all .item elements except for the first; otherwise, 
-	// may see flicker on mobile device from multiple .item elements with the .active class.
-	$("#myCarousel").removeClass('collapse');
+	var prepCarousel = function(){
+		var deferredObj = $.Deferred();
+		
+		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+		$("#myCarousel").find(".active.item").each(function( index ) {
+			if(index != 0){
+				$(this).removeClass('active');
+			}
+		}).promise().then(function(){
+			 deferredObj.resolve();
+		});
+		
+		return deferredObj.promise()
+	}
+
+	var showCarousel = function(){
+		var deferredObj = $.Deferred();
+		
+		// Removes .active class to all items in carousel except the first - allows dotdotdot to complete execution first
+		// Unhide carousel after .active class has been removed from all .item elements except for the first; otherwise, 
+		// may see flicker on mobile device from multiple .item elements with the .active class.
+		$("#myCarousel").removeClass('collapse').promise().then(function(){
+			 deferredObj.resolve();
+		});
+		
+		return deferredObj.promise()
+	}
 	
-	// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
-	$('#myCarousel').carousel({
-		interval: 4000
-	});
+	var startCarousel = function(){
+		var deferredObj = $.Deferred();
+		
+		// Bootstrap plugin that controls the interval for advancing the carousel - http://getbootstrap.com/javascript/#carousel
+		$('#myCarousel').carousel({
+			interval: 4000
+		}).promise().then(function(){
+			deferredObj.resolve()
+		});
+		
+		return deferredObj.promise()
+	}
+	
+	prepCarousel().then(showCarousel).then(startCarousel);
 }
 
 

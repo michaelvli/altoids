@@ -12,11 +12,12 @@ Altoids::Application.routes.draw do
 	match '/splash', to: 'sessions#splash', via: 'get'
   	match '/home', to: 'sessions#home', via: 'get'
 	match '/events_list', to: 'sessions#events_list', via: 'get'
-	match '/tearsheet', :to => "sessions#tearsheet", via: 'get'
+	match '/tearsheet', :to => 'sessions#tearsheet', via: 'get'
+	match '/logout', to: 'sessions#destroy', via: 'get'
 	
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
-	post "zencoder" => "zencoder#create", :as => "zencoder" # used to direct the "completed job" notification from zencoder	
+	post 'zencoder' => 'zencoder#create', :as => 'zencoder' # used to direct the "completed job" notification from zencoder	
 	  
   # Example resource route (maps HTTP verbs to controller actions automatically):
 	resources :videos

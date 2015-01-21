@@ -1,6 +1,7 @@
 // https://github.com/twbs/bootstrap-sass
 @import "bootstrap";
 
+
 // http://www.colorhexa.com/
 $color-darkest: #050505;
 $color-darker: #0d0d0d;
@@ -18,6 +19,10 @@ body {
 //	color: $color-light;
 //	margin-left:auto;
 //	margin-right:auto;
+}
+
+body a{
+	-webkit-touch-callout: none; // Disables iOS popup when holding on a link - http://stackoverflow.com/questions/9145084/prevent-ios-webkit-long-press-on-link/9145259#9145259
 }
  
 .color-lightest{
@@ -356,33 +361,32 @@ input.hidden[type="radio"]{
 	text-align: center;
 	background-color: $color-darkest;
 	padding: 4px 4px 4px 4px; // prevents browser scrollbars from interferring with button.
-	z-index: 5;
+//	z-index: 5;
+}
+
+.translucent {
+	background-color: transparent;
 }
 
 
 /* Preloader */
 .preloader{
 	background-color: $color-darkest;
-//	position: fixed;
-//	top: 51px;
 	position: absolute;
-	top: 0px;
+	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: 110;
-//	height: 100%;
-	overflow: auto;
+	z-index: 1035; // needs to be higher than 1030 (z-index of .navbar-fixed-bottom)
 	display: none;
 	color: $color-lightest;
-//	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
 	outline: 0;
 }
  
 // center of the screen - http://www.smashingmagazine.com/2013/08/09/absolute-horizontal-vertical-centering-css/
 .absolute-center{
-	position: fixed;
+//	position: fixed;
+	position: absolute;
 	top: 50%;
 	left: 50%;
 	-ms-transform: translate(-50%, -50%); /* IE 9 */
@@ -489,21 +493,38 @@ input.hidden[type="radio"]{
 	}
 }
 
+// for panes that do not include a top or bottom navbar (i.e. not including translucent filter button)
+.scrollable, #menu.scrollable{
+	z-index: 0;
+	height: calc(100% - 52px); // need to define height in order for overflow to function; consider 52px for navbar
+	overflow-y: scroll; // show a scroll bar for content that overflows vertically - http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_overflow-xy
+	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
+}
+
+// hides the gray scrollbar created by overflow-y: scroll in scrollable - http://stackoverflow.com/questions/16670931/hide-scroll-bar-but-still-being-able-to-scroll
+// not a problem in iOS but in Android chrome, the gray scrollbar doesn't slide away when menu is closed
+#menu.scrollable::-webkit-scrollbar { 
+    display: none; 
+}
+
+#mainPane .scrollable, #sign_up_form.scrollable, #log_in_form.scrollable{
+	height: 100%; // need to define height in order for overflow to function; consider 52px for navbar
+	padding-bottom: 93px; // padding on bottom is used to "push up" scrollable content above the .navbar-fixed-bottom element.
+}
 
 
 /* Slide mobile content to left - http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/  */
 #mainPane {
-	position: absolute;
-	top: 51px;
+//	position: absolute;
+	position: fixed;
+	top: 52px; // height of navbar
 	left: 0;
 	z-index: 100;
 	width: 100%;
-	height: 100%;
-//	height: 1500px;
-	background-color: $color-darkest; // needed in order to "cover up" #menu when sliding
+ 	height: calc(100% - 52px); // not using auto or else venue thumbnails on home page may be too "short" if not enough menues - translucent filter button will get lost in background red
+	background-color: $color-darker; // needed in order to "cover up" #menu when sliding
 	color: $color-light;
 }
-
 
 .body{
 	position: relative;
@@ -520,15 +541,14 @@ input.hidden[type="radio"]{
 		
 #menu, #rightPane {
 //	position: relative; // fixed/absolute position messes up delegated touch events with specific ID selectors
-//	top: 50px;
+//	top: 0;
+	position: fixed; // fixed/absolute position messes up delegated touch events with specific ID selectors
+	top: 52px;
 	width: 100%;
 	height: 100%;
 	color: $color-light;
 	background-color: $color-darker;
 	z-index: 5;
-//	overflow: auto;
-//  overflow-y: scroll; // show a scroll bar for content that overflows vertically - http://www.w3schools.com/cssref/tryit.asp?filename=trycss3_overflow-xy
-	-webkit-overflow-scrolling: touch; // for touch screens - allows user to "spin" scrollable elements (i.e. like a slot machine)
 	.header{
 		text-align: center;
 		margin: 0px 0px 0px 0px;
@@ -549,8 +569,9 @@ input.hidden[type="radio"]{
 		border-bottom: 0 solid transparent;
 	}
 }
-
+	
 #rightPane {
+	height: calc(100% - 52px);
 	.body{
 		.header{
 			width: 100%;
@@ -559,7 +580,6 @@ input.hidden[type="radio"]{
 	.preloader{
 		z-index: 50;
 	}
-
 }
 	
 #tearsheet_options.btn-group, #sort_options.btn-group {
@@ -575,10 +595,10 @@ input.hidden[type="radio"]{
 		border-radius: 0 4px 4px 0;
 	}
 }
-	
+
 /* Vertical slider */
 #slider{
-	position: absolute;
+	position: fixed;
 	top: 0; // jquery dynamically changes this value to the height of the screen in order to place slider at "bottom" initially - so slider can "slide up" when being opened
 	left: 0;
 	z-index: 1035; // needs to be on top of navbar which has z-index: 1030
@@ -586,9 +606,11 @@ input.hidden[type="radio"]{
 	height: 100%;
 	background-color: $color-darker;
 	color: $color-light;
+	.body{
+		height: calc(100% - 52px); // .body element in slider needs to deduct navbar height since the navbar element is within #slider (which is 52px); on the other hand, navbar for menu, mainPane, and rightPane is not included within the #menu, #mainPane, or #rightPane elements
+	}
 	.navbar-pane{
-		position: relative;
-		z-index: 1035; // needs to be on top of navbar which has z-index: 1030
+		position: static;
 		width: 100%
 	}
 	.navbar-fixed-bottom{
@@ -596,10 +618,29 @@ input.hidden[type="radio"]{
 	}
 }
 
+.dynamicContent{
+	width: 100%;
+	height: 100%;
+}
+
+
+.body{
+	height: 100%;
+}
+
+.height-100{
+	height: 100%;
+}
+
+form{
+	height: 100%;
+}
+
 
 /* Filter and sort menu */
 #filter_sort_menu{
-	margin-bottom: 60px; // should be about the same size as the height of the fixed "apply filters" button.
+	width: 100%;
+	height: 100%;
 	.search_field{
 		width: 95%;
 		margin: 0px 2.5% 0px 2.5%;
@@ -614,6 +655,7 @@ input.hidden[type="radio"]{
 }
 
 #tearsheet{
+	height: 100%;
 	.content{
 		padding: 15px 0 15px 0;
 	}

@@ -1,4 +1,4 @@
-	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'venues/index.html.erb') %>");	
+	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'venues/index.html.erb') %>");	
 	
 //	mainPane: bind venue buttons of class=".rightPane" to open rightPane
 	bindTouchButtons({
@@ -25,9 +25,63 @@
 		}
 	});
 
+	// mainPane: enables touch behavior and toggling for translucent filter button
+	bindTouchButtons({
+		scope: "div.navbar-fixed-bottom",
+		buttonCollection: "#filter_button",
+		mode: "flash",
+		callback: function(){
+			var sliderTitle = "Filter Results";
+			toggleSlider({
+				title: sliderTitle
+			});
+
+		}
+	});
 	
-// BEGIN DEBUG: //
-/*
+	// Slider: binds the "Apply Filters" button
+	bindTouchButtons({
+		scope: "#filter_sort_menu",
+		buttonCollection: "button.submit",
+		mode: "flash",
+		callback: function(){
+			var jqObj = this;
+			toggleSlider({
+				callback: function(){
+					// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+					// method of either:
+					// 1. the "keypress" event, or
+					// 2. the "touchend" event
+					// within bindTouchButtons.  
+					// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+					// element within the "scope" parameter of this function.  On the other hand, if the callback is
+					// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+					// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+					// regardless whether it represents the "input" element or buttonCollection to determine the 
+					// appropriate Rails controller/action.
+					preLoadContent(jqObj);				
+				}
+			});
+		}
+	});
+
+	// slider: sort icon buttons
+	bindTouchButtons({
+		scope: "#sort_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_radio"
+	});
+
+	// slider: filter checkboxes
+	bindTouchButtons({
+		scope: "#filter_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_checkbox"
+	});
+	
+// BEGIN DEBUG //
+if (debug)
+{	
 	$("#venues_index").on("click", ".rightPane", function(event){
 		var button_obj = $(this);
 		var url = button_obj.attr("href"); // get the url of the button
@@ -48,5 +102,27 @@
 
 		event.preventDefault();
 	});
-*/
-// END DEBUG: //
+
+	// mainPane: translucent "filter" button
+	$("div.navbar-fixed-bottom").on("click", "#filter_button", function(event){
+		var sliderTitle = "Filter Results";
+		toggleSlider({
+			title: sliderTitle
+		});
+		
+		event.preventDefault();
+	});
+
+	// Slider: "Apply Filter" button
+	$("#filter_sort_menu").on("click", "button.submit", function(event){
+		var jqObj = $(this);
+		toggleSlider({
+			callback: function(){
+				preLoadContent(jqObj); // gets the parent "form" element from the jquery object, "$(this)"
+			}
+		}); // close slider
+		
+		event.preventDefault();
+	});
+}	
+// END DEBUG //

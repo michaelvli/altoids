@@ -7,7 +7,10 @@ ruby '1.9.3'
 gem 'rails', '4.0.5'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 4.0.2'
+gem 'sass-rails', '>= 3.2'
+
+#  	https://github.com/twbs/bootstrap-sass
+gem 'bootstrap-sass', '~> 3.1.1' # didn't work on android stock browser (i.e. alert boxes didn't go off consistently)!
 
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
@@ -47,9 +50,6 @@ gem 'debugger', group: [:development, :test]
 gem 'jquery-fileupload-rails' # provides file uploading capabilities
 gem 'carrierwave-aws' # provides file uploading capabilities (to Amazon S3) as well as Amazon aws-sdk gem functionality (allows us to access Amazon API calls - to delete/create S3 file directories)
 gem 'zencoder' # provides video transcoding capabilities
-
-#  	https://github.com/twbs/bootstrap-sass
-gem 'bootstrap-sass', '~> 3.1.1'
 
 #	Datepicker from jquery-ui-rails gem: http://api.jqueryui.com/datepicker/
 gem 'jquery-ui-rails', '~> 4.2.1' # for datepicker gem... requires 'rails', '~>4.0.0' (instead of gem 'rails', '4.0.0')

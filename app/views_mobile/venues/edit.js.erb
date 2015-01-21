@@ -1,7 +1,14 @@
-// load edit_form with error messages
+// edit.js.erb is called by the following scenarios: 
+// 	1) 	When there is an error from the "update" action in "venues" controller (i.e. when user is updating 
+// 		info for a venue).
+//
+// edit.js.erb loads the partial /views_mobile/venues/_edit.html.erb which will show the error messages 
+// that prevented the "update" action from being executed successfully.
+
+// load _edit.html.erb partial with the error messages
 $("#venue_edit").html("<%= escape_javascript(render partial: 'edit') %>");
 
-// open slider
+// open slider - slider houses the venue edit form
 toggleSlider({
 	state: "open",
 	callback: function(){

@@ -1,0 +1,30 @@
+<!--
+	The splash page is called via the following scenarios:
+		1.  A user visiting the page prior to signing in (splash.html.erb includes the partial, _splash.html.erb)
+		2.  A user logging out (the partial, _splash.html.erb, is inserted via destroy.js.erb)
+-->
+
+	<!-- Carousel -->
+	<!-- 
+		.collapse in class is removed by .initCarousel() after .active class in have been removed in .item 
+		elements (except for the first) within #myCarousel; otherwise, user may see all .item elements "flicker" 
+		in the carousel for a moment before .initCarousel removes the .active class after the first .item element.
+	-->	
+	<div id="myCarousel" class="carousel slide collapse">
+		<!-- @videos is an ActiveRecord collection -->
+		<%= render partial: 'carousel', object: @videos, as: 'videos' %>
+	</div><!-- /.carousel -->
+
+	<!-- Jumbotron -->
+	<div class="jumbotron">
+		<h3 class="text-center"><strong>CHECK OUT THE VIBE</strong></h3>
+		<p class="grey-text">Why read reviews when you can see for yourself?  We provide videos. You choose the venue.</p>
+	</div>
+	
+	<!-- Jumbotron -->
+	<div class="jumbotron background-darkest text-center">
+		<P>Watch videos</p>
+		<p>Discover events</p>
+		<p>Find specials</p>
+		<%= link_to "Create Your Free Account", new_user_path, class:"btn btn-md btn-primary", id: "create_free_account_button", :data =>{ :page => "sign_up_form", :title => "Join Barfly"} %>
+	</div>

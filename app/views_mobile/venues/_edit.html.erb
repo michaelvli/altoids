@@ -1,3 +1,69 @@
+<div id='venue_edit' class='height-100'>
+
+	<%= bootstrap_form_for(@venue, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
+		<div class="scrollable">		
+			<!-- turn off error summary -->
+			<%= f.alert_message "Please fix the errors below:", error_summary: false %>
+				
+			<!-- Contact info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Contact Info</h3>
+					<%= render 'venues/form_contact', f: f %>
+				</div>
+			</div>
+	
+			<!-- Additional Info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Additional Info</h3>
+					<%= render 'venues/form_additional', f: f %>
+				</div>
+			</div>
+			
+			<!-- Features panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Features</h3>
+					<%= render 'venues/form_features', f: f %>
+				</div>
+			</div>
+
+			<!-- Venue Hours panel -->
+			<div class="form-group">
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-9 col-md-offset-4 col-md-8">
+							<h3>Venue Hours</h3>
+						</div>
+					</div>	
+					<%= render 'venues/form_hours_venue', f: f %>
+				</div>
+
+				<div class="col-md-6">
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-9 col-md-8">
+							<h3>Kitchen Hours</h3>
+						</div>
+					</div>	
+					<%= render 'venues/form_hours_kitchen', f: f %>
+				</div>
+			</div> <!-- Venue and Kitchen Hours -->
+			
+		</div> <!-- .scrollable -->
+
+		<!-- Not using f.submit method on mobile because navbar-fixed-bottom element needs to be outside of 
+			.scrollable element or else iOS momentum scrolling will also scroll the button. -->		
+		<div class="navbar-fixed-bottom">
+			<%= button_tag "Update Venue", id:"submit_venue_edit", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", :data =>{ :form => "form_venue_edit"} %>
+		</div>
+			
+	<% end %>
+
+</div>
+
+
+<% if false %>		
 	<div class='padding-15'>
 		<%= bootstrap_form_for(@venue, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-7") do |f| %>
 		
@@ -50,6 +116,8 @@
 			</div>
 
 <% if false %>
+<!-- Can't use f.submit method on mobile because user can hold button to open a new page, 
+	 bypassing the javascript hijacks; thus, using button_tag instead -->
 			<%= f.form_group do %> <!-- rails-bootstrap-forms - https://github.com/bootstrap-ruby/rails-bootstrap-forms -->
 				<%= f.submit 'Update Venue', class: 'btn btn-success col-xs-12', :data =>{ :page => "update"} %>
 			<% end %>	
@@ -60,4 +128,5 @@
 			</div>
 			
 		<% end %>
-	</div>	
+	</div>
+<% end %>	

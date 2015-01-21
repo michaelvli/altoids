@@ -60,11 +60,12 @@ class VenuesController < ApplicationController
 	if @venue.update_attributes(venue_params)
 	  flash[:success] = "Venue updated!"
 	  if current_user.account_type == "admin"
-#		redirect_to venues_path  #takes user to index action in venue controller
-		# redirect_to takes user to show action in venue controller, accessing venues.rb model (executing 
-		# callbacks such as format_phone_number) prior to executing show.js.erb.
-		# redirect_to below is also passing params[:updated] = true to the show action
-		redirect_to venue_path(id: @venue.id, updated: true) 
+#		redirect_to venues_path  # takes user to index action in venue controller
+
+		# redirect_to below takes user to show action in venue controller, accessing venues.rb model 
+		# (executing callbacks such as format_phone_number) prior to executing show.js.erb, also 
+		# passing params[:updated] = true to the show action.
+		redirect_to venue_path(id: @venue.id, updated: true) # takes user to show action in venue controller
 		
 		# Not using render below. Instead, using redirect_to because it will access venues.rb model first
 		# which executes callbacks such as format_phone_number within venues.rb.

@@ -1,14 +1,5 @@
-if ($("#mainPane").find("#tearsheet").length)
-{
-	var pane = $("#mainPane");
-}
-else
-{
-	var pane = $("#rightPane");
-	pane.find(".dynamicContent").html("<div id='tearsheet'></div>");
-}
-
-pane.find("#tearsheet").html("<%= escape_javascript(render partial: 'tearsheet') %>");
+// insert tearsheet partial into rightPane
+$("#rightPane").find("div.dynamicContent").html("<%= escape_javascript(render partial: 'tearsheet') %>");
 	
 // initializes carousel with one active carousel item and sets slide interval speed
 initCarousel();
@@ -47,7 +38,7 @@ bindTouchButtons({
 
 
 // BEGIN DEBUG //
-/*
+
 $("#tearsheet_options").on("click", ".btn-glass", function(){
 	initTearsheetOptions($(this)); // "this" passes the $(this) object to activateTearsheetOptions(button_obj) function
 });
@@ -57,5 +48,5 @@ $("#tearsheet_events").on("click", ".btn-glass", function(event){
 
 	event.preventDefault();
 });
-*/
+
 // END DEBUG //

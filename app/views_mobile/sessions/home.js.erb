@@ -8,42 +8,21 @@
 	
 	<!-- refreshes menu and slider -->
 	$('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
+	initButtons_Menu();
+
+// 	refresh slider - need to make sure slider is "closed" before refreshing (i.e. display == "none"); 
+//  otherwise, slider position may not be reset to top: 0 and display: none, which will cause abnormal 
+//  behavior since slider uses display: none to detect if slider is open or closed AND starting position 
+//  for the next time it opens will not be at the "bottom" of the screen (may be further down).
+
 	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>");
-	
+	initButtons_Slider();
+
 	// only show the appropriate page in the slider
-	$("#slider").find(".body").children().hide(); // hide all forms within #slider-body
+	$("#slider").find("div.body").children().hide(); // hide all forms within #slider-body
 	$("#filter_sort_menu").show(); // show the relevant page: 1) #sign_up_form, 2) #log_in_form, or 3) #filter_sort_menu
 
-
-	// mainPane: enables touch behavior and toggling for translucent filter button
-	bindTouchButtons({
-		scope: "div.navbar-fixed-bottom",
-		buttonCollection: "#filter_button",
-		mode: "flash",
-		callback: function(){
-			var sliderTitle = "Filter Results";
-			toggleSlider({
-				title: sliderTitle
-			});
-
-		}
-	});
-	
-	// slider: sort icon buttons
-	bindTouchButtons({
-		scope: "#sort_options",
-		buttonCollection: ".btn-glass",
-		mode: "toggle_radio"
-	});
-
-	// slider: filter checkboxes
-	bindTouchButtons({
-		scope: "#filter_options",
-		buttonCollection: ".btn-glass",
-		mode: "toggle_checkbox"
-	});
-
-//	<!-- mainPane: bind thumbnails of class=".rightPane" to open rightPane -->
+	//	mainPane: bind thumbnails of class=".rightPane" to open rightPane
 	bindTouchButtons({
 		scope: "#venues",
 		buttonCollection: "a.rightPane",
@@ -68,9 +47,65 @@
 		}
 	});
 	
+	// mainPane: enables touch behavior and toggling for translucent filter button
+	bindTouchButtons({
+		scope: "div.navbar-fixed-bottom",
+		buttonCollection: "#filter_button",
+		mode: "flash",
+		callback: function(){
+			var sliderTitle = "Filter Results";
+			toggleSlider({
+				title: sliderTitle
+			});
+
+		}
+	});
 	
-// BEGIN DEBUG: //
-/*
+	// Slider: binds the "Apply Filters" button
+	bindTouchButtons({
+		scope: "#filter_sort_menu",
+		buttonCollection: "button.submit",
+		mode: "flash",
+		callback: function(){
+			var jqObj = this;
+			toggleSlider({
+				callback: function(){
+					// the "this" variable represents the $(this) jquery object passed in from the .call($(this)) 
+					// method of either:
+					// 1. the "keypress" event, or
+					// 2. the "touchend" event
+					// within bindTouchButtons.  
+					// If the callback is invoked by the "keypress" event, then the "this" represents the "input" 
+					// element within the "scope" parameter of this function.  On the other hand, if the callback is
+					// invoked by the "touchend" event, then $(this) represents the "buttonCollection" parameter of 
+					// this function.  Either way, preLoadContent() finds the parent "form" element of $(this), 
+					// regardless whether it represents the "input" element or buttonCollection to determine the 
+					// appropriate Rails controller/action.
+					preLoadContent(jqObj);				
+				}
+			});
+		}
+	});
+
+	// slider: sort icon buttons
+	bindTouchButtons({
+		scope: "#sort_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_radio"
+	});
+
+	// slider: filter checkboxes
+	bindTouchButtons({
+		scope: "#filter_options",
+		buttonCollection: ".btn-glass",
+		mode: "toggle_checkbox"
+	});
+	
+	
+// BEGIN DEBUG //
+if (debug)
+{	
+	// mainPane - venue thumbnails
 	$("#venues").on("click", "a.rightPane", function(event){
 		var button_obj = $(this);
 		var url = button_obj.attr("href"); // get the url of the button
@@ -90,15 +125,29 @@
 		});
 		event.preventDefault();
 	});
-
+	
+	// mainPane: translucent "filter" button
 	$("div.navbar-fixed-bottom").on("click", "#filter_button", function(event){
 		var sliderTitle = "Filter Results";
 		toggleSlider({
 			title: sliderTitle
-		});	
+		});
+		
 		event.preventDefault();
 	});
-*/
+
+	// Slider: "Apply Filter" button
+	$("#filter_sort_menu").on("click", "button.submit", function(event){
+		var jqObj = $(this);
+		toggleSlider({
+			callback: function(){
+				preLoadContent(jqObj); // gets the parent "form" element from the jquery object, "$(this)"
+			}
+		}); // close slider
+		
+		event.preventDefault();
+	});
+}
 // END DEBUG //
 <% end %>
 

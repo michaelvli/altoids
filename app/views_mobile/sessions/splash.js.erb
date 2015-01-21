@@ -1,23 +1,25 @@
-// splash.js.erb is called by two scenarios: 
-// 1) create action in sessions controller (when logging in), or 
-// 2) create action in users controller (when signing up)
+// splash.js.erb is called by the following scenarios: 
+// 1) 	When there is an error from the "create" action in "sessions" controller (i.e. when user is logging in).
+// 2) 	When there is an error from the "create" action in "users" controller (i.e. when user is signing up).
 
 if (<%= params.has_key?(:create_user) && params[:create_user] %>) // Scenario #2
 {
-	// error from signing up
-	$("#sign_up_form").html("<%= escape_javascript(render partial: 'layouts/sign_up_form') %>");
+	// reload #sign_up_form if there is an error from signing up
+	// #sign_up_form uses bootstrap_form_for's alert message protocol (vs .status_message element used in 
+	// #log_in_form) - see "alert messages" at https://github.com/bootstrap-ruby/rails-bootstrap-forms
+	// Thus, need to reload the page (vs. using .html() to insert status message from controller)
+	$("#sign_up_form").html("<%= escape_javascript(render partial: 'layouts/sign_up_form') %>")
 }
 else // Scenario #1
 {
 	// error from logging in
-//	$("#mainPane").find(".status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
-	$("#slider").find(".status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
+//	$("#log_in_form").html("<%= escape_javascript(render partial: 'layouts/log_in_form') %>");
+	$("#log_in_form").find("div.status_message").html("<%= escape_javascript(render partial: 'layouts/messages', flash: flash) %>");
 }
 
 // open slider
 toggleSlider({
 	state: "open",
 	callback: function(){
-		fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
 	}
 });

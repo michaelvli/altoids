@@ -1,4 +1,4 @@
-<div id="filter_sort_menu" class="collapse">
+
 
 	<%= form_tag home_path, :method => 'get', :id => "form_sortFilter" do %>
 <% if false %>
@@ -6,22 +6,23 @@
 		<%= hidden_field_tag :latitude, params[:latitude], {id:'hidden_field_latitude'} %>
 		<%= hidden_field_tag :longitude, params[:longitude], {id:'hidden_field_longitude'} %>
 <% end %>
+		<div class="scrollable">
+			<div class="section">
+				SEARCH
+			</div>
 
-		<div class="section">
-			SEARCH
+			<div class="content">
+				<%= text_field_tag :search, params[:search], id:"search_field", class:"search_field", placeholder: 'Enter venue...' %>
+			</div>
+			
+			<%= render partial: "layouts/sort_options" %>		
+			<%= render partial: "layouts/filter_options" %>	
 		</div>
-
-		<div class="content">
-			<%= text_field_tag :search, params[:search], id:"search_field", class:"search_field", placeholder: 'Enter venue...' %>
-		</div>
-
-		<%= render partial: "layouts/sort_options" %>		
-		<%= render partial: "layouts/filter_options" %>	
-
+			
+		<!-- Not using f.submit method on mobile because navbar-fixed-bottom element needs to be outside of 
+			.scrollable element or else iOS momentum scrolling will also scroll the button. -->	
 		<div class="navbar-fixed-bottom">
 			<%= button_tag "Apply Filters", id:"apply_filter_button", class:"btn btn-lg btn-primary col-xs-12 submit", :data =>{ :page => "filter_sort_menu"} %>
 		</div>
 
 	<% end %>
-
-</div>	

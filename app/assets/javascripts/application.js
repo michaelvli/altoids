@@ -14,14 +14,39 @@
 //
 //= require jquery
 //= require jquery_ujs
+// require bootstrapDEBUG
+
 //= require bootstrap
+
+// individual bootstrap components (use in place of "require bootstrap" directive above):
+// require bootstrap/affix
+// require bootstrap/alert
+// require bootstrap/button
+// require bootstrap/carousel
+// require bootstrap/collapse
+// require bootstrap/dropdown
+// require bootstrap/tab
+// require bootstrap/transition
+// require bootstrap/scrollspy
+// require bootstrap/modal
+// require bootstrap/tooltip
+// require bootstrap/popover
+
 //= require turbolinks
+
+
 //= require jquery.cookie
 //= require jquery.dotdotdot
 //= require detectDeviceType
+
 //= require html5Geolocation
+
 //= require bootstrap-progressbar
+
+// not using because jquery.ui.datepicker - requires jquery-ui-rails which is designed for Rails 3.1 asset pipeline
 //= require jquery.ui.datepicker
+
 //= require modernizr
 //= require modalWindow
+
 //= require altoids

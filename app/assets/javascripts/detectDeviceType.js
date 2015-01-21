@@ -42,6 +42,7 @@ function detectDeviceType(callback){
 
 //DEBUG	alert("width: " + physicalWidth + " dpr: " + devicePixelRatio);
 		deviceType = 'phone'
+
 /*	
 	if (deviceIndependentPixels < 768)
 	{

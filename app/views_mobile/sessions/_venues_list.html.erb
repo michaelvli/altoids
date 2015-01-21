@@ -1,5 +1,5 @@
 <!-- Venue thumbnails -->
-<div id="venues">
+<div id="venues" class="scrollable">
 	<%= render partial: 'venues', collection: @venues, as: 'venue' %>
 </div>
 	
@@ -12,4 +12,6 @@
 </div>
 
 <!-- translucent filter button -->
+<!-- navbar-fixed-bottom element needs to be outside of .scrollable 
+	element or else iOS momentum scrolling will also scroll the button. -->			
 <%= render 'layouts/filter_button' %>

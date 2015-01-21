@@ -34,6 +34,7 @@ class UsersController < ApplicationController
 		render 'new'
 	  else  
 #		render :template => "sessions/splash" # if user has not logged in and received an error message, then user needs to be taken to splash page with appropriate window displayed
+		flash[:error] = "Invalid email/password combination"
 		params[:create_user] = true
 		render 'sessions/splash' # if user has not logged in and received an error message, then call splash.js.erb to take user back to splash page with slider open to the "sign up" form displayed
 	  end

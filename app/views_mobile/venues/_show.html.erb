@@ -1,5 +1,6 @@
-	<div class='padding-15-top padding-15-bottom'>
-	
+<div id="venue_show" class="height-100">
+
+	<div class='scrollable'>	
 			<!-- Contact info panel -->
 			<div class="form-group">
 				<div class="col-sm-offset-2 col-sm-9">
@@ -114,7 +115,12 @@
 				</div>
 			</div>
 
-			<div class="navbar-fixed-bottom">
-				<%= button_tag "Edit Venue", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", data: { title: @venue.name } %>				
-			</div>			
+	</div> <!-- .scrollable -->
+	
+	<!-- Not using f.submit method on mobile because navbar-fixed-bottom element needs to be outside of 
+		.scrollable element or else iOS momentum scrolling will also scroll the button. -->
+	<div class="navbar-fixed-bottom">
+		<%= button_tag "Edit Venue", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", data: { title: @venue.name } %>
 	</div>
+	
+</div> <!-- #venue_show -->

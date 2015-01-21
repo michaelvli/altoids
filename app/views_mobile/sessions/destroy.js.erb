@@ -1,4 +1,9 @@
-$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'sessions/splash') %>");
+//	The splash page is called via the following scenarios:
+//		1.  A user visiting the page prior to signing in (splash.html.erb includes the partial, _splash.html.erb)
+//		2.  A user logging out (the partial, _splash.html.erb, is inserted via destroy.js.erb)
+
+<!-- Scenario #2 -->
+$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render 'splash') %>");
 
 // initializes carousel with one active carousel item and sets slide interval speed
 initCarousel();
@@ -6,5 +11,17 @@ initCarousel();
 <!-- refreshes menu and slider -->
 $('#menu').html("<%= escape_javascript(render 'layouts/menu') %>");
 
+// rebind "sign up" and "log in" submit buttons to in "sign up" and "log in" slider
+initButtons_Menu();
+
+// 	refresh slider - need to make sure slider is "closed" before refreshing (i.e. display == "none"); 
+//  otherwise, slider position may not be reset to top: 0 and display: none, which will cause abnormal 
+//  behavior since slider uses display: none to detect if slider is open or closed AND starting position 
+//  for the next time it opens will not be at the "bottom" of the screen (may be further down).
+	$('#slider').html("<%= escape_javascript(render 'layouts/slider') %>");
+
 // hide all pages within the slider
-$("#slider").find(".body").children().hide(); // hide all forms within #slider
+$("#slider").find("div.body").children().hide(); // hide all forms within #slider
+
+// rebind "sign up" and "log in" submit buttons to in "sign up" and "log in" slider
+initButtons_Slider();
