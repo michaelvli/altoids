@@ -39,7 +39,7 @@ Plugins:
 $(function() {
 //	alert("DOM READY");	
 	debug = false; // global variable: true = "clicks" are active, false = only initButtons_XXX are active
-	
+
 	load_DOM_functions();			
 });
 
@@ -575,7 +575,17 @@ function bindTouchButtons(options){
 			event.preventDefault();
 		}
 	});
-
+	
+	// prevent click event from happening (i.e. when user long presses a link, this event would be 
+	// prevented; otherwise, the user would be taken to the link since the event isn't considered
+	// a "touchstart" event).
+	// Also, can't use .preventDefault() at end of "touchstart" event because .preventDefault()
+	// would prevent user from being able to scroll if user made contact with a link.
+	$(settings.scope).off("click", settings.buttonCollection);
+	$(settings.scope).on("click", settings.buttonCollection, function(event){
+		event.preventDefault();
+	});	
+		
 	// Use touchstart event to check if the user is "pressing" a button (vs. scrolling):
 	// 1. Touchstart event binds touchmove and touchend events when user touches a screen.
 	// 2. If the user moves (i.e. scrolls), touchstart unbinds the touchend event.
