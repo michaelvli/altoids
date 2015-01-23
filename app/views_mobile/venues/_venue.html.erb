@@ -1,3 +1,6 @@
+<!-- 
+	partial file for venue listing in the venues index page (i.e. views_mobile/venues/index.html.erb)
+-->
 <div class="btn btn-glass">
 				<div class="btn-description">
 					<div class="row">
@@ -20,7 +23,7 @@
 							Tearsheet Views: TBD
 						</div>
 						<div class="col-xs-6 text-12">
-							Finished Videos: <%= link_to venue.count_videos("finished"), videos_path(:venue_id => venue.id) %>
+							Finished Videos: <%= link_to venue.count_videos("finished"), videos_path(:venue_id => venue.id), class:"rightPane", data: { title: venue.name } %>
 							<br>
 							Processing Videos: <%= venue.count_videos("processing") %>
 							<br>

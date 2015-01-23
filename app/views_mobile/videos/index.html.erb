@@ -1,0 +1,16 @@
+<div id="videos_index" class="content scrollable">
+	<% @videos.each do |video| %>
+		<!-- provides an anchor for videos/update.js.erb -->
+		<% if !video.response.nil? && video.response[:job][:state] == 'finished' %>
+			<tr id="video_<%= video.id %>" class="video_<%= video.id %>">
+				<%= render partial: 'video', locals: { video: video } %>
+			</tr>
+		<% end %>
+	<% end %>
+</div>
+
+<!-- Not using f.submit method on mobile because navbar-fixed-bottom element needs to be outside of 
+	.scrollable element or else iOS momentum scrolling will also scroll the button. -->
+<div class="navbar-fixed-bottom">
+	<%= button_tag "Add Video", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", data: { title: "New Video" } %>
+</div>

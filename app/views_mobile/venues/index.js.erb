@@ -1,4 +1,4 @@
-	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render partial: 'venues/index.html.erb') %>");	
+	$('#mainPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'venues/index.html.erb') %>");	
 	
 //	mainPane: bind venue buttons of class=".rightPane" to open rightPane
 	bindTouchButtons({
@@ -82,6 +82,22 @@
 // BEGIN DEBUG //
 if (debug)
 {	
+
+// PROB NOT USING THIS:
+//	$("#venues_index").on("click", ".mainPane", function(event){
+//		var button_obj = $(this);
+//		var url = button_obj.attr("href"); // get the url of the button
+		
+		// insert title of venue into mainPane navbar
+//		var title = $(this).data("title");
+//		$("#mainPane-title").text(title);
+		
+		// load content
+//		loadContent(url);
+
+//		event.preventDefault();
+//	});
+	
 	$("#venues_index").on("click", ".rightPane", function(event){
 		var button_obj = $(this);
 		var url = button_obj.attr("href"); // get the url of the button

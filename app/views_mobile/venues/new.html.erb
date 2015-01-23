@@ -1,0 +1,43 @@
+		<!-- Anchor for progress bar -->
+		<div class="row">
+			<div id="progress-bar-anchor" class="col-sm-offset-2 col-sm-8">
+			</div>
+		</div>
+		<div id="preloader" class="row collapse">
+			<div class="col-sm-12">
+				<%= image_tag("preloader.GIF", class:"image-center margin-10") %>
+			</div>
+			<div class="col-sm-12">
+				<p class="text-center" >Please wait...<p>
+			</div>
+		</div>
+		
+		<!-- Progress bar template -->
+		<script id="template-upload" type="text/x-tmpl">
+			<div class="upload">
+				<% if false %>
+					{%=o.name%} // shows the name of the file
+				<% end %>
+				<div class="progress">
+					<div class="progress-bar" role="progressbar" data-transitiongoal="100" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<!-- form below uses jquery file upload (vs. carrierwave) to upload videos -->
+				<!-- Need to set multipart to true if doing a file upload -->
+				<!-- form has class="new_video", id="new_video", action="/videos", method="post" -->
+				<!-- action: "/videos" + method: "post" = controller: videos + action: create -->
+				<%= form_for Video.new, html: { multipart: true } do |f| %>
+					<span class="btn btn-success fileinput-button">
+						<span class="glyphicon glyphicon-plus"></span>
+						<span>Add files...</span>
+						<% if current_user.account_type == "admin" %>
+							<%= f.hidden_field :venue_id, value: params[:venue_id] %>
+						<% elsif current_user.account_type == "venue" %>
+							<%= f.hidden_field :venue_id, value: current_user.venue_id %>
+						<% end %>
+						<%= f.file_field :attachment, multiple: true, name: "video[attachment]" %>
+					</span>
+				<% end %>

@@ -6,7 +6,7 @@
 // that prevented the "update" action from being executed successfully.
 
 // load _edit.html.erb partial with the error messages
-$("#venue_edit").html("<%= escape_javascript(render partial: 'edit') %>");
+$("#venue_edit").html("<%= escape_javascript(render template: 'venues/edit.html.erb') %>");
 
 // open slider - slider houses the venue edit form
 toggleSlider({

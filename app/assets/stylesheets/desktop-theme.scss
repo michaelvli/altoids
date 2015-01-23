@@ -20,6 +20,18 @@ body {
 //	margin-right:auto;
 }
 
+.fileinput-button{
+	height: 2.5em; // ugly "Choose file" button is causing button to be too "tall"
+}
+
+#video_attachment{
+	position: relative;
+	top: -1.5em; // moving up the ugly "Choose file" button embedded in the "Add Files..." button used in jquery file upload
+	opacity: 0; // hides ugly "Choose file" button
+	z-index: 1; // the ugly "Choose file" button needs to be pressable to trigger jquery file upload
+	margin-left: auto;
+	margin-right: auto;
+}
  
  /* CUSTOMIZE THE CAROUSEL
 -------------------------------------------------- */

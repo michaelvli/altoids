@@ -24,31 +24,39 @@
 	-->
 	<%= stylesheet_link_tag "mobile-manifest", media: "all", "data-turbolinks-track" => true %>		
 
-
 	<!-- includes application.js (manifest file) -->
 	<%= javascript_include_tag "application.js", "data-turbolinks-track" => true %>
 
-
 <% if false %>
+	<!-- 	
+		When "config.assets.debug" = true (in config/development.rb), the asset pipeline doesn't concatenate
+		and preprocess assets; instead, the script include files are listed individually as seen below (vs.
+		only having all of them located in just a single script file, "application.js".
+		
+		For some reason, the Android native/stock browser can't process these javascript files separately
+		(results in the jquery rarely/intermittantly executing).  But, when "config.assets.debug" = false,
+		the stock browser has no problems with using the javascript file, "application.js", processed by
+		the asset pipeline.
+	-->
 
-<script data-turbolinks-track="true" src="/assets/jquery.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/jquery_ujs.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/jquery.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/jquery_ujs.js?body=1"></script>
 
-<script data-turbolinks-track="true" src="/assets/bootstrap/affix.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/alert.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/button.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/carousel.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/collapse.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/dropdown.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/tab.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/transition.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/scrollspy.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/modal.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/tooltip.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap/popover.js?body=1"></script>
-<script data-turbolinks-track="true" src="/assets/bootstrap.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/affix.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/alert.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/button.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/carousel.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/collapse.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/dropdown.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/tab.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/transition.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/scrollspy.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/modal.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/tooltip.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap/popover.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/bootstrap.js?body=1"></script>
 
-<script data-turbolinks-track="true" src="/assets/altoids.js?body=1"></script>
+	<script data-turbolinks-track="true" src="/assets/altoids.js?body=1"></script>
 
 <% end %>
 

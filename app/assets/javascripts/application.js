@@ -14,7 +14,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-// require bootstrapDEBUG
 
 //= require bootstrap
 
@@ -33,20 +32,14 @@
 // require bootstrap/popover
 
 //= require turbolinks
-
-
 //= require jquery.cookie
 //= require jquery.dotdotdot
 //= require detectDeviceType
-
 //= require html5Geolocation
-
+//= require jquery-fileupload/basic
+//= require jquery-fileupload/vendor/tmpl
 //= require bootstrap-progressbar
-
-// not using because jquery.ui.datepicker - requires jquery-ui-rails which is designed for Rails 3.1 asset pipeline
 //= require jquery.ui.datepicker
-
 //= require modernizr
 //= require modalWindow
-
 //= require altoids

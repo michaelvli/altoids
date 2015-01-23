@@ -27,10 +27,10 @@
 	}
 		
 	// load contents of partial: views_mobile/venues/_show.html.erb into rightPane
-	$("#rightPane").find(".dynamicContent").html("<%= escape_javascript(render partial: 'show') %>");
+	$("#rightPane").find(".dynamicContent").html("<%= escape_javascript(render template: 'venues/show.html.erb') %>");
 	
 	// preload contents for edit in case user wants to modify info
-	$("#slider-content").html("<%= escape_javascript(render partial: 'edit') %>");
+	$("#slider-content").html("<%= escape_javascript(render template: 'venues/edit.html.erb') %>");
 
 	fadeInContent();  // ensures thumbnails are fully loaded before preloader.gif fades out
 	
@@ -99,7 +99,7 @@
 if (debug)
 {	
 	<!-- rightPane: "Edit Venue" button -->
-	$("#venue_show").on("click", "button.bottomNavbarButton", function(event){
+	$("#rightPane").on("click", "button.bottomNavbarButton", function(event){
 		var jqObj = $(this);
 		var sliderTitle = jqObj.data("title");
 		toggleSlider({

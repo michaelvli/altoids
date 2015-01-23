@@ -1,0 +1,126 @@
+<div id="venue_show" class="height-100">
+
+	<div class='scrollable'>	
+			<!-- Contact info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Contact Info</h3>
+				</div>	
+			</div>	
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<div class="padding-15-sides">
+						<%= @venue.name %>&nbsp;(<%= @venue.neighborhood.name %>)<br>
+						<%= @venue.address %><br>
+						<%= @venue.city %>, <%= @venue.state %> <%= @venue.zip_code %><br>
+						<%= link_to @venue.phone, 'tel:'+@venue.phone, target:"_blank" %><br>
+						<% if !@venue.website.nil? %>
+							<%= link_to @venue.website, url_with_protocol(@venue.website), target:"_blank" %>					
+						<% else %>
+							No website listed
+						<% end %>
+					</div>	
+				</div>
+			</div> <!-- form-group -->
+
+
+			<!-- Additional Info panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Additional Info</h3>
+				</div>
+			</div> <!-- form-group -->
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<div class="padding-15-sides">
+						Description: <p><em>"<%= @venue.description%>"</em></p>
+						<% if current_user.account_type == "admin" %>
+							<p>Filename:&nbsp;<%= @venue.file_name %></p>
+							<p>Status:&nbsp;<% if @venue.active %>Active<% else %>Inactive<% end %></p>
+						<% end %>
+					</div>	
+				</div>
+			</div> <!-- form-group -->
+
+
+			<!-- Features panel -->
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<h3>Features</h3>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-9">
+					<% Feature.all.each do |feature| %>
+						<div class="checkbox padding-15-sides">
+							<label>
+								<%= check_box_tag "venue[feature_ids][]", feature.id, @venue.feature_ids.include?(feature.id), class:"regular-checkbox", onclick:"return false"%>
+								<small><%= feature.name %></small><br>
+							</label>
+						</div>
+					<% end %>
+				</div>
+			</div> <!-- form-group -->
+
+
+			<!-- Venue Hours panel -->
+			<div class="form-group">
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-sm-offset-2 col-sm-9 col-md-offset-4 col-md-8">
+							<h3>Venue Hours</h3>
+						</div>
+					</div>
+					<% @days_of_week.each do |day_of_week| %>
+						<div class="row">
+							<div class='col-xs-3'>
+								<%= label_tag day_of_week.to_s.capitalize, nil, class: 'col-xs-2 col-sm-6' %>
+							</div>	
+							<div class='col-xs-9'>
+								<%= @venue.send(time_field_helper("open", day_of_week)).strftime("%l:%M %p") %>
+								&nbsp;-&nbsp;
+								<%= @venue.send(time_field_helper("close", day_of_week)).strftime("%l:%M %p") %>
+							</div>
+						</div>
+					<% end %>
+				</div>
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-sm-offset-2 col-sm-9 col-md-8">
+							<h3>Kitchen Hours</h3>
+						</div>
+					</div>	
+					<% @days_of_week.each do |day_of_week| %>
+						<div class="row">
+							<div class='col-xs-3'>
+								<%= label_tag day_of_week.to_s.capitalize, nil, class: 'col-xs-2 col-sm-6' %>
+							</div>	
+							<div class='col-xs-9'>
+								<% if !@venue.send(time_field_helper("open", day_of_week, "kitchen")).nil? %>
+									<%= @venue.send(time_field_helper("open", day_of_week, "kitchen")).strftime("%l:%M %p") %>
+								<% else %>
+									N/A
+								<% end %>
+								&nbsp;-&nbsp;
+								<% if !@venue.send(time_field_helper("close", day_of_week, "kitchen")).nil? %>
+									<%= @venue.send(time_field_helper("close", day_of_week, "kitchen")).strftime("%l:%M %p") %>
+								<% else %>
+									N/A
+								<% end %>
+							</div>
+						</div>
+					<% end %>
+				</div>
+			</div>
+
+	</div> <!-- .scrollable -->
+	
+	<!-- Not using f.submit method on mobile because navbar-fixed-bottom element needs to be outside of 
+		.scrollable element or else iOS momentum scrolling will also scroll the button. -->
+	<div class="navbar-fixed-bottom">
+		<%= button_tag "Edit Venue", class:"btn btn-lg btn-primary col-xs-12 bottomNavbarButton", data: { title: @venue.name } %>
+	</div>
+	
+</div> <!-- #venue_show -->

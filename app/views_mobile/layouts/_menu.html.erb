@@ -1,6 +1,6 @@
 				<!-- MENU -->
 						<% if !signed_in? %>
-							<div class="header">
+							<div class="btn-bar">
 								<p>Welcome!  Join or log in to get full access to venue information</p>
 								<div class="row">
 									<div class="col-xs-6">
@@ -21,8 +21,10 @@
 							<%= link_to "Venues", home_path, class:"btn btn-glass #{ menu_selection(params[:action], 'home', 'active', default: true) }", :data =>{ :button => "#venues" } %>
 							<div class="divider"></div>
 							<%= link_to "Events", events_list_path, class:"btn btn-glass #{ menu_selection(params[:action], 'events_list', 'active') }", :data =>{ :button => "#events" } %>
+<% if false %>							
 							<div class="divider"></div>
-							<%= link_to "Videos", new_video_path, class:"btn btn-glass #{ menu_selection(params[:action], 'videos', 'active') }", :data =>{ :button => "#videos" } %>
+							<%= link_to "Videos", videos_path, class:"btn btn-glass #{ menu_selection(params[:action], 'videos', 'active') }", :data =>{ :button => "#videos" } %>
+<% end %>							
 						</div>
 												
 						<% if current_user %>

@@ -1,0 +1,38 @@
+$('#rightPane').find('.dynamicContent').html("<%= escape_javascript(render template: 'videos/index.html.erb') %>");
+
+	// preload contents slider in case user wants to add video
+	$("#slider-content").html("<%= escape_javascript(render template: 'venues/new.html.erb') %>");
+
+	$("#videos_index").on("click", ".rightPane", function(event){
+		var button_obj = $(this);
+		var url = button_obj.attr("href"); // get the url of the button
+
+		$("#rightPane").find(".preloader").show(); // .preloader in rightPane needs to be showing before rightPane is opened
+			
+		// open rightPane
+		togglePane({
+			state: "open",
+			title: button_obj.data("title"),
+			callback: function(){
+				// load content
+				loadContent(url, {
+					pane: "rightPane"
+				});
+			}
+		});
+
+		event.preventDefault();
+	});
+	
+	
+	<!-- rightPane: "Add Video" button -->
+	$("#rightPane").on("click", "button.bottomNavbarButton", function(event){
+		var jqObj = $(this);
+		var sliderTitle = jqObj.data("title");
+		toggleSlider({
+			title: sliderTitle,
+			sliderChild: "#slider-content"
+		});
+
+		event.preventDefault();
+	});
